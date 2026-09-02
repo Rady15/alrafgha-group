@@ -91,6 +91,20 @@ app.use(cors({
     optionsSuccessStatus: 200
 }));
 
+// Stripe webhook must receive the RAW body (BEFORE express.json transforms it) so
+// signature verification works. Must be mounted before app.use(express.json).
+app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
+app.use('/api/v1/stripe/webhook', (req, res, next) => {
+    if (req.body !== undefined && Buffer.isBuffer(req.body)) {
+        try {
+            JSON.parse(req.body.toString('utf8'));
+        } catch {
+            return res.status(400).json({ error: 'Malformed webhook payload' });
+        }
+    }
+    next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
