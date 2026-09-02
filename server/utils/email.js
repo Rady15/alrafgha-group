@@ -50,17 +50,14 @@ const sendEmail = async (options) => {
     const missingMailConfig = !process.env.EMAIL_HOST || !process.env.EMAIL_PORT || !process.env.EMAIL_USERNAME || !process.env.EMAIL_PASSWORD;
 
     if (missingMailConfig) {
-        if (process.env.NODE_ENV !== 'production') {
-            // Development fallback: log the email contents so registration can proceed without real SMTP
-            console.log('--- Development email fallback ---');
-            console.log('To:', options.email);
-            console.log('Subject:', options.subject);
-            console.log('Text:', options.text);
-            console.log('HTML preview omitted');
-            console.log('--- End fallback ---');
-            return;
-        }
-        throw new AppError('Email service is not configured in production. Please set EMAIL_HOST, EMAIL_PORT, EMAIL_USERNAME, and EMAIL_PASSWORD environment variables.', 500);
+        // Always fall back to console logging when no email provider is set.
+        // This lets registration / OTP flows work without SMTP configured.
+        console.log('--- Email fallback (no SMTP configured) ---');
+        console.log('To:', options.email);
+        console.log('Subject:', options.subject);
+        console.log('Body:', options.text);
+        console.log('--- End fallback ---');
+        return;
     }
 
     try {

@@ -19,6 +19,7 @@ if (fs.existsSync(envPath)) {
 }
 
 const app = require('./app');
+const seedProduction = require('./seedProduction');
 
 let DB = (process.env.DATABASE || '').replace(
     '<PASSWORD>',
@@ -30,19 +31,29 @@ if (!DB) {
     process.exit(1);
 }
 
+const port = process.env.PORT || 5600;
+
 mongoose
     .connect(DB)
-    .then(() => console.log('✅ MongoDB connection successful!'));
+    .then(async () => {
+        console.log('✅ MongoDB connection successful!');
+        // Auto-seed on first boot if DB is empty
+        if (process.env.SEED_ON_START !== 'false') {
+            await seedProduction();
+        }
+        const server = app.listen(port, () => {
+            console.log(`🎉 Alrafgha Group server is running on http://localhost:${port}`);
+        });
 
-const port = process.env.PORT || 5600;
-const server = app.listen(port, () => {
-    console.log(`🎉 Alrafgha Group server is running on http://localhost:${port}`);
-});
-
-process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
-    server.close(() => {
+        process.on('unhandledRejection', err => {
+            console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+            console.log(err.name, err.message);
+            server.close(() => {
+                process.exit(1);
+            });
+        });
+    })
+    .catch(err => {
+        console.error('❌ MongoDB connection failed:', err.message);
         process.exit(1);
     });
-});
