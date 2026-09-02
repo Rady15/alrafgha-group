@@ -1,0 +1,29 @@
+{
+  "loadingPackages": "جارٍ تحميل باقات الأسعار...",
+  "fetchError": "تعذّر جلب الباقات",
+  "fetchErrorMessage": "خطأ أثناء جلب الباقات: {{message}}",
+  "errorTitle": "عذراً! حدث خطأ ما",
+  "errorDescription": "تعذّر تحميل الباقات. يرجى المحاولة مرة أخرى لاحقاً.",
+  "backHome": "العودة إلى الرئيسية",
+  "transparentPricing": "أسعار شفافة",
+  "chooseYour": "اختر",
+  "perfectPlan": "الخطة المثالية.",
+  "heroSubtitle": "بلا رسوم خفية ولا مفاجآت. أسعار واضحة لرحلتك القادمة فقط.",
+  "filters": {
+    "all": "الكل",
+    "allPricing": "الأسعار",
+    "bikes": "دراجات",
+    "cars": "سيارات"
+  },
+  "ccRange": "{{min}} - {{max}} سم مكعب",
+  "perHour": "لكل ساعة",
+  "perKm": "لكل كم",
+  "features": {
+    "support": "دعم عملاء على مدار الساعة",
+    "cancellation": "إلغاء مجاني",
+    "insurance": "تأمين شامل"
+  },
+  "viewVehicles": "عرض المركبات",
+  "noPackagesTitle": "لا توجد باقات متاحة",
+  "noPackagesDescription": "لا توجد باقات مدرجة لهذه الفئة المحددة حالياً."
+}

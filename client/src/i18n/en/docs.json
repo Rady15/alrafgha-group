@@ -1,0 +1,1014 @@
+{
+  "about": {
+    "heroTitle": "About",
+    "heroSubtitle": "Your trusted companion for seamless vehicle rentals. We connect customers with verified vehicles and empower vendors to grow their business - all on one platform.",
+    "stat": {
+      "registeredUsers": "Registered Users",
+      "vehiclesListed": "Vehicles Listed",
+      "verifiedVendors": "Verified Vendors",
+      "citiesCovered": "Cities Covered"
+    },
+    "missionTitle": "Our Mission",
+    "missionText": "To democratize transportation by providing easy access to quality vehicles at affordable prices. We connect vehicle owners with customers, creating a win-win ecosystem where vendors earn and customers travel freely without the burden of ownership.",
+    "visionTitle": "Our Vision",
+    "visionText": "To become the Kingdoms most trusted vehicle rental platform, setting new standards in customer service, vendor empowerment, and operational excellence. We envision a future where mobility is accessible, affordable, and sustainable for everyone.",
+    "howItWorksTitle": "How Alrafgha Group Works",
+    "howItWorksSubtitle": "Simple, transparent, and hassle-free - from booking to return",
+    "how": [
+      {
+        "title": "Browse & Select",
+        "description": "Search for cars or bikes based on your location, dates, and preferences. Filter by type, price, and availability."
+      },
+      {
+        "title": "Book Online",
+        "description": "Choose your pickup date, time, and location. Complete the booking with your details - no advance payment required!"
+      },
+      {
+        "title": "Pickup Vehicle",
+        "description": "Visit the pickup location with your ID and driving license. Our staff will verify your documents and hand over the vehicle."
+      },
+      {
+        "title": "Enjoy Your Ride",
+        "description": "Hit the road! Use the vehicle for your trip. All vehicles come with comprehensive insurance coverage."
+      },
+      {
+        "title": "Return & Pay",
+        "description": "Return the vehicle at the designated location. Pay based on actual usage (distance or time, whichever is higher)."
+      }
+    ],
+    "forWhomTitle": "Who Is Alrafgha Group For",
+    "forWhomSubtitle": "Built for everyone in the vehicle rental ecosystem",
+    "for": [
+      {
+        "title": "For Customers",
+        "description": "Book cars and bikes hassle-free for daily commute, weekend getaways, or special occasions.",
+        "features": [
+          "Wide range of vehicles",
+          "Transparent pricing",
+          "Easy booking process",
+          "Small advance payment",
+          "24/7 support"
+        ]
+      },
+      {
+        "title": "For Vendors",
+        "description": "List your vehicles and earn money. Reach thousands of customers without marketing hassle.",
+        "features": [
+          "Easy vehicle listing",
+          "Earnings dashboard",
+          "Secure payments",
+          "Admin support",
+          "Fleet management"
+        ]
+      },
+      {
+        "title": "For Office Staff",
+        "description": "Manage bookings efficiently with our intuitive dashboard designed for smooth operations.",
+        "features": [
+          "Booking management",
+          "Pickup/Return processing",
+          "Document verification",
+          "Billing system",
+          "Refund handling"
+        ]
+      }
+    ],
+    "valuesTitle": "Our Core Values",
+    "valuesSubtitle": "The principles that guide everything we do",
+    "values": [
+      {
+        "title": "Trust & Safety",
+        "description": "All vehicles are verified with proper documentation. Comprehensive insurance coverage on every rental."
+      },
+      {
+        "title": "Innovation",
+        "description": "Modern tech stack with real-time booking, automated billing, and seamless payment integration."
+      },
+      {
+        "title": "Customer First",
+        "description": "24/7 support, transparent pricing with no hidden fees, and hassle-free cancellation policies."
+      },
+      {
+        "title": "Sustainability",
+        "description": "Promoting shared mobility to reduce carbon footprint and supporting local vendors across the Kingdom."
+      }
+    ],
+    "differentTitle": "What Makes Us Different",
+    "diff": [
+      {
+        "title": "Pay-Per-Use Pricing",
+        "description": "Only a small advance payment is required! Pay full only after you use the vehicle. Final cost is calculated based on actual distance traveled OR duration. Completely transparent, no hidden charges."
+      },
+      {
+        "title": "100% Verified",
+        "description": "Every vehicle on our platform is verified with proper documentation including RC, insurance, and fitness certificates. All vendors go through a thorough verification process before approval."
+      },
+      {
+        "title": "24/7 Support",
+        "description": "Round-the-clock customer support via phone, email, and live chat. Our dedicated team is always ready to help you with bookings, issues, or queries."
+      },
+      {
+        "title": "Comprehensive Insurance",
+        "description": "All vehicles come with comprehensive insurance coverage as per government regulations. Third-party liability and own damage coverage included for your peace of mind."
+      }
+    ],
+    "journeyTitle": "Our Journey",
+    "journeySubtitle": "Key milestones in our growth story",
+    "milestone": [
+      {
+        "title": "Foundation Stage",
+        "description": "Started with a vision to revolutionize vehicle rentals in the Kingdom"
+      },
+      {
+        "title": "Growth Phase",
+        "description": "Expanding to multiple cities with thousands of satisfied customers"
+      }
+    ],
+    "developersTitle": "Meet the Developers",
+    "developersSubtitle": "The minds behind this application development and implementation",
+    "dev": [
+      {
+        "role": "Project Lead, Full Stack Developer"
+      },
+      {
+        "role": "Frontend Developer"
+      },
+      {
+        "role": "Backend Engineer"
+      },
+      {
+        "role": "Designer, Researcher"
+      }
+    ],
+    "ctaTitle": "Ready to Start Your Journey?",
+    "ctaSubtitle": "Join thousands of happy customers who trust Alrafgha Group for their travel needs",
+    "ctaBrowse": "Browse Vehicles",
+    "ctaVendor": "Become a Vendor"
+  },
+  "faq": {
+    "heroTitle": "Frequently Asked",
+    "heroSubtitle": "Everything you need to know about Alrafgha Group - for customers, vendors, and staff",
+    "jumpTo": "Jump to section:",
+    "cat": [
+      "Getting Started",
+      "Booking Process",
+      "Pricing & Payments",
+      "Pickup & Return",
+      "Cancellation & Refunds",
+      "Insurance & Safety",
+      "For Vendors",
+      "For Office Staff"
+    ],
+    "c": [
+      [
+        {
+          "q": "What is Alrafgha Group?",
+          "a": "Alrafgha Group is a comprehensive online vehicle rental platform that connects customers with verified vehicle vendors. You can rent cars and bikes for daily use, trips, or special occasions. Our platform ensures transparent pricing, verified vehicles, and secure transactions."
+        },
+        {
+          "q": "How do I create an account?",
+          "a": "Click on \"Register\" button, fill in your details (name, email, phone, password). You'll receive a 6-digit OTP on your email. Enter the OTP to verify your account, and you're ready to start booking! The OTP is valid for 10 minutes."
+        },
+        {
+          "q": "Who can use Alrafgha Group?",
+          "a": "Alrafgha Group is designed for: 1) Customers - Anyone 18+ years with a valid driving license can rent vehicles. 2) Vendors - Vehicle owners who want to list and rent out their cars/bikes. 3) Office Staff - Alrafgha Group employees who manage pickups and returns. 4) Administrators - Platform managers with full system access."
+        },
+        {
+          "q": "What types of vehicles are available?",
+          "a": "We offer both two-wheelers (bikes/scooters) and four-wheelers (cars). Vehicles are categorized by engine capacity (CC) with different pricing packages. You can filter vehicles by type, location, availability, and price range."
+        }
+      ],
+      [
+        {
+          "q": "How do I book a vehicle?",
+          "a": "Step 1: Browse vehicles on our platform and select your preferred one. Step 2: Click \"Book Now\" and choose your pickup date, time, and location. Step 3: Submit the booking request. Step 4: Visit the pickup location at the scheduled time with your ID and driving license. No advance payment is required - you pay after returning the vehicle!"
+        },
+        {
+          "q": "What documents do I need for pickup?",
+          "a": "At pickup, you need to provide: 1) Valid Government ID (Aadhaar Card, PAN Card, Passport, Voter ID, or Driving License) 2) Valid Driving License (Two-wheeler license for bikes, Four-wheeler license for cars). Our office staff will verify these documents before handing over the vehicle."
+        },
+        {
+          "q": "Can I modify my booking?",
+          "a": "Currently, bookings cannot be modified after submission. If you need to change details, please cancel the existing booking (no charges before pickup) and create a new one. We're working on adding modification features in future updates."
+        },
+        {
+          "q": "How far in advance can I book?",
+          "a": "You can book vehicles up to 3 months in advance. We recommend booking early during peak seasons, holidays, and weekends to ensure availability of your preferred vehicle."
+        },
+        {
+          "q": "What happens after I submit a booking?",
+          "a": "After submission: 1) Booking status becomes \"Booking Requested\" 2) Vehicle is temporarily marked as \"Booked\" 3) You'll receive a confirmation email 4) Visit the pickup location at scheduled time 5) Office staff will verify your documents and hand over the vehicle 6) A unique Bill ID is generated at pickup."
+        }
+      ],
+      [
+        {
+          "q": "How is the rental cost calculated?",
+          "a": "Our pricing is based on actual usage. We calculate: 1) Distance Cost = KM traveled × Price per KM 2) Time Cost = Hours used × Price per Hour. Your final cost = MAX(Distance Cost, Time Cost) + Damage Cost (if any). You pay whichever is higher between distance and time, ensuring fair pricing for your trip."
+        },
+        {
+          "q": "What are the pricing packages?",
+          "a": "Packages are based on vehicle type and engine capacity (CC). For example: Economy Bike (100-150CC) at {{bikeHour}}/hour or {{bikeKm}}/km, Standard Car (1200-1600CC) at {{carHour}}/hour or {{carKm}}/km. Visit our Pricing page to see all current packages with detailed rates."
+        },
+        {
+          "q": "Do I need to pay in advance?",
+          "a": "No! Alrafgha Group follows a pay-after-use model. You don't need to pay any advance or deposit while booking. Payment is collected only after you return the vehicle, based on actual usage."
+        },
+        {
+          "q": "What payment methods are accepted?",
+          "a": "We accept: 1) Cash - Pay directly at the return location 2) Online Payment - Credit/Debit cards, Mada, Net Banking via Mada. Choose your preferred method at the time of return."
+        },
+        {
+          "q": "Are there any hidden charges?",
+          "a": "Absolutely not! We believe in 100% transparent pricing. The price you see on the package is what you pay. Additional charges only apply if: 1) Vehicle is damaged during rental 2) Late return fees (if applicable). All charges are clearly communicated before finalizing."
+        },
+        {
+          "q": "What about fuel charges?",
+          "a": "Fuel is NOT included in the rental price. You receive the vehicle with a certain fuel level and must return it with the same level. If returned with less fuel, charges may apply."
+        }
+      ],
+      [
+        {
+          "q": "Where can I pick up the vehicle?",
+          "a": "Pickup locations are specified for each vehicle and shown in the booking confirmation. Visit the designated Alrafgha Group partner location at your scheduled time. The address and any special instructions will be included in your confirmation email."
+        },
+        {
+          "q": "What happens at pickup?",
+          "a": "At pickup, our office staff will: 1) Verify your ID and Driving License 2) Record the vehicle's current odometer reading 3) Check the vehicle plate number 4) Generate a Bill ID (BILL-YYYYMMDD-XXXXX) 5) Hand over the vehicle keys 6) Send you a pickup confirmation email with all details."
+        },
+        {
+          "q": "What if I am late for pickup?",
+          "a": "Please inform us as soon as possible if you're running late. We hold your reservation for up to 2 hours. If you don't show up or don't inform us, the booking may be cancelled by staff."
+        },
+        {
+          "q": "How do I return the vehicle?",
+          "a": "Return the vehicle to the same pickup location. Our staff will: 1) Record the final odometer reading 2) Verify vehicle details (plate, engine, chassis numbers) 3) Inspect vehicle condition 4) Calculate final cost 5) Process your payment 6) Send return confirmation email with complete bill."
+        },
+        {
+          "q": "What if I return late?",
+          "a": "Extra hours will be charged according to the package rate. Always try to return on time or inform us in advance if you need an extension. Unauthorized late returns may result in additional penalties."
+        },
+        {
+          "q": "Can I return to a different location?",
+          "a": "Currently, vehicles must be returned to the same location where you picked them up. One-way rentals may be available for select routes in the future."
+        }
+      ],
+      [
+        {
+          "q": "Can I cancel my booking?",
+          "a": "Yes! You can cancel any booking that is in \"Booking Requested\" status (before pickup). Go to your Bookings page, select the booking, and click Cancel. You'll need to provide a cancellation reason."
+        },
+        {
+          "q": "Are there cancellation charges?",
+          "a": "Since Alrafgha Group doesn't require advance payment, most cancellations are free! If you've made any advance payment, refund will be processed within 7-10 business days."
+        },
+        {
+          "q": "What if the office staff rejects my booking?",
+          "a": "In rare cases, staff may reject a booking due to document issues, vehicle unavailability, or other reasons. You'll receive an email notification with the rejection reason. Any advance payments will be refunded."
+        },
+        {
+          "q": "How do I get a refund?",
+          "a": "Refunds for cancelled bookings (where advance payment was made) are automatically processed. Status changes to \"Refund Pending\" and then \"Completed\" once processed. Refunds typically take 7-10 business days to reflect in your account."
+        }
+      ],
+      [
+        {
+          "q": "Are the vehicles insured?",
+          "a": "Yes! All vehicles on Alrafgha Group come with comprehensive insurance coverage as per government regulations. This includes third-party liability and own damage coverage."
+        },
+        {
+          "q": "What happens if there is an accident?",
+          "a": "In case of an accident: 1) Ensure your safety first 2) Contact local police if required 3) Call our 24/7 support immediately 4) Do NOT leave the accident site 5) We'll guide you through the insurance claim process. Never admit fault or make settlements without our authorization."
+        },
+        {
+          "q": "Am I responsible for damages?",
+          "a": "You're responsible for damages beyond normal wear and tear. At return, staff will inspect the vehicle. If damages are found, they'll be assessed and added to your final bill. Minor scratches may be covered, but significant damage will be charged."
+        },
+        {
+          "q": "Are helmets provided with bikes?",
+          "a": "Yes! Complimentary helmets are provided with all bike rentals. We sanitize them after each use for your safety. You're also welcome to bring your own helmet."
+        },
+        {
+          "q": "What safety measures does Alrafgha Group take?",
+          "a": "We ensure: 1) All vehicles have valid RC and insurance 2) Regular maintenance checks 3) Vendor verification before approval 4) Customer ID verification at pickup 5) 24/7 emergency support"
+        }
+      ],
+      [
+        {
+          "q": "How do I become a vendor?",
+          "a": "Visit our Vendor page and fill the registration form. You'll need: Name, Email, Phone, Address, ID proof (PAN/Aadhaar/DL for individuals or Business Registration for companies), and Password. After email verification via OTP, your account goes for admin approval. Once approved, you can start listing vehicles!"
+        },
+        {
+          "q": "What documents do vendors need?",
+          "a": "For Individuals: PAN Card, Driving License, Passport, or Aadhaar Card. For Organizations: Business Registration Certificate or Business Tax ID. All documents must be valid and clearly readable."
+        },
+        {
+          "q": "How do I list my vehicles?",
+          "a": "After vendor approval: 1) Go to Vendor Dashboard 2) Click \"Add New Vehicle\" 3) Fill vehicle details (name, model, brand, registration, engine, chassis numbers) 4) Upload RC, Insurance documents, and vehicle images 5) Submit for admin approval. Once approved, your vehicle becomes available for booking!"
+        },
+        {
+          "q": "How do I track my earnings?",
+          "a": "Your Vendor Dashboard shows: 1) Total earnings overview 2) Filter earnings by Day/Week/Month/Year 3) Detailed breakdown of each completed booking 4) Vehicle-wise earnings analysis"
+        },
+        {
+          "q": "When do I get paid?",
+          "a": "Earnings are tracked automatically when customers complete their rentals. Payment settlements are processed according to our vendor payment schedule. Check your dashboard for detailed payment history."
+        },
+        {
+          "q": "What happens if my vehicle is damaged?",
+          "a": "Damage costs are collected from customers during return. These are recorded in the booking details. Insurance claims for major damages are handled as per the vehicle's insurance policy."
+        }
+      ],
+      [
+        {
+          "q": "How do I process a pickup?",
+          "a": "In your Staff Dashboard: 1) Find the booking in \"Booking Requested\" status 2) Click \"Confirm Pickup\" 3) Fill pickup details: Date, Time, Odometer reading, Vehicle plate number, Customer ID type and number, any notes 4) Submit. This generates a Bill ID and changes status to \"Picked Up\"."
+        },
+        {
+          "q": "How do I process a return?",
+          "a": "1) Find the booking in \"Picked Up\" status 2) Click \"Process Return\" 3) Fill return details: Date, Time, Final odometer reading, Verify vehicle numbers, Vehicle condition (Perfect/Damaged), Damage cost if applicable, Amount paid 4) Select payment method (Cash/Online) 5) Submit to complete the rental."
+        },
+        {
+          "q": "How is the final cost calculated?",
+          "a": "System calculates automatically: Distance = End Odometer - Start Odometer, Duration = Return Time - Pickup Time. Distance Cost = Distance × Price per KM, Time Cost = Hours × Price per Hour. Final Cost = MAX(Distance Cost, Time Cost) + Damage Cost. This ensures customers pay fairly based on actual usage."
+        },
+        {
+          "q": "How do I reject a booking?",
+          "a": "For valid reasons (document issues, vehicle problems, etc.): 1) Find the booking in \"Booking Requested\" status 2) Click \"Reject\" 3) Provide rejection reason 4) Submit. Customer is notified via email. Vehicle status returns to \"Available\"."
+        },
+        {
+          "q": "How do I mark a refund as completed?",
+          "a": "For cancelled bookings with pending refunds: 1) Find the cancelled booking with \"Refund Pending\" status 2) Once refund is processed in your payment system 3) Click \"Mark Refund Completed\" 4) Status updates to \"Refund Completed\""
+        }
+      ]
+    ],
+    "stillTitle": "Still Have Questions?",
+    "stillSubtitle": "Can't find the answer you're looking for? Our support team is here to help!",
+    "visitHelp": "Visit Help Center",
+    "emailSupport": "Email Support"
+  },
+  "terms": {
+    "heroTitle": "Terms of Service",
+    "heroSubtitle": "Complete terms and conditions for all users - customers, vendors, and staff",
+    "lastUpdated": "Last Updated: January 2026",
+    "importantTitle": "Important Notice",
+    "importantText1": "These Terms of Service constitute a legally binding agreement between you and Alrafgha Group. By creating an account, making a booking, listing a vehicle, or using any of our services, you acknowledge that you have read, understood, and agree to be bound by these terms.",
+    "importantText2": "This document covers terms for all user types: Customers who rent vehicles, Vendors who list vehicles for rental, and Office Staff who manage operations. Please read the sections relevant to your role carefully.",
+    "paymentSummaryTitle": "Payment Summary",
+    "paymentSummary": [
+      "40% advance at booking",
+      "60% remaining at return",
+      "Final cost = Distance + Time + Damages",
+      "Secure payments via Mada"
+    ],
+    "cancelGuideTitle": "Cancellation Quick Guide",
+    "cancelGuide": [
+      "Cancel pickups from your Bookings page",
+      "Reject the pickup if the vehicle has issues",
+      "Full refund applies if rejected during pickup",
+      "No refunds after pickup acceptance"
+    ],
+    "pickupReqTitle": "Pickup Requirements",
+    "pickupReq": [
+      "Valid driving license (original)",
+      "Government ID (Aadhaar/PAN/Passport)",
+      "Booking confirmation or Bill ID",
+      "Minimum age: 18 years"
+    ],
+    "vendorEssentialsTitle": "Vendor Essentials",
+    "vendorEssentials": [
+      "Valid ID & business documents",
+      "Vehicle RC & insurance required",
+      "24-48hr approval time",
+      "Commission deducted per booking"
+    ],
+    "sec": [
+      {
+        "title": "Acceptance of Terms",
+        "content": "By accessing and using Alrafgha Group's vehicle rental platform, you accept and agree to be bound by the terms and provisions of this agreement. These terms apply to all users including customers, vendors, and office staff. If you do not agree to these terms, please do not use our services. We reserve the right to update or modify these terms at any time without prior notice, and your continued use constitutes acceptance of any changes."
+      },
+      {
+        "title": "User Roles and Eligibility",
+        "content": "Alrafgha Group supports multiple user roles: (1) Customers - Must be at least 18 years old with a valid driving license appropriate for the vehicle type (two-wheeler license for bikes, four-wheeler license for cars) and valid government-issued identification. (2) Vendors - Individuals or organizations registering to list vehicles must provide valid business or personal identification documents and meet all legal requirements for vehicle rental operations. (3) Office Staff - Authorized personnel assigned by Alrafgha Group to manage pickups, returns, and booking operations. (4) Administrators - Alrafgha Group personnel with full system access for platform management."
+      },
+      {
+        "title": "Customer Booking Terms",
+        "content": "Bookings are subject to vehicle availability. To complete a booking, you must: (1) Select a vehicle and specify pickup date/time, (2) Review the estimated cost breakdown showing hourly and daily rates, (3) Pay 40% advance payment through Mada to confirm your booking, (4) Receive a booking confirmation with a unique reference. Bookings can be modified or cancelled subject to our cancellation policy. We reserve the right to refuse or cancel bookings at our discretion if terms are violated."
+      },
+      {
+        "title": "Payment Structure",
+        "content": "Alrafgha Group operates on a split payment model: (1) Advance Payment - 40% of estimated rental cost is required at booking time via Mada (credit/debit cards, Mada, net banking, wallets). This confirms your reservation. (2) Final Payment - Remaining amount calculated based on actual distance traveled (odometer reading) and time used, plus any damage costs, is collected at vehicle return. Final payment can be made via cash or online. (3) Security Deposits - A refundable deposit may be required at pickup for high-value vehicles. All prices are in Saudi Riyal (SAR) and include applicable taxes unless stated otherwise."
+      },
+      {
+        "title": "Cost Calculation",
+        "content": "Final rental cost is calculated using: (1) Time-based charges - Based on total rental duration at hourly/daily rates determined by vehicle's pricing package, (2) Distance-based charges - Based on kilometers traveled (ending odometer - starting odometer) at per-km rate, (3) Damage costs - Any damages assessed during return inspection are added to the final bill. Pricing packages are automatically assigned based on vehicle type (bike/car) and engine CC. You will see estimated costs before booking, but final costs depend on actual usage."
+      },
+      {
+        "title": "Cancellation and Refund Policy",
+        "content": "For Customer Cancellations: (1) Cancellations made 48+ hours before scheduled pickup are eligible for a full refund of advance payment minus a 5% processing fee. (2) Cancellations made 24-48 hours before pickup will incur a 25% cancellation fee. (3) Cancellations within 24 hours of pickup will incur a 50% cancellation fee. (4) No-shows (failure to pick up without cancellation) will forfeit the entire advance payment. For Staff Rejections: If our office staff reject your booking (document issues, vehicle unavailability, etc.), you are entitled to a full refund. Refunds are processed within 7-10 business days to the original payment method."
+      },
+      {
+        "title": "Vehicle Pickup Requirements",
+        "content": "At the scheduled pickup time, you must present: (1) Valid original driving license (two-wheeler for bikes, four-wheeler for cars - learner's licenses not accepted), (2) Government-issued ID proof (Aadhaar Card, PAN Card, Voter ID, Passport, or Driving License), (3) Booking confirmation or Bill ID. Our office staff will: (1) Verify your identity, (2) Record your ID details, (3) Note the starting odometer reading, (4) Generate a Bill ID for your rental, (5) Provide you with the vehicle keys and necessary documents. Failure to provide valid documents will result in booking rejection with refund per cancellation policy."
+      },
+      {
+        "title": "Vehicle Usage Responsibilities",
+        "content": "As a renter, you agree to: (1) Drive safely and obey all traffic laws, (2) Not exceed the vehicle's passenger capacity, (3) Not use the vehicle for racing, towing, or commercial purposes without permission, (4) Not allow unlicensed drivers to operate the vehicle, (5) Not transport illegal substances or engage in illegal activities, (6) Maintain fuel levels (return with same level as pickup or pay for difference), (7) Report any accidents or mechanical issues immediately to our 24/7 helpline, (8) Not smoke inside the vehicle, (9) Not take the vehicle outside designated service areas without prior approval, (10) Return the vehicle in the same condition as received (normal wear excepted)."
+      },
+      {
+        "title": "Vehicle Return Process",
+        "content": "At the end of your rental: (1) Return the vehicle to the same pickup location at or before the agreed time, (2) Our staff will record the ending odometer reading, (3) A vehicle inspection will be conducted to assess condition, (4) If damages are found, they will be documented with photos and costs assessed, (5) Final cost is calculated (distance + time + damages - advance paid), (6) Pay the remaining balance via cash or online, (7) Receive final receipt with complete trip summary. Late returns without prior approval will incur additional hourly charges. Extensions must be requested before the original return time and are subject to availability."
+      },
+      {
+        "title": "Damage and Liability",
+        "content": "You are responsible for: (1) Any damage to the vehicle during your rental period not covered by insurance, (2) Traffic violations, fines, and penalties incurred during the rental, (3) Towing charges if the vehicle is illegally parked, (4) Loss or damage to vehicle keys, (5) Interior damage including stains, burns, or tears. Damage Assessment: Our staff will inspect the vehicle at return. Any damages will be documented with photographs, and costs will be determined based on repair estimates. Damage costs are deducted from your security deposit or added to your final bill. Pre-existing damages must be noted at pickup; otherwise, you may be held responsible."
+      },
+      {
+        "title": "Insurance Coverage",
+        "content": "All Alrafgha Group vehicles are covered by comprehensive insurance as per Saudi regulations, which includes: (1) Third-party liability coverage, (2) Own damage coverage for accidents. However, you remain liable for: (1) Insurance deductible amounts, (2) Damages caused by negligence or policy violations, (3) Damages not covered by insurance (theft due to negligence, interior damage, etc.), (4) Any costs if you fail to report accidents properly. In case of an accident: (1) Contact our 24/7 helpline immediately, (2) Do not leave the accident scene, (3) File a police report if required, (4) Do not admit fault or make settlements without our authorization, (5) Provide all requested documentation for insurance claims."
+      },
+      {
+        "title": "Vendor Terms and Conditions",
+        "content": "Vendors listing vehicles on Alrafgha Group agree to: (1) Provide accurate and complete vehicle information (name, model, registration, engine details), (2) Upload valid and current documents (RC, insurance), (3) Maintain vehicles in roadworthy condition, (4) Ensure all listed vehicles have valid registration and insurance, (5) Not list stolen or disputed vehicles, (6) Accept Alrafgha Group's pricing packages based on vehicle specifications, (7) Allow platform commission deduction from earnings, (8) Respond promptly to admin queries regarding vehicles, (9) Remove vehicles from listing when sold or unavailable, (10) Comply with all applicable local and national regulations. Vendor Registration requires: Valid ID proof, Business documents (for organizations), Address verification. Vehicle approval is subject to admin review within 24-48 hours."
+      },
+      {
+        "title": "Vendor Earnings and Payments",
+        "content": "Vendors earn money when their vehicles are rented: (1) Earnings are calculated based on bookings completed (customer returned vehicle and paid), (2) Alrafgha Group deducts a platform commission from each booking, (3) Vendors can view detailed earnings reports in their dashboard (filter by day, week, month, year), (4) Earnings show: pickup/return details, distance traveled, damage costs, final amount. Earnings Tracking: (1) Total earnings across all vehicles, (2) Per-vehicle statistics (bookings, distance, hours), (3) Currently booked vehicles count. Payment schedules and commission rates are specified in the Vendor Agreement provided during registration."
+      },
+      {
+        "title": "Office Staff Responsibilities",
+        "content": "Office staff authorized by Alrafgha Group are responsible for: (1) Verifying customer identity and documents at pickup, (2) Recording accurate odometer readings, (3) Generating Bill IDs for confirmed pickups, (4) Inspecting vehicles at return and documenting condition, (5) Assessing and recording damage costs fairly, (6) Processing final payments (cash or online), (7) Handling booking rejections with valid reasons, (8) Processing refund status updates, (9) Maintaining professional conduct with all customers, (10) Keeping login credentials confidential, (11) Reporting suspicious activities to management. Staff must not: Accept bribes, Skip verification steps, Share customer data externally, Process personal bookings."
+      },
+      {
+        "title": "Prohibited Activities",
+        "content": "The following activities are strictly prohibited on Alrafgha Group: (1) Creating fake accounts or providing false information, (2) Attempting to bypass payment systems, (3) Sub-renting vehicles to third parties, (4) Using the platform for illegal activities, (5) Harassing staff, vendors, or other users, (6) Attempting to access unauthorized system areas, (7) Manipulating reviews or ratings, (8) Sharing account credentials, (9) Using automated systems to make bookings, (10) Violating intellectual property rights. Violations may result in account suspension, booking cancellation, legal action, and forfeiture of payments."
+      },
+      {
+        "title": "Intellectual Property",
+        "content": "All content on Alrafgha Group including but not limited to: logos, trademarks, text, images, software, and design elements are the property of Alrafgha Group or its licensors. You may not: (1) Copy, reproduce, or distribute our content without permission, (2) Use our trademarks without authorization, (3) Reverse engineer our software, (4) Create derivative works from our platform. User-generated content (reviews, feedback) grants Alrafgha Group a non-exclusive license to use, display, and distribute such content."
+      },
+      {
+        "title": "Limitation of Liability",
+        "content": "Alrafgha Group and its partners are not liable for: (1) Indirect, incidental, special, or consequential damages, (2) Loss of profits or business opportunities, (3) Delays or failures due to circumstances beyond our control (weather, traffic, breakdowns), (4) Actions of third parties including vendors and customers, (5) Technical failures or service interruptions, (6) Accuracy of information provided by vendors. Our total liability is limited to the amount you paid for the specific booking in question. This limitation applies to the fullest extent permitted by law."
+      },
+      {
+        "title": "Indemnification",
+        "content": "You agree to indemnify, defend, and hold harmless Alrafgha Group, its affiliates, officers, directors, employees, and agents from any claims, damages, losses, liabilities, costs, or expenses (including legal fees) arising from: (1) Your use of our services, (2) Your violation of these terms, (3) Your violation of any third-party rights, (4) Your negligent or wrongful conduct, (5) Any content you submit to the platform."
+      },
+      {
+        "title": "Dispute Resolution",
+        "content": "For any disputes arising from these terms or your use of Alrafgha Group: (1) First, contact our support team to attempt informal resolution, (2) If unresolved, disputes will be settled through binding arbitration in accordance with the arbitration laws of Saudi Arabia, (3) Arbitration will be conducted in English, (4) The venue will be in the city where Alrafgha Group is registered, (5) Both parties agree to waive rights to a jury trial, (6) Class action lawsuits are not permitted. Exceptions: Claims for injunctive relief or intellectual property violations may be brought in courts of competent jurisdiction."
+      },
+      {
+        "title": "Governing Law",
+        "content": "These Terms of Service are governed by and construed in accordance with the laws of Saudi Arabia. Any legal action or proceeding relating to your access to or use of Alrafgha Group shall be brought exclusively in the courts of competent jurisdiction in Saudi Arabia. By using our services, you consent to the jurisdiction and venue of such courts. If any provision of these terms is found to be unenforceable, the remaining provisions will continue in full force and effect."
+      },
+      {
+        "title": "Modifications to Service",
+        "content": "Alrafgha Group reserves the right to: (1) Modify or discontinue any feature or service without notice, (2) Change pricing structures with reasonable notice, (3) Update these terms at any time, (4) Suspend or terminate user accounts for violations, (5) Add or remove supported cities and locations. We will make reasonable efforts to notify users of significant changes through email or platform notifications."
+      },
+      {
+        "title": "Contact Information",
+        "content": "For questions about these Terms of Service, contact us at: Email: legal@alrafgha-group.com | Support: support@alrafgha-group.com | Phone: +966-000-000-0000 | Address: 123 Business Park, Tech City, Saudi Arabia. For urgent matters related to ongoing rentals, use our 24/7 helpline. Visit our Help Center at /help for FAQs and detailed guides for customers, vendors, and staff."
+      }
+    ],
+    "keyPointsTitle": "Key Points to Remember",
+    "keyPoints": [
+      "Always carry valid ID and license - Bookings cannot be processed without proper documents.",
+      "Report accidents immediately - Failure to report may void insurance coverage.",
+      "Return on time - Late returns without prior approval incur additional charges.",
+      "Vendors must maintain accurate listings - Incorrect information may result in account suspension.",
+      "Staff decisions are final - Regarding vehicle condition assessment and damage costs."
+    ],
+    "agreementTitle": "Your Agreement",
+    "agreementText": "By continuing to use Alrafgha Group's services, you acknowledge that you have read and understood these Terms of Service and agree to be bound by them. These terms protect both you and Alrafgha Group, ensuring a safe and fair experience for all users - customers, vendors, and staff.",
+    "contactSupport": "Contact Support",
+    "viewPrivacy": "View Privacy Policy"
+  },
+  "privacy": {
+    "heroTitle": "Privacy Policy",
+    "heroSubtitle": "Your privacy is important to us. Learn how we collect, use, and protect your information across all user roles.",
+    "lastUpdated": "Last Updated: January 2026",
+    "commitmentTitle": "Our Commitment to Your Privacy",
+    "commitmentText": [
+      "At Alrafgha Group, we respect your privacy and are committed to protecting the personal information of all our users - whether you're a customer renting vehicles, a vendor listing your fleet, or an office staff member managing operations.",
+      "This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our vehicle rental platform. It covers all user types and their specific data handling practices.",
+      "By using Alrafgha Group's services, you consent to the data practices described in this policy. If you do not agree with this policy, please do not use our services."
+    ],
+    "userType": [
+      {
+        "title": "Customers",
+        "desc": "We collect account info, booking details, payment data, and ID verification at pickup."
+      },
+      {
+        "title": "Vendors",
+        "desc": "We collect business details, ID documents, vehicle information, and earnings data."
+      },
+      {
+        "title": "Office Staff",
+        "desc": "Staff access booking data for pickups, returns, and refund processing under strict guidelines."
+      }
+    ],
+    "sec": [
+      {
+        "title": "Information We Collect",
+        "content": [
+          {
+            "subtitle": "Customer Information",
+            "text": "When you create a customer account, we collect your full name, email address, phone number, and password. During vehicle pickup, we verify and record your government-issued ID details (Aadhaar, PAN, Voter ID, Passport, or Driving License) including ID type and number for security and legal compliance."
+          },
+          {
+            "subtitle": "Vendor Information",
+            "text": "Vendors registering on Alrafgha Group provide their full name (or organization name for businesses), contact number, email address, business/personal address, and identification documents. Organizations may provide Business Registration Certificates or Tax IDs, while individuals provide PAN, Aadhaar, License, or Passport details. We also collect uploaded identity documents for verification purposes."
+          },
+          {
+            "subtitle": "Vehicle Information",
+            "text": "For vehicles listed by vendors, we collect vehicle name, brand, model, type (bike/car), registration number, engine number, chassis number, engine CC, location, RC documents, insurance documents, and vehicle images (exterior and interior photos)."
+          },
+          {
+            "subtitle": "Booking & Transaction Data",
+            "text": "We collect booking details including pickup/return dates and times, locations, odometer readings, estimated and final costs, advance payments (40%), and final payments (60%). All payment transactions through Mada include order IDs, payment IDs, and signature verification data."
+          },
+          {
+            "subtitle": "Usage Data",
+            "text": "We automatically collect information about how you interact with our platform, including IP addresses, browser types, device information, pages visited, time spent on pages, and referring URLs. This helps us improve our services and detect potential security issues."
+          },
+          {
+            "subtitle": "Location Information",
+            "text": "We collect location data related to vehicle pickup and drop-off points. With your permission, we may collect real-time location data to provide enhanced services such as nearest vehicle availability."
+          }
+        ]
+      },
+      {
+        "title": "How We Use Your Information",
+        "content": [
+          {
+            "subtitle": "Service Delivery",
+            "text": "We use your information to process vehicle bookings, verify customer and vendor identities, facilitate vehicle pickups and returns, calculate rental costs based on distance and time, process advance and final payments through Mada, generate bill IDs, and provide customer support."
+          },
+          {
+            "subtitle": "Vendor Operations",
+            "text": "For vendors, we use information to review and approve vehicle listings, match vehicles with appropriate pricing packages based on engine CC and type, track earnings and booking statistics, and process vendor payouts."
+          },
+          {
+            "subtitle": "Office Staff Operations",
+            "text": "Office staff use collected information to verify customer identity at pickup, record vehicle condition and odometer readings, process returns and damage assessments, handle refunds for cancellations, and maintain booking records."
+          },
+          {
+            "subtitle": "Communication",
+            "text": "We use your contact information to send booking confirmations with Bill IDs, OTPs for email verification and password changes, payment receipts and refund notifications, important service updates, and promotional offers (with your consent)."
+          },
+          {
+            "subtitle": "Security and Fraud Prevention",
+            "text": "We analyze usage patterns to detect fraudulent activities, prevent unauthorized account access, verify identity documents to ensure legitimate users, and protect both customers and vendors from potential fraud."
+          },
+          {
+            "subtitle": "Service Improvement",
+            "text": "We use aggregated and anonymized data to analyze booking trends, improve vehicle availability algorithms, enhance user interface and experience, develop new features based on user behavior, and optimize pricing structures."
+          }
+        ]
+      },
+      {
+        "title": "Information Sharing and Disclosure",
+        "content": [
+          {
+            "subtitle": "With Vendors",
+            "text": "When you book a vehicle, we share relevant booking details with the vehicle vendor including your name, contact information, and booking dates. This enables vendors to track their vehicle usage and earnings."
+          },
+          {
+            "subtitle": "With Payment Processors",
+            "text": "We share necessary transaction data with Mada to process your advance and final payments. Mada handles your card details, Mada information, and wallet data according to their own privacy policy and PCI-DSS compliance standards. We do not store complete card details on our servers."
+          },
+          {
+            "subtitle": "With Image Storage Provider",
+            "text": "Vehicle images and uploaded documents are stored using ImageKit's cloud storage service. These images are used only for vehicle display and document verification purposes."
+          },
+          {
+            "subtitle": "With Office Staff",
+            "text": "Our authorized office staff access customer booking details, ID verification information, and vehicle condition records to process pickups and returns. Staff are bound by confidentiality agreements."
+          },
+          {
+            "subtitle": "Legal Requirements",
+            "text": "We may disclose your information when required by law, in response to valid legal processes (court orders, subpoenas), to protect our rights and property, to prevent fraud or illegal activities, or in connection with vehicle accidents or insurance claims."
+          },
+          {
+            "subtitle": "Business Transfers",
+            "text": "In the event of a merger, acquisition, or sale of assets, your information may be transferred to the acquiring entity. We will notify you of any such change in ownership and your options regarding your personal data."
+          }
+        ]
+      },
+      {
+        "title": "Data Security",
+        "content": [
+          {
+            "subtitle": "Technical Security Measures",
+            "text": "We implement industry-standard security measures including SSL/TLS encryption for all data transmission, secure password hashing using bcrypt, JWT (JSON Web Tokens) for secure authentication, HTTP-only cookies to prevent XSS attacks, and regular security audits of our systems."
+          },
+          {
+            "subtitle": "Payment Security",
+            "text": "All payment processing is handled through Mada, a PCI-DSS compliant payment gateway. Your sensitive payment details are never stored on our servers. We only store transaction IDs and verification signatures for record-keeping."
+          },
+          {
+            "subtitle": "Document Storage",
+            "text": "Uploaded documents (ID proofs, RC documents, insurance papers) are stored securely on ImageKit's cloud infrastructure with encrypted storage and controlled access permissions."
+          },
+          {
+            "subtitle": "Access Controls",
+            "text": "We implement role-based access controls: Customers can only view their own bookings and profile. Vendors can only access their own vehicles and earnings. Office staff have limited access to process bookings. Admins have controlled full system access with audit logging."
+          },
+          {
+            "subtitle": "Data Retention",
+            "text": "We retain your personal information only as long as necessary: Active account data is kept while your account exists. Booking records are retained for 7 years for legal compliance. Inactive accounts may be deleted after 2 years of inactivity with prior notice."
+          }
+        ]
+      },
+      {
+        "title": "User-Specific Privacy Rights",
+        "content": [
+          {
+            "subtitle": "Customer Rights",
+            "text": "As a customer, you can: Access and update your profile information at any time. View your complete booking history. Request deletion of your account and associated data. Opt out of marketing communications. Cancel bookings and track refund status. Download your personal data upon request."
+          },
+          {
+            "subtitle": "Vendor Rights",
+            "text": "As a vendor, you can: Update your profile and business information. Add or remove vehicles from your listing. Access detailed earnings reports. Request correction of any incorrect information. Delete your vendor account (vehicles will be delisted). Export your vehicle and earnings data."
+          },
+          {
+            "subtitle": "Password Security",
+            "text": "All users can change their password through the settings page. Password changes require OTP verification sent to your registered email for enhanced security. We recommend using strong, unique passwords and enabling email verification."
+          },
+          {
+            "subtitle": "Data Deletion Requests",
+            "text": "You can request complete deletion of your account and personal data by contacting privacy@alrafgha-group.com. Note: Certain data may be retained for legal compliance, pending transactions, or dispute resolution. Deletion requests are processed within 30 days."
+          }
+        ]
+      },
+      {
+        "title": "Cookies and Tracking Technologies",
+        "content": [
+          {
+            "subtitle": "Essential Cookies",
+            "text": "We use essential cookies to maintain your login session (HTTP-only cookies with JWT tokens), remember your preferences, ensure secure transactions, and enable core platform functionality. These cannot be disabled as they are necessary for the service to work."
+          },
+          {
+            "subtitle": "Analytics Cookies",
+            "text": "We may use analytics tools to understand how users interact with our platform, identify popular features and areas for improvement, track booking conversion rates, and optimize user experience. These cookies collect anonymized data."
+          },
+          {
+            "subtitle": "Managing Cookies",
+            "text": "You can control cookie settings through your browser preferences. However, disabling essential cookies may affect your ability to use the platform, particularly login functionality and secure transactions."
+          }
+        ]
+      },
+      {
+        "title": "Third-Party Services",
+        "content": [
+          {
+            "subtitle": "Mada Payment Gateway",
+            "text": "We use Mada to process all online payments including advance bookings (40%) and final payments (60%). Mada is PCI-DSS compliant and handles your payment card data, Mada details, and wallet information according to their privacy policy at mada.com/privacy."
+          },
+          {
+            "subtitle": "ImageKit Image Storage",
+            "text": "Vehicle images, ID documents, RC documents, and insurance papers are stored using ImageKit's cloud storage service. ImageKit provides secure storage with CDN delivery for optimized image loading. Their privacy policy is available at imagekit.io/privacy-policy."
+          },
+          {
+            "subtitle": "Email Services",
+            "text": "We use email services to send booking confirmations, OTPs for verification, password reset links, and important notifications. These services have access to your email address only for delivery purposes."
+          },
+          {
+            "subtitle": "MongoDB Database",
+            "text": "Your data is stored in MongoDB databases with encryption at rest and in transit. We use secure connection strings and implement database-level access controls."
+          }
+        ]
+      },
+      {
+        "title": "Children's Privacy",
+        "content": [
+          {
+            "subtitle": "Age Restrictions",
+            "text": "Alrafgha Group services are intended for users who are at least 18 years of age. Vehicle rentals require a valid driving license, which is only issued to adults. We do not knowingly collect personal information from individuals under 18. If we discover that we have collected information from a minor, we will promptly delete it."
+          }
+        ]
+      },
+      {
+        "title": "Changes to This Privacy Policy",
+        "content": [
+          {
+            "subtitle": "Policy Updates",
+            "text": "We may update this Privacy Policy periodically to reflect changes in our practices, technology, legal requirements, or business operations. When we make significant changes, we will: Update the \"Last Updated\" date at the top of this page. Send email notification to registered users for material changes. Post a prominent notice on our platform. Your continued use of Alrafgha Group after changes constitutes acceptance of the updated policy."
+          }
+        ]
+      },
+      {
+        "title": "Contact Information",
+        "content": [
+          {
+            "subtitle": "Privacy Inquiries",
+            "text": "For any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at: Email: privacy@alrafgha-group.com | Support: support@alrafgha-group.com | Phone: +966-000-000-0000 | Address: 123 Business Park, Tech City, Saudi Arabia. We aim to respond to all privacy-related inquiries within 72 hours."
+          }
+        ]
+      }
+    ],
+    "questionsTitle": "Questions About Privacy?",
+    "questionsText": "If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please don't hesitate to contact us. We're committed to protecting your privacy and ensuring transparency in all our data handling practices.",
+    "visitHelp": "Visit Help Center",
+    "emailBtn": "Email: privacy@alrafgha-group.com"
+  },
+  "help": {
+    "heroTitle": "How Can We",
+    "heroEmph": "Help You?",
+    "heroSubtitle": "Comprehensive guides for customers, vendors, and staff. Get the support you need, whenever you need it.",
+    "quickTitle": "Quick Help",
+    "quickSubtitle": "Browse these common topics to find quick answers",
+    "quick": [
+      {
+        "title": "FAQs",
+        "desc": "Find answers to frequently asked questions"
+      },
+      {
+        "title": "Booking Help",
+        "desc": "Learn how to book and manage your rentals"
+      },
+      {
+        "title": "Payment Issues",
+        "desc": "Get help with payments and refunds"
+      },
+      {
+        "title": "Account Support",
+        "desc": "Manage your account and profile settings"
+      }
+    ],
+    "guidesTitle": "Detailed User Guides",
+    "guidesSubtitle": "Step-by-step guides for every user type",
+    "expandGuide": "expand",
+    "collapseGuide": "collapse",
+    "guide": [
+      {
+        "title": "Customer Guide",
+        "sections": [
+          {
+            "title": "How to Book a Vehicle",
+            "steps": [
+              "Browse our vehicle catalog and select your preferred car or bike",
+              "Click on the vehicle to view detailed specifications and pricing",
+              "Select your pickup date and time using the booking form",
+              "Review the cost breakdown showing hourly/daily rates",
+              "Pay 40% advance amount securely via Mada (cards, Mada, wallets)",
+              "Receive booking confirmation via email with Bill ID",
+              "Visit our office at the scheduled time with valid ID proof"
+            ]
+          },
+          {
+            "title": "Document Requirements for Pickup",
+            "steps": [
+              "Original valid driving license (two-wheeler for bikes, four-wheeler for cars)",
+              "Government-issued ID proof (Aadhaar, PAN, Voter ID, or Passport)",
+              "Booking confirmation email or Bill ID",
+              "Payment receipt for advance amount"
+            ]
+          },
+          {
+            "title": "During Your Rental Period",
+            "steps": [
+              "Drive safely and follow all traffic rules",
+              "Do not exceed the vehicle's carrying capacity",
+              "Maintain the fuel level as provided at pickup",
+              "Report any accidents or issues immediately to our 24/7 helpline",
+              "Keep the booking confirmation handy for verification"
+            ]
+          },
+          {
+            "title": "Returning the Vehicle",
+            "steps": [
+              "Return the vehicle to the same pickup location",
+              "Our staff will record the odometer reading",
+              "Vehicle inspection will be conducted for any damages",
+              "Final cost calculated based on distance + time used",
+              "Pay remaining 60% amount (cash or online)",
+              "Receive final receipt and trip summary"
+            ]
+          },
+          {
+            "title": "Cancellation & Refund Process",
+            "steps": [
+              "Login to your account and go to \"My Bookings\"",
+              "Select the booking you want to cancel",
+              "Click \"Cancel Booking\" and provide a reason",
+              "Refund amount depends on cancellation timing (see Terms)",
+              "Refunds are processed within 7-10 business days",
+              "Track refund status in your bookings page"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Vendor Guide",
+        "sections": [
+          {
+            "title": "Vendor Registration Process",
+            "steps": [
+              "Visit the \"Become a Vendor\" page",
+              "Fill in personal/organization details",
+              "Upload valid ID proof (PAN, Aadhaar, License, or Business Certificate)",
+              "Set your account password",
+              "Verify your email with OTP sent to your registered email",
+              "Wait for admin approval (usually within 24-48 hours)",
+              "Once approved, access your Vendor Dashboard"
+            ]
+          },
+          {
+            "title": "Adding a Vehicle",
+            "steps": [
+              "Login to your Vendor Dashboard",
+              "Click \"Add Vehicle\" button",
+              "Enter vehicle details: Name, Model, Brand, Type (Bike/Car)",
+              "Provide registration, engine, and chassis numbers",
+              "Enter engine CC (determines pricing package automatically)",
+              "Upload RC document and valid insurance (max 1MB each)",
+              "Upload 5 vehicle images (4 sides + interior, max 1MB each)",
+              "Submit for admin review",
+              "Once approved, your vehicle goes live for booking"
+            ]
+          },
+          {
+            "title": "Managing Your Fleet",
+            "steps": [
+              "View all your vehicles in the \"Vehicles\" tab",
+              "Track each vehicle's availability status (Available/Booked/Maintenance)",
+              "Monitor total bookings, distance traveled, and earnings per vehicle",
+              "Delete vehicles no longer available for rental",
+              "Vehicle becomes unavailable automatically when booked"
+            ]
+          },
+          {
+            "title": "Tracking Earnings",
+            "steps": [
+              "Access the \"Earnings\" tab in your dashboard",
+              "Filter earnings by day, week, month, or year",
+              "View detailed breakdown: pickup/return dates, distance, costs",
+              "Track currently booked vehicles count",
+              "Monitor total earnings across all vehicles",
+              "Earnings are calculated after customer return and final payment"
+            ]
+          },
+          {
+            "title": "Commission & Payment Structure",
+            "steps": [
+              "Alrafgha Group charges a platform commission on each booking",
+              "Earnings are credited after successful vehicle return",
+              "View detailed earnings history in your dashboard",
+              "Pricing is automatically set based on vehicle CC and type",
+              "Price includes hourly and per-kilometer rates"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Office Staff Guide",
+        "sections": [
+          {
+            "title": "Processing Vehicle Pickup",
+            "steps": [
+              "Access \"Pending Requests\" tab in your dashboard",
+              "Verify customer identity with valid government ID",
+              "Record ID proof type and number in the system",
+              "Note the starting odometer reading",
+              "Verify vehicle plate number matches booking",
+              "Click \"Complete Pickup\" to generate Bill ID",
+              "Hand over vehicle keys and booking receipt to customer"
+            ]
+          },
+          {
+            "title": "Processing Vehicle Return",
+            "steps": [
+              "Access \"Active Bookings\" tab",
+              "Note the ending odometer reading",
+              "Inspect vehicle for any damages",
+              "If damaged: select \"Damaged\", enter cost and description",
+              "System calculates final cost (distance x rate + time x rate + damages)",
+              "Collect remaining payment (cash or online via Mada)",
+              "Click \"Verify Return\" to complete the booking"
+            ]
+          },
+          {
+            "title": "Rejecting a Booking",
+            "steps": [
+              "From \"Pending Requests\", click \"Reject Booking\"",
+              "Provide a valid rejection reason (mandatory)",
+              "Customer receives notification with reason",
+              "Refund is automatically initiated for advance payment",
+              "Booking moves to \"Cancelled\" section"
+            ]
+          },
+          {
+            "title": "Handling Refunds",
+            "steps": [
+              "View cancelled bookings in \"Cancelled\" tab",
+              "Check if refund is pending",
+              "After processing refund manually, click \"Mark Refund as Returned\"",
+              "Update refund status for customer visibility",
+              "Keep records for accounting purposes"
+            ]
+          },
+          {
+            "title": "Best Practices",
+            "steps": [
+              "Always verify customer ID thoroughly before vehicle handover",
+              "Take photos of vehicle condition at pickup and return",
+              "Document any pre-existing damages clearly",
+              "Be polite and professional with all customers",
+              "Report any suspicious activity to management immediately",
+              "Keep login credentials secure and confidential"
+            ]
+          }
+        ]
+      }
+    ],
+    "troubleshootTitle": "Troubleshooting",
+    "troubleshootSubtitle": "Quick solutions to common issues",
+    "trouble": [
+      {
+        "issue": "Payment Failed",
+        "solution": "Check your card/Mada details, ensure sufficient balance, try another payment method, or contact your bank. If amount is deducted but booking failed, contact support with payment ID."
+      },
+      {
+        "issue": "OTP Not Received",
+        "solution": "Check spam/junk folder, wait 2-3 minutes, click \"Resend OTP\". Ensure email address is correct. If issue persists, try a different email or contact support."
+      },
+      {
+        "issue": "Cannot Login",
+        "solution": "Use \"Forgot Password\" to reset. Ensure you're using the correct email. Clear browser cache and try again. If account is locked, wait 30 minutes or contact support."
+      },
+      {
+        "issue": "Booking Not Showing",
+        "solution": "Refresh the page and check \"My Bookings\". Verify payment was successful. Check spam folder for confirmation email. Contact support with payment ID if issue persists."
+      },
+      {
+        "issue": "Vehicle Not Available",
+        "solution": "The vehicle might be booked by another customer. Try different dates or browse similar vehicles in the same category."
+      },
+      {
+        "issue": "Refund Not Received",
+        "solution": "Refunds take 7-10 business days. Check your original payment method. For Mada/cards, contact your bank with refund reference ID provided in confirmation email."
+      },
+      {
+        "issue": "Document Upload Failed",
+        "solution": "Ensure file is under 1MB. Use JPG, PNG, or PDF format. Check internet connection. Try compressing the image before uploading."
+      },
+      {
+        "issue": "Vendor Application Pending",
+        "solution": "Applications are reviewed within 24-48 hours. Ensure all documents are clear and valid. Check email for any rejection reason or additional document requests."
+      }
+    ],
+    "contactTitle": "Contact Us",
+    "contactSubtitle": "Multiple ways to reach our support team",
+    "contact": [
+      {
+        "title": "Email Support",
+        "value": "support@alrafgha-group.com"
+      },
+      {
+        "title": "24/7 Phone Support",
+        "value": "+966-000-000-0000"
+      },
+      {
+        "title": "Live Chat",
+        "value": "Available 24/7"
+      },
+      {
+        "title": "Office Address",
+        "value": "123 Business Park, Tech City, Saudi Arabia"
+      }
+    ],
+    "msgTitle": "Send Us a Message",
+    "msgSubtitle": "Fill out the form below and we'll get back to you within 24 hours",
+    "msgName": "Full Name",
+    "msgEmail": "Email Address",
+    "msgPhone": "Phone Number",
+    "msgSubject": "Subject",
+    "msgMessage": "Message",
+    "phName": "Your Name",
+    "phEmail": "your.mail@example.com",
+    "phPhone": "+966 00000 00000",
+    "phMessage": "Please describe your issue or question in detail...",
+    "selectPlaceholder": "Select a topic",
+    "selectOptions": [
+      "Booking Issues",
+      "Payment & Refunds",
+      "Vehicle Problems",
+      "Account Support",
+      "Vendor Registration",
+      "Staff Support",
+      "Feedback & Suggestions",
+      "Other"
+    ],
+    "sending": "Sending...",
+    "send": "Send Message",
+    "success": "Thank you for contacting us! We'll get back to you within 24 hours.",
+    "moreTitle": "Need More Help?",
+    "moreSubtitle": "Explore our resources or visit our FAQ page for instant answers",
+    "browseFaq": "Browse FAQs",
+    "browseVehicles": "Browse Vehicles",
+    "clickExpand": "Click to expand guide",
+    "clickCollapse": "Click to collapse guide"
+  }
+}

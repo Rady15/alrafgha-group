@@ -1,0 +1,65 @@
+{
+  "brandTagline": "رحلتك بلا عناء",
+  "nav": {
+    "home": "الرئيسية",
+    "fleet": "الأسطول",
+    "pricing": "الأسعار",
+    "bookings": "حجوزاتي",
+    "vendors": "الموردون"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "logout": "تسجيل الخروج",
+    "profile": "الملف الشخصي"
+  },
+  "footer": {
+    "company": {
+      "about": "من نحن",
+      "contact": "تواصل معنا",
+      "careers": "الوظائف",
+      "blog": "المدونة"
+    },
+    "services": {
+      "carRentals": "تأجير سيارات",
+      "bikeRentals": "تأجير دراجات",
+      "becomeVendor": "كن مورداً",
+      "pricing": "الأسعار"
+    },
+    "support": {
+      "help": "مركز المساعدة",
+      "faqs": "الأسئلة الشائعة",
+      "terms": "شروط الخدمة",
+      "privacy": "سياسة الخصوصية"
+    },
+    "ctaTitle": "جاهز للـ",
+    "ctaEmphasis": "ركوب",
+    "ctaSubtitle": "اعثر على سيارتك أو دراجتك المثالية في أقل من 60 ثانية. بدون دفعة مقدمة.",
+    "browseFleet": "تصفّح الأسطول",
+    "becomeVendor": "كن مورداً",
+    "about": "رفيقك الموثوق للسيارات والدراجات — صُمّم لرحلاتك العفوية وإجازات نهاية الأسبوع ومغامراتك اليومية.",
+    "contactEmail": "support@alrafgha-group.com",
+    "contactPhone": "+966 55 000 0000",
+    "contactAddress": "الرياض · جدة · الدمام",
+    "sections": {
+      "company": "الشركة",
+      "services": "الخدمات",
+      "support": "الدعم"
+    },
+    "rights": "جميع الحقوق محفوظة.",
+    "crafted": "صُنع بـ ❤️ لطرق مفتوحة."
+  },
+  "actions": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "submit": "إرسال",
+    "search": "بحث",
+    "loading": "جارٍ التحميل...",
+    "retry": "إعادة المحاولة",
+    "next": "التالي",
+    "previous": "السابق"
+  }
+}

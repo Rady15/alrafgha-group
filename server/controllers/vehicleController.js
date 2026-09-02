@@ -1,0 +1,345 @@
+const Vehicle = require('../models/Vehicle');
+const Package = require('../models/Package');
+const Booking = require('../models/Booking');
+const VehicleRequest = require('../models/VehicleRequest');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
+const logAudit = require('../utils/auditLog');
+const sanitizeHtml = require('sanitize-html');
+const sanitizeText = (text) => sanitizeHtml(text || '', { allowedTags: [], allowedAttributes: {} });
+
+exports.getAllVehicles = catchAsync(async (req, res, next) => {
+    const vehicles = await Vehicle.find();
+
+    res.status(200).json({
+        status: 'success',
+        results: vehicles.length,
+        data: {
+            vehicles
+        }
+    });
+});
+
+// Get grouped vehicles by brand and model
+exports.getGroupedVehicles = catchAsync(async (req, res, next) => {
+    const vehicles = await Vehicle.find();
+
+    // Group vehicles by brand + model_name
+    const groupedMap = new Map();
+
+    for (const vehicle of vehicles) {
+        const key = `${vehicle.brand}_${vehicle.model_name}`;
+        
+        if (!groupedMap.has(key)) {
+            // Get the appropriate package for this vehicle
+            const vehiclePackage = await Package.findOne({
+                vehicle_type: vehicle.type,
+                cc_range_min: { $lte: vehicle.cc_engine },
+                cc_range_max: { $gte: vehicle.cc_engine },
+                is_active: true
+            });
+
+            const vehicleData = {
+                _id: vehicle._id,
+                name: vehicle.name,
+                model_name: vehicle.model_name,
+                type: vehicle.type,
+                brand: vehicle.brand,
+                images: vehicle.images,
+                location: vehicle.location,
+                description: vehicle.description,
+                cc_engine: vehicle.cc_engine,
+                is_featured: vehicle.is_featured,
+                price_per_hour: vehiclePackage ? vehiclePackage.price_per_hour : 0,
+                price_per_day: vehiclePackage ? vehiclePackage.price_per_hour * 24 : 0,
+                price_per_km: vehiclePackage ? vehiclePackage.price_per_km : 0,
+                // Count how many vehicles of this model are available
+                total_count: 1,
+                available_count: vehicle.availability_status === 'available' ? 1 : 0,
+                availability_status: vehicle.availability_status === 'available' ? 'available' : 'not_available'
+            };
+            groupedMap.set(key, vehicleData);
+        } else {
+            const existing = groupedMap.get(key);
+            existing.total_count++;
+            if (vehicle.availability_status === 'available') {
+                existing.available_count++;
+                existing.availability_status = 'available'; // If at least one is available
+            }
+        }
+    }
+
+    const groupedVehicles = Array.from(groupedMap.values());
+
+    res.status(200).json({
+        status: 'success',
+        results: groupedVehicles.length,
+        data: {
+            vehicles: groupedVehicles
+        }
+    });
+});
+
+// Get featured vehicles (max 4)
+exports.getFeaturedVehicles = catchAsync(async (req, res, next) => {
+    const featuredVehicles = await Vehicle.find({ is_featured: true });
+
+    // Group featured vehicles as well
+    const groupedMap = new Map();
+
+    for (const vehicle of featuredVehicles) {
+        const key = `${vehicle.brand}_${vehicle.model_name}`;
+        
+        if (!groupedMap.has(key)) {
+            // Get the appropriate package for this vehicle
+            const vehiclePackage = await Package.findOne({
+                vehicle_type: vehicle.type,
+                cc_range_min: { $lte: vehicle.cc_engine },
+                cc_range_max: { $gte: vehicle.cc_engine },
+                is_active: true
+            });
+
+            const vehicleData = {
+                _id: vehicle._id,
+                name: vehicle.name,
+                model_name: vehicle.model_name,
+                type: vehicle.type,
+                brand: vehicle.brand,
+                images: vehicle.images,
+                location: vehicle.location,
+                description: vehicle.description,
+                cc_engine: vehicle.cc_engine,
+                is_featured: true,
+                price_per_hour: vehiclePackage ? vehiclePackage.price_per_hour : 0,
+                price_per_day: vehiclePackage ? vehiclePackage.price_per_hour * 24 : 0,
+                price_per_km: vehiclePackage ? vehiclePackage.price_per_km : 0,
+                total_count: 1,
+                available_count: vehicle.availability_status === 'available' ? 1 : 0,
+                availability_status: vehicle.availability_status === 'available' ? 'available' : 'not_available'
+            };
+            groupedMap.set(key, vehicleData);
+        } else {
+            const existing = groupedMap.get(key);
+            existing.total_count++;
+            if (vehicle.availability_status === 'available') {
+                existing.available_count++;
+                existing.availability_status = 'available';
+            }
+        }
+    }
+
+    const groupedFeatured = Array.from(groupedMap.values()).slice(0, 4);
+
+    res.status(200).json({
+        status: 'success',
+        results: groupedFeatured.length,
+        data: {
+            vehicles: groupedFeatured
+        }
+    });
+});
+
+exports.getVehicle = catchAsync(async (req, res, next) => {
+    const vehicle = await Vehicle.findById(req.params.id);
+
+    if (!vehicle) {
+        return next(new AppError('No vehicle found with that ID', 404));
+    }
+
+    // Find the appropriate package for this vehicle
+    const vehiclePackage = await Package.findOne({
+        vehicle_type: vehicle.type,
+        cc_range_min: { $lte: vehicle.cc_engine },
+        cc_range_max: { $gte: vehicle.cc_engine },
+        is_active: true
+    });
+
+    // Check how many vehicles of the same brand and model are available
+    const sameModelVehicles = await Vehicle.find({
+        brand: vehicle.brand,
+        model_name: vehicle.model_name
+    });
+
+    const availableCount = sameModelVehicles.filter(v => v.availability_status === 'available').length;
+    const isAnyAvailable = availableCount > 0;
+
+    const vehicleData = {
+        ...vehicle.toObject(),
+        price_per_hour: vehiclePackage ? vehiclePackage.price_per_hour : 0,
+        price_per_day: vehiclePackage ? vehiclePackage.price_per_hour * 24 : 0,
+        price_per_km: vehiclePackage ? vehiclePackage.price_per_km : 0,
+        available_count: availableCount,
+        is_available_for_booking: isAnyAvailable
+    };
+
+    // Remove sensitive data
+    delete vehicleData.registration_number;
+    delete vehicleData.engine_number;
+    delete vehicleData.chassis_number;
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            vehicle: vehicleData
+        }
+    });
+});
+
+exports.createVehicle = catchAsync(async (req, res, next) => {
+    // XSS FIX: Sanitize text fields
+    if (req.body.name) req.body.name = sanitizeText(req.body.name);
+    if (req.body.description) req.body.description = sanitizeText(req.body.description);
+    if (req.body.brand) req.body.brand = sanitizeText(req.body.brand);
+    if (req.body.model_name) req.body.model_name = sanitizeText(req.body.model_name);
+    if (req.body.location) req.body.location = sanitizeText(req.body.location);
+    try {
+        const newVehicle = await Vehicle.create(req.body);
+        console.log('VEHICLE CREATED OK');
+        res.status(201).json({
+            status: 'success',
+            data: { vehicle: newVehicle }
+        });
+
+        // Audit log
+        await logAudit({
+            actor_id: req.user.id,
+            actor_role: req.user.role,
+            action: 'create',
+            entity_type: 'vehicle',
+            entity_id: newVehicle._id,
+            description: `Vehicle created: ${newVehicle.name}`,
+            after_value: { name: newVehicle.name, registration_number: newVehicle.registration_number },
+            req
+        });
+    } catch (error) {
+        console.log('CAUGHT ERROR:', error.name, error.code);
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue)[0];
+            return next(new AppError(`Duplicate value for ${field}. This ${field} already exists.`, 400));
+        }
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(e => e.message);
+            return next(new AppError(`Validation failed: ${messages.join(', ')}`, 400));
+        }
+        throw error;
+    }
+});
+
+exports.updateVehicle = catchAsync(async (req, res, next) => {
+    const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    if (!vehicle) {
+        return next(new AppError('No vehicle found with that ID', 404));
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            vehicle
+        }
+    });
+});
+
+exports.deleteVehicle = catchAsync(async (req, res, next) => {
+    const vehicle = await Vehicle.findById(req.params.id);
+
+    if (!vehicle) {
+        return next(new AppError('No vehicle found with that ID', 404));
+    }
+
+    // Check if vehicle has active bookings
+    const activeBookings = await Booking.find({
+        vehicle_id: req.params.id,
+        status: { $in: ['booking_requested', 'picked_up'] }
+    });
+
+    if (activeBookings.length > 0) {
+        return next(new AppError('Cannot delete vehicle with active bookings. Please wait until all bookings are completed or cancelled.', 400));
+    }
+
+    // Delete the vehicle
+    await Vehicle.findByIdAndDelete(req.params.id);
+
+    // Delete related vehicle requests
+    await VehicleRequest.deleteMany({
+        $or: [
+            { vendor_id: vehicle.vendor_id, registration_number: vehicle.registration_number },
+            { vendor_id: vehicle.vendor_id, engine_number: vehicle.engine_number },
+            { vendor_id: vehicle.vendor_id, chassis_number: vehicle.chassis_number }
+        ]
+    });
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Vehicle deleted successfully',
+        data: null
+    });
+});
+
+// Get vehicles by vendor ID
+exports.getVehiclesByVendor = catchAsync(async (req, res, next) => {
+    const Booking = require('../models/Booking');
+    const vehicles = await Vehicle.find({ vendor_id: req.params.vendorId });
+
+    // Calculate total earnings for each vehicle
+    const vehiclesWithEarnings = await Promise.all(
+        vehicles.map(async (vehicle) => {
+            const vehicleObj = vehicle.toObject();
+            
+            // Get all completed bookings for this vehicle
+            const bookings = await Booking.find({
+                vehicle_id: vehicle._id,
+                status: 'returned',
+                payment_status: 'paid'
+            });
+            
+            // Calculate total earnings
+            const totalEarnings = bookings.reduce((sum, booking) => {
+                return sum + (booking.final_cost || 0);
+            }, 0);
+            
+            vehicleObj.total_earnings = totalEarnings;
+            return vehicleObj;
+        })
+    );
+
+    res.status(200).json({
+        status: 'success',
+        results: vehiclesWithEarnings.length,
+        data: {
+            vehicles: vehiclesWithEarnings
+        }
+    });
+});
+
+// Toggle feature status for a vehicle
+exports.toggleFeatureVehicle = catchAsync(async (req, res, next) => {
+    const vehicle = await Vehicle.findById(req.params.id);
+
+    if (!vehicle) {
+        return next(new AppError('No vehicle found with that ID', 404));
+    }
+
+    // If trying to feature the vehicle, check the limit
+    if (!vehicle.is_featured) {
+        const featuredCount = await Vehicle.countDocuments({ is_featured: true });
+        
+        if (featuredCount >= 4) {
+            return next(new AppError('Maximum 4 vehicles can be featured at a time', 400));
+        }
+    }
+
+    // Toggle the feature status
+    vehicle.is_featured = !vehicle.is_featured;
+    await vehicle.save();
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            vehicle
+        }
+    });
+});

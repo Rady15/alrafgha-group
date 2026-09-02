@@ -1,0 +1,131 @@
+{
+  "hero": {
+    "pillLive": "Live",
+    "pillMiddle": "bookings happening",
+    "pillSuffix": "now in 3 cities",
+    "headline1": "Your ride is",
+    "headlineTap": "just a tap",
+    "headline2": "away.",
+    "subtext": "Rent cars and bikes across Saudi Arabia with transparent pricing, instant booking, and low upfront commitment.",
+    "seePricing": "See Pricing",
+    "carsFrom": "Cars from {{price}}/day",
+    "verified": "Verified",
+    "allVehicles": "All Vehicles",
+    "driveLatest": "Drive the latest",
+    "onDemand": "on-demand.",
+    "bikesBadge": "Bikes",
+    "zipAcrossTown": "Zip across town",
+    "fromPrice": "From {{price}}/day"
+  },
+  "stats": {
+    "happyRiders": "Happy riders",
+    "vehicles": "Vehicles",
+    "citiesLive": "Cities live",
+    "starRating": "Star rating",
+    "trustedBy": "Trusted by",
+    "happyTravelers": "happy travelers across Saudi Arabia"
+  },
+  "categories": {
+    "badge": "Curated Categories",
+    "pickYour": "Pick your",
+    "vibe": "vibe.",
+    "subtitle": "Whether it is a quick city dash or a coast-to-coast journey, find your perfect ride from our diverse fleet.",
+    "options": "{{count}} options · explore →",
+    "cityCars": "City Cars",
+    "suvs": "SUVs",
+    "commuterBikes": "Commuter Bikes",
+    "sportsBikes": "Sports Bikes",
+    "dailyDrivers": "Daily drivers",
+    "familyTrips": "Family trips",
+    "quickErrands": "Quick errands",
+    "adrenaline": "Adrenaline"
+  },
+  "featured": {
+    "editorsPick": "Editor's pick",
+    "featuredRides": "Featured rides",
+    "subtitle": "Our most-loved vehicles — handpicked, road-tested, and ready when you are.",
+    "viewAll": "View all",
+    "noVehicles": "No featured vehicles available right now.",
+    "viewAllVehicles": "View all vehicles"
+  },
+  "howItWorks": {
+    "badge": "How it works",
+    "title": "Three steps to the",
+    "openRoad": "open road.",
+    "discover": {
+      "title": "Discover",
+      "description": "Browse our curated fleet by type, city, package or vibe. Filter your perfect match in seconds."
+    },
+    "book": {
+      "title": "Book",
+      "description": "Choose pickup date and location. Lock your ride instantly — no upfront payment needed."
+    },
+    "ride": {
+      "title": "Ride",
+      "description": "Pick up your keys, hit the open road. Return when done, pay only for what you used."
+    }
+  },
+  "features": {
+    "badge": "Why Alrafgha Group",
+    "title1": "Built for",
+    "freedom": "freedom",
+    "title2": "priced with",
+    "honesty": "honesty.",
+    "subtitle": "We obsess over every detail so you can obsess over the journey. No hidden fees, no surprises, just smooth rides and good vibes.",
+    "instantBooking": {
+      "title": "Instant Booking",
+      "description": "Reserve any ride in 60 seconds — no advance, no hassle. Pickup ready when you are."
+    },
+    "payPerUse": {
+      "title": "Pay-Per-Use",
+      "description": "Pay only for what you actually use — by distance or time, whichever benefits you more."
+    },
+    "verifiedInsured": {
+      "title": "Verified & Insured",
+      "description": "Every vehicle is RC verified, insured, and maintained — your safety is non-negotiable."
+    },
+    "roadside": {
+      "title": "24/7 Roadside",
+      "description": "Real humans, real fast. Call, chat or email — we are with you on every kilometer."
+    }
+  },
+  "experience": {
+    "liveTracking": "Live tracking",
+    "realTimeGps": "Real-time GPS",
+    "support24": "24/7",
+    "alwaysHere": "Always here",
+    "premiumBadge": "Premium experience",
+    "title1": "More than a rental — a",
+    "titleEm": "rideful experience.",
+    "subtitle": "Every booking is backed by tech, trust and a team that genuinely cares about your trip.",
+    "item1Title": "Real-time booking system",
+    "item1Desc": "Lock your ride in 60 seconds with live availability across cities.",
+    "item2Title": "Verified documents always",
+    "item2Desc": "RC, insurance, fitness — every paper checked, every time.",
+    "item3Title": "Pay your way",
+    "item3Desc": "Mada, Mada, cards, cash — pay how you like, after your ride.",
+    "startJourney": "Start your journey"
+  },
+  "testimonials": {
+    "badge": "4.9 / 5 from 1000+ travelers",
+    "title": "Loved by riders,",
+    "titleEm": "trusted by thousands.",
+    "weekendRoadTripper": "Weekend Road-tripper",
+    "cityCommuter": "City Commuter",
+    "frequentTraveler": "Frequent Traveler",
+    "comment1": "Booked an SUV for a Riyadh trip. Picked up clean, drove like a dream. Pay-per-use saved me {{amount}} vs traditional rentals.",
+    "comment2": "The bike rental was a vibe. Smooth booking, super clean Activa, and support replied in 2 minutes. My new go-to.",
+    "comment3": "Been with Alrafgha Group for over a year now. Reliable fleet, transparent pricing, zero surprises. They earned my trust."
+  },
+  "cta": {
+    "specialOffer": "Special launch offer",
+    "readyToHit": "Ready to hit",
+    "theRoad": "the road?",
+    "subtitle": "Join 1000+ riders who chose Alrafgha Group. No upfront. No surprises. Just open roads ahead.",
+    "browseVehicles": "Browse Vehicles",
+    "rated": "4.9/5 rated",
+    "freeCancellation": "Free cancellation",
+    "support247": "24/7 support",
+    "startingAt": "Starting at"
+  }
+}

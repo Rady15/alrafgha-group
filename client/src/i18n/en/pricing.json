@@ -1,0 +1,29 @@
+{
+  "loadingPackages": "Loading pricing packages...",
+  "fetchError": "Failed to fetch packages",
+  "fetchErrorMessage": "Error fetching packages: {{message}}",
+  "errorTitle": "Oops! Something went wrong",
+  "errorDescription": "We couldn't load the packages. Please try again later.",
+  "backHome": "Back to Home",
+  "transparentPricing": "Transparent Pricing",
+  "chooseYour": "Choose your",
+  "perfectPlan": "perfect plan.",
+  "heroSubtitle": "No hidden fees, no surprises. Just straightforward pricing for your next journey.",
+  "filters": {
+    "all": "All",
+    "allPricing": "Pricing",
+    "bikes": "Bikes",
+    "cars": "Cars"
+  },
+  "ccRange": "{{min}} - {{max}} CC",
+  "perHour": "Per Hour",
+  "perKm": "Per KM",
+  "features": {
+    "support": "24/7 Customer Support",
+    "cancellation": "Free Cancellation",
+    "insurance": "Insurance Included"
+  },
+  "viewVehicles": "View Vehicles",
+  "noPackagesTitle": "No packages available",
+  "noPackagesDescription": "There are no packages listed for this selected category right now."
+}

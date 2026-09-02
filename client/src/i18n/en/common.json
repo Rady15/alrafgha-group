@@ -1,0 +1,65 @@
+{
+  "brandTagline": "Travel made effortless",
+  "nav": {
+    "home": "Home",
+    "fleet": "Fleet",
+    "pricing": "Pricing",
+    "bookings": "Bookings",
+    "vendors": "Vendors"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "footer": {
+    "company": {
+      "about": "About Us",
+      "contact": "Contact",
+      "careers": "Careers",
+      "blog": "Blog"
+    },
+    "services": {
+      "carRentals": "Car Rentals",
+      "bikeRentals": "Bike Rentals",
+      "becomeVendor": "Become a Vendor",
+      "pricing": "Pricing"
+    },
+    "support": {
+      "help": "Help Center",
+      "faqs": "FAQs",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    },
+    "ctaTitle": "Ready to",
+    "ctaEmphasis": "ride",
+    "ctaSubtitle": "Find your perfect car or bike in under 60 seconds. No upfront payment.",
+    "browseFleet": "Browse Fleet",
+    "becomeVendor": "Become Vendor",
+    "about": "Your trusted companion for cars and bikes — built for spontaneous journeys, weekend escapes and everyday adventures.",
+    "contactEmail": "support@alrafgha-group.com",
+    "contactPhone": "+966 55 000 0000",
+    "contactAddress": "Riyadh · Jeddah · Dammam",
+    "sections": {
+      "company": "Company",
+      "services": "Services",
+      "support": "Support"
+    },
+    "rights": "All rights reserved.",
+    "crafted": "Crafted with ❤️ for the open road."
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "submit": "Submit",
+    "search": "Search",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "next": "Next",
+    "previous": "Previous"
+  }
+}
