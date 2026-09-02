@@ -61,7 +61,7 @@ const [vehicleForm, setVehicleForm] = useState({
     name: '', model_name: '', type: 'car', brand: '', registration_number: '',
     engine_number: '', chassis_number: '', cc_engine: '', location: '',
     description: '', availability_status: 'available', is_featured: false, images: '',
-    rc_document: '', insurance_document: ''
+    rc_document: '', insurance_document: '', vendor_id: ''
 });
 
     // File upload states (matching vendor form)
@@ -373,7 +373,8 @@ const [vehicleForm, setVehicleForm] = useState({
         setVehicleForm({
             name: '', model_name: '', type: 'car', brand: '', registration_number: '',
             engine_number: '', chassis_number: '', cc_engine: '', location: '',
-            description: '', availability_status: 'available', is_featured: false, images: ''
+            description: '', availability_status: 'available', is_featured: false, images: '',
+            rc_document: '', insurance_document: '', vendor_id: ''
         });
         setShowVehicleForm(false);
         setEditingVehicle(null);
