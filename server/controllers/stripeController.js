@@ -65,8 +65,9 @@ exports.createAdvancePaymentIntent = catchAsync(async (req, res, next) => {
                 estimated_cost: estimated_cost.toString(),
                 advance_amount: advanceAmount.toString(),
                 booking_id: booking_id || 'none'
-            },
-            idempotency_key: `adv_${vehicle_id}_${req.user.id}_${Date.now()}`
+            }
+        }, {
+            idempotencyKey: `adv_${vehicle_id}_${req.user.id}_${Date.now()}`
         });
 
         res.status(200).json({
@@ -133,8 +134,9 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
                 final_amount: final_amount.toString(),
                 advance_paid: advancePaid.toString(),
                 remaining_amount: remainingAmount.toString()
-            },
-            idempotency_key: `fin_${booking_id}_${Date.now()}`
+            }
+        }, {
+            idempotencyKey: `fin_${booking_id}_${Date.now()}`
         });
 
         res.status(200).json({
