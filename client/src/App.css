@@ -3,7 +3,7 @@
    ALRAFGHA HOMEPAGE — HUMAN / EDITORIAL REDESIGN
    The existing Alrafgha logo asset is intentionally untouched.
 ================================================================ */
-.alrafgha-home { --home-orange:#ff5722; --home-orange-dark:#e74616; --home-ink:#111116; --home-muted:#686872; --home-line:#e9e7e2; --home-soft:#f8f7f3; background:#fff; color:var(--home-ink); overflow:hidden; }
+.alrafgha-home { --home-orange:#efb616; --home-orange-dark:#e74616; --home-ink:#111116; --home-muted:#686872; --home-line:#e9e7e2; --home-soft:#f8f7f3; background:#fff; color:var(--home-ink); overflow:hidden; }
 .alrafgha-home *, .alrafgha-home *::before, .alrafgha-home *::after { box-sizing:border-box; }
 .home-shell { width:min(1180px, calc(100% - 40px)); margin:0 auto; }
 .home-hero { position:relative; padding:56px 0 0; background:linear-gradient(180deg,#fff 0%,#faf9f6 100%); overflow:hidden; }
