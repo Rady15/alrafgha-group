@@ -81,7 +81,8 @@ exports.createAdvancePaymentIntent = catchAsync(async (req, res, next) => {
         });
     } catch (error) {
         console.error('Stripe payment intent creation error:', error.message);
-        return next(new AppError('Failed to create payment intent', 500));
+        console.error('Stripe error type:', error.type, 'code:', error.code, 'status:', error.statusCode, 'decline:', error.decline_code);
+        return next(new AppError('Failed to create payment intent: ' + error.message + ' | type=' + (error.type || '') + ' | code=' + (error.code || '') + ' | status=' + (error.statusCode || ''), 500));
     }
 });
 
