@@ -1278,12 +1278,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                     <div className="space-y-6">
                                         <div className="flex justify-between items-center">
                                             <h2 className="text-2xl font-bold">Vehicle Management</h2>
-                                            <button
-                                                onClick={() => { resetVehicleForm(); setShowVehicleForm(!showVehicleForm); }}
-                                                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium"
-                                            >
-                                                {showVehicleForm ? 'Cancel' : 'Add Vehicle'}
-                                            </button>
+                                            <span className="text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded-full px-3 py-2">Existing vehicles only</span>
                                         </div>
                                         {sectionLoading ? (
                                             <div className="flex justify-center py-12">
@@ -1291,7 +1286,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                             </div>
                                         ) : (
                                             <>
-                                                {(showVehicleForm || editingVehicle) && (
+                                                {editingVehicle && (
                                                     <div className="bg-white rounded-lg shadow p-6">
                                                         <h3 className="text-lg font-semibold mb-4">{editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}</h3>
                                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
