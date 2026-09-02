@@ -33,7 +33,8 @@
   "actions": {
     "viewDetails": "عرض التفاصيل",
     "cancelBooking": "إلغاء الحجز",
-    "bookAgain": "احجز مرة أخرى"
+    "bookAgain": "احجز مرة أخرى",
+    "payRemaining": "ادفع الرصيد المتبقي"
   },
   "empty": {
     "title": "لا توجد حجوزات",
@@ -221,6 +222,9 @@
     "verify": "تحقق",
     "vehicleReturn": "إرجاع المركبة",
     "bookingInfo": "معلومات الحجز",
+    "customerPaysOnlineNote": "سيدفع العميل الرصيد المتبقي وقدره {{amount}} أونلاين من حسابه الخاص.",
+    "customerPaysOnlineHint": "تأكيد هذا الإرجاع يترك الرصيد المتبقي كدفعة أونلاين معلّقة على العميل.",
+    "customerPaysOnlineConfirm": "أؤكد أن العميل سيكمل الدفعة المتبقية أونلاين من حسابه.",
     "customer": "العميل:",
     "vehicle": "المركبة:",
     "pickupOdometer": "عداد الاستلام:",

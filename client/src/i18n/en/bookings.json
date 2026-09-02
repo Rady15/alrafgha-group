@@ -33,7 +33,8 @@
   "actions": {
     "viewDetails": "View Details",
     "cancelBooking": "Cancel Booking",
-    "bookAgain": "Book Again"
+    "bookAgain": "Book Again",
+    "payRemaining": "Pay Balance"
   },
   "empty": {
     "title": "No bookings found",
@@ -221,6 +222,9 @@
     "verify": "Verify",
     "vehicleReturn": "Vehicle Return",
     "bookingInfo": "Booking Information",
+    "customerPaysOnlineNote": "The customer will pay the remaining balance of {{amount}} online from their own account.",
+    "customerPaysOnlineHint": "Confirming this return leaves the remaining balance as a pending online payment for the customer.",
+    "customerPaysOnlineConfirm": "I confirm the customer will complete the remaining online payment from their account.",
     "customer": "Customer:",
     "vehicle": "Vehicle:",
     "pickupOdometer": "Pickup Odometer:",

@@ -388,7 +388,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                 ...formData,
                 staff_id: staffId,
                 payment_done: paymentMethod === 'cash' ? cashPaymentConfirmed : onlinePaymentCompleted,
-                amount_paid: costBreakdown ? costBreakdown.totalCost : 0,
+                amount_paid: costBreakdown ? (paymentMethod === 'cash' ? costBreakdown.totalCost : costBreakdown.advancePaid) : 0,
                 payment_mode: paymentMethod  // Add payment mode to the payload
             };
 
@@ -810,72 +810,29 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                                     {/* Online Payment Section */}
                                     {paymentMethod === 'online' && (
                                         <div className="mt-4 ml-8 pl-4 border-l-2 border-purple-400">
-                                            {onlinePaymentCompleted ? (
-                                                <div className="bg-green-100 p-3 rounded-lg border border-green-300">
-                                                    <div className="flex items-center">
-                                                        <svg className="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                        <div>
-                                                            <p className="font-semibold text-green-800">{t('bookings:return.paymentSuccessful')}</p>
-                                                            {onlinePaymentDetails?.paymentId && (
-                                                                <p className="text-sm text-green-700">{t('bookings:labels.paymentId')}: {onlinePaymentDetails.paymentId}</p>
-                                                            )}
-                                                            {onlinePaymentDetails?.amount > 0 && (
-                                                                <p className="text-sm text-green-700">{t('bookings:labels.amountPaid')}: {formatPrice(onlinePaymentDetails.amount)}</p>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ) : clientSecret && stripePromise ? (
-                                                <div className="space-y-3 rounded-xl border-2 border-neutral-200 p-4">
-                                                    <p className="text-sm text-purple-700">
-                                                        {t('bookings:return.collectOnline', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
+                                            <div className="space-y-3 rounded-xl border-2 border-neutral-200 p-4 bg-purple-50">
+                                                <p className="text-sm font-semibold text-purple-800">
+                                                    {t('bookings:return.customerPaysOnlineNote', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
+                                                </p>
+                                                <p className="text-sm text-purple-700">
+                                                    {t('bookings:return.customerPaysOnlineHint')}
+                                                </p>
+                                                <label className="flex items-start space-x-2 text-sm text-neutral-700 cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={onlinePaymentCompleted}
+                                                        onChange={(e) => setOnlinePaymentCompleted(e.target.checked)}
+                                                        className="mt-0.5 h-4 w-4 accent-purple-600"
+                                                        data-testid="online-notice-confirm"
+                                                    />
+                                                    <span>{t('bookings:return.customerPaysOnlineConfirm')}</span>
+                                                </label>
+                                                {errors.payment_confirmation && paymentMethod === 'online' && (
+                                                    <p className="text-sm text-red-600" data-testid="payment-confirmation-error">
+                                                        {errors.payment_confirmation}
                                                     </p>
-                                                    <Elements stripe={stripePromise} options={{ clientSecret }}>
-                                                        <StripeFinalForm
-                                                            amount={costBreakdown?.remainingAmount || 0}
-                                                            onSuccess={handleStripeFinalSuccess}
-                                                            onError={handleStripeFinalError2}
-                                                        />
-                                                    </Elements>
-                                                </div>
-                                            ) : (
-                                                <div className="space-y-3">
-                                                    <p className="text-sm text-purple-700">
-                                                        {t('bookings:return.collectOnline', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
-                                                    </p>
-                                                    <button
-                                                        type="button"
-                                                        onClick={handleOnlinePayment}
-                                                        disabled={loading || !costBreakdown}
-                                                        className="w-full py-3 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
-                                                        data-testid="pay-online-button"
-                                                    >
-                                                        {loading ? (
-                                                                <>
-                                                                    <svg className="animate-spin w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
-                                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                                    </svg>
-                                                                    {t('bookings:form.processing')}
-                                                                </>
-                                                        ) : (
-                                                            <>
-                                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                                                </svg>
-                                                                {t('bookings:return.payViaMada', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                    {errors.payment_confirmation && paymentMethod === 'online' && (
-                                                        <p className="text-sm text-red-600" data-testid="payment-confirmation-error">
-                                                            {errors.payment_confirmation}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </div>

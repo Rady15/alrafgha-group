@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { API_ENDPOINTS, getAuthHeader } from '../config/api';
@@ -7,6 +7,8 @@ import CancelConfirmationModal from '../components/CancelConfirmationModal';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice, formatDate, formatDateTime } from '../i18n/format';
 import { useTranslation } from 'react-i18next';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const BookingsPage = () => {
   const navigate = useNavigate();
@@ -20,6 +22,12 @@ const BookingsPage = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+
+  // Final (remaining) online payment state
+  const [payBooking, setPayBooking] = useState(null);
+  const [stripePromise, setStripePromise] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
+  const [payLoading, setPayLoading] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -86,6 +94,7 @@ const BookingsPage = () => {
           return_details: booking.return_details,
           rejection_reason: booking.rejection_reason || null,
           advance_payment: booking.advance_payment,
+          final_payment: booking.final_payment,
           // Cancellation and refund tracking
           cancellation_reason: booking.cancellation_reason || null,
           cancelled_by: booking.cancelled_by || null,
@@ -109,6 +118,60 @@ const BookingsPage = () => {
       setLoading(false);
     }
   };
+
+  // Is this booking still owed money (customer pays remaining online)?
+  const remainingDue = (booking) => {
+    if (booking.payment_status !== 'partial') return 0;
+    const adv = booking.advance_payment?.amount || 0;
+    const fin = booking.final_cost || booking.total_cost || 0;
+    return Math.max(0, Math.round((fin - adv) * 100) / 100);
+  };
+
+  const handleOpenFinalPayment = async (booking) => {
+    const due = remainingDue(booking);
+    if (due <= 0) {
+      showToast(t('bookings:return.noRemainingAmount') || 'No remaining balance', 'info');
+      return;
+    }
+    setPayBooking(booking);
+    setPayLoading(true);
+    try {
+      const configRes = await fetch(API_ENDPOINTS.stripeConfig, { credentials: 'include' });
+      const configData = await configRes.json();
+      const pk = configData.data?.publishable_key || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+      if (!pk) {
+        showToast(t('bookings:return.paymentGatewayFailed') || 'Payment gateway unavailable', 'error');
+        setPayLoading(false);
+        return;
+      }
+      const intentRes = await fetch(API_ENDPOINTS.stripeCreateFinalIntent, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+        body: JSON.stringify({ booking_id: booking._id, final_amount: booking.final_cost || booking.total_cost, advance_paid: booking.advance_payment?.amount || 0 })
+      });
+      const intentData = await intentRes.json();
+      if (intentData.status !== 'success') {
+        showToast(intentData.message || 'Failed to start payment', 'error');
+        setPayLoading(false);
+        return;
+      }
+      setClientSecret(intentData.data.client_secret);
+      setStripePromise(loadStripe(pk));
+    } catch (e) {
+      console.error('Final payment start error:', e);
+      showToast(t('bookings:return.somethingWentWrong') || 'Something went wrong', 'error');
+    } finally {
+      setPayLoading(false);
+    }
+  };
+
+  const handlePaySuccess = useCallback(async () => {
+    setClientSecret(null);
+    showToast('Payment received successfully', 'success');
+    setPayBooking(null);
+    await fetchBookings();
+  }, [showToast]);
 
   // Map backend status to frontend status
   const mapBackendStatus = (backendStatus) => {
@@ -335,6 +398,16 @@ const BookingsPage = () => {
                             {t('bookings:actions.cancelBooking')}
                           </button>
                         )}
+                        {remainingDue(booking) > 0 && (
+                          <button
+                            onClick={() => handleOpenFinalPayment(booking)}
+                            disabled={payLoading}
+                            className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:shadow-glow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            data-testid="pay-remaining-button"
+                          >
+                            {t('bookings:actions.payRemaining') || 'Pay Balance'} · {formatPrice(remainingDue(booking))}
+                          </button>
+                        )}
                         {booking.status === 'completed' && (
                           <Link to={`/vehicles/${booking.vehicle._id}`}>
                               <button className="px-5 py-2 border-2 border-primary-500 text-primary-600 rounded-lg font-semibold hover:bg-primary-50 transition-all duration-200">
@@ -392,6 +465,63 @@ const BookingsPage = () => {
           loading={cancelLoading}
         />
       )}
+
+      {payBooking && clientSecret && stripePromise && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setPayBooking(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-neutral-900">{t('bookings:return.payViaMada') || 'Pay Remaining Balance'}</h3>
+              <button
+                onClick={() => setPayBooking(null)}
+                className="text-neutral-400 hover:text-neutral-600 text-2xl leading-none"
+                aria-label="close"
+              >×</button>
+            </div>
+            <p className="text-sm text-neutral-600 mb-3">
+              {payBooking.vehicle.name} — {t('bookings:summary.finalAmount') || 'Final amount'}: {formatPrice(remainingDue(payBooking))}
+            </p>
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <RemainingPaymentForm amount={remainingDue(payBooking)} onSuccess={handlePaySuccess} />
+            </Elements>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const RemainingPaymentForm = ({ amount, onSuccess }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [confirming, setConfirming] = useState(false);
+  const [paymentError, setPaymentError] = useState(null);
+  const { t } = useTranslation('bookings');
+
+  const handleConfirm = async () => {
+    if (!stripe || !elements) return;
+    setConfirming(true);
+    setPaymentError(null);
+    const { error } = await stripe.confirmPayment({ elements, redirect: 'if_required' });
+    if (error) {
+      setPaymentError(error.message);
+      setConfirming(false);
+    } else {
+      onSuccess();
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <PaymentElement options={{ layout: 'tabs' }} />
+      {paymentError && <p className="text-sm text-red-600">{paymentError}</p>}
+      <button
+        onClick={handleConfirm}
+        disabled={confirming || !stripe || !elements}
+        className="w-full py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        data-testid="confirm-remaining-payment-button"
+      >
+        {confirming ? (t('bookings:form.processing') || 'Processing...') : (t('bookings:return.payViaMada', { amount: formatPrice(amount) }) || `Pay ${formatPrice(amount)}`)}
+      </button>
     </div>
   );
 };
