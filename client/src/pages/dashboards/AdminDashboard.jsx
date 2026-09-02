@@ -1418,8 +1418,8 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                 />
 
                                                                      <div className="mt-1">
-                                                                         <img src={files.rc_document ? URL.createObjectURL(files.rc_document) : ''} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
-                                                                         <p className="text-xs text-gray-500 mt-1">{files.rc_document.name}</p>
+<img src={files.rc_document ? URL.createObjectURL(files.rc_document) : ''} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
+                                                                          <p className="text-xs text-gray-500 mt-1">{files.rc_document ? files.rc_document.name : ''}</p>
                                                                      </div>
                                                                  )}
                                                             </div>
@@ -1435,8 +1435,8 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                 />
 
                                                                      <div className="mt-1">
-                                                                         <img src={files.insurance_document ? URL.createObjectURL(files.insurance_document) : ''} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
-                                                                         <p className="text-xs text-gray-500 mt-1">{files.insurance_document.name}</p>
+<img src={files.insurance_document ? URL.createObjectURL(files.insurance_document) : ''} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
+                                                                          <p className="text-xs text-gray-500 mt-1">{files.insurance_document ? files.insurance_document.name : ''}</p>
                                                                      </div>
                                                                  )}
                                                             </div>
