@@ -346,11 +346,22 @@ exports.handleWebhook = catchAsync(async (req, res, next) => {
 
             // Update booking if exists
             const bookingId = paymentIntent.metadata.booking_id;
+            const paymentType = paymentIntent.metadata.payment_type;
             if (bookingId && bookingId !== 'none') {
-                await Booking.findByIdAndUpdate(bookingId, {
-                    'advance_payment.stripe_payment_id': paymentIntent.id,
-                    'advance_payment.status': 'completed'
-                });
+                if (paymentType === 'final') {
+                    await Booking.findByIdAndUpdate(bookingId, {
+                        'final_payment.status': 'completed',
+                        'final_payment.method': 'stripe',
+                        'final_payment.stripe_payment_id': paymentIntent.id,
+                        'final_payment.amount': paymentIntent.amount / 100,
+                        'final_payment.paid_at': new Date()
+                    }, { runValidators: false });
+                } else {
+                    await Booking.findByIdAndUpdate(bookingId, {
+                        'advance_payment.stripe_payment_id': paymentIntent.id,
+                        'advance_payment.status': 'completed'
+                    });
+                }
             }
             break;
         }

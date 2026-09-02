@@ -46,7 +46,7 @@ node create-admin.js newuser@yatramate.com NewUser123 User user
 2. **Vendor Registration**: Requires admin approval with document verification
 3. **Vehicle Management**: Vendors submit vehicles for admin approval
 4. **Complete Booking Flow**: Arabic/English support throughout
-5. **Payment**: SAR currency with Razorpay integration
+5. **Payment**: SAR currency with Stripe integration
 
 - **JWT Authentication** with HTTP-only cookies
 - **6-digit OTP** verification (10-minute expiry)
@@ -80,7 +80,7 @@ node create-admin.js newuser@yatramate.com NewUser123 User user
 | MongoDB | Database |
 | Mongoose | ODM |
 | JWT | Authentication |
-| Razorpay | Payment (SAR) |
+| Stripe | Payment (SAR) |
 | ImageKit | Image Management |
 
 ## 📁 Project Structure
@@ -176,7 +176,7 @@ Made with ❤️ by the YatraMate Team
 - **Responsive Design:** Fully responsive interface for desktop, tablet, and mobile
 - **Image Uploads:** Efficient image management powered by ImageKit
 - **Email Notifications:** Automated emails for booking confirmations, pickups, returns, and cancellations
-- **Payment Integration:** Razorpay integration for online payments
+- **Payment Integration:** Stripe integration for online payments
 - **Real-time Status:** Live booking status updates
 
 ---
@@ -338,7 +338,7 @@ If approved: Vehicle listed and available for booking
 | Multer | File Uploads |
 | ImageKit | Image Management |
 | Nodemailer | Email Service |
-| Razorpay | Payment Gateway |
+| Stripe | Payment Gateway |
 
 ## ⚙️ Installation
 
@@ -376,9 +376,10 @@ EMAIL_USERNAME=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 EMAIL_FROM=YatraMate <noreply@yatramate.com>
 
-# Razorpay (for payments)
-RAZORPAY_KEY_ID=your_razorpay_key_id
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+# Stripe (for payments)
+STRIPE_PUBLISHABLE_KEY=pk_test_xxx
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
 
 # Frontend URL (for password reset links)
 FRONTEND_URL=http://localhost:5173

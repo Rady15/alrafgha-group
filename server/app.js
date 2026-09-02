@@ -10,7 +10,6 @@ const globalErrorHandler = require('./controllers/errorController');
 const authRouter = require('./routes/authRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 const paymentRouter = require('./routes/paymentRoutes');
-const razorpayRouter = require('./routes/razorpayRoutes');
 const stripeRouter = require('./routes/stripeRoutes');
 const userRouter = require('./routes/userRoutes');
 const vehicleRouter = require('./routes/vehicleRoutes');
@@ -34,14 +33,14 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "https://js.stripe.com", "https://checkout.razorpay.com"],
+            scriptSrc: ["'self'", "https://js.stripe.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'", "https://api.stripe.com", "https://checkout.razorpay.com", "https://api.razorpay.com"],
+            connectSrc: ["'self'", "https://api.stripe.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
             objectSrc: ["'none'"],
             mediaSrc: ["'self'"],
-            frameSrc: ["'none'", "https://js.stripe.com", "https://checkout.razorpay.com"],
+            frameSrc: ["'none'", "https://js.stripe.com"],
         },
     },
     crossOriginEmbedderPolicy: false,
@@ -117,7 +116,6 @@ app.use(cookieParser());
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/payments', paymentRouter);
-app.use('/api/v1/razorpay', razorpayRouter);
 app.use('/api/v1/stripe', stripeRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/vehicles', vehicleRouter);

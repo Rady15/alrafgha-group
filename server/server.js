@@ -21,13 +21,12 @@ if (fs.existsSync(envPath)) {
 const app = require('./app');
 const seedProduction = require('./seedProduction');
 
-// Validate / auto-generate critical env vars
+// Validate / set critical env vars
 if (!process.env.JWT_SECRET) {
-    const crypto = require('crypto');
-    const generated = crypto.randomBytes(48).toString('base64');
-    process.env.JWT_SECRET = generated;
-    console.warn('⚠️  JWT_SECRET was not set. A random secret has been generated for this session.');
-    console.warn('⚠️  Tokens will be INVALID after a restart. Set JWT_SECRET in your environment variables!');
+    console.error('❌ JWT_SECRET environment variable is not set.');
+    console.error('❌ Refusing to start: JWT_SECRET is REQUIRED in production so that tokens remain');
+    console.error('❌ valid across restarts. Set JWT_SECRET in your environment variables.');
+    process.exit(1);
 }
 if (!process.env.JWT_EXPIRES_IN) process.env.JWT_EXPIRES_IN = '90d';
 if (!process.env.JWT_COOKIE_EXPIRES_IN) process.env.JWT_COOKIE_EXPIRES_IN = '90';

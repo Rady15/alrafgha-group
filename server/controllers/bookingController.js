@@ -441,7 +441,7 @@ exports.confirmReturn = catchAsync(async (req, res, next) => {
     booking.payment_status = 'paid';
     
     // Set final payment details with payment mode
-    if (booking.final_payment && booking.final_payment.razorpay_payment_id) {
+    if (booking.final_payment && (booking.final_payment.stripe_payment_id || booking.final_payment.razorpay_payment_id)) {
         booking.final_payment = {
             ...booking.final_payment.toObject(),
             amount: parseFloat(amount_paid),
