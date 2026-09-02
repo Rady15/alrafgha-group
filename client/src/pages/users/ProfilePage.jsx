@@ -84,7 +84,7 @@ const ProfilePage = () => {
         return;
       }
       setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
+      setAvatarPreview(file ? URL.createObjectURL(file) : '');
     }
   };
 

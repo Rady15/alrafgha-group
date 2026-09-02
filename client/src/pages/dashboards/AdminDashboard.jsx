@@ -1418,7 +1418,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                 />
 
                                                                      <div className="mt-1">
-                                                                         <img src={URL.createObjectURL(files.rc_document)} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
+                                                                         <img src={files.rc_document ? URL.createObjectURL(files.rc_document) : ''} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
                                                                          <p className="text-xs text-gray-500 mt-1">{files.rc_document.name}</p>
                                                                      </div>
                                                                  )}
@@ -1435,7 +1435,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                 />
 
                                                                      <div className="mt-1">
-                                                                         <img src={URL.createObjectURL(files.insurance_document)} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
+                                                                         <img src={files.insurance_document ? URL.createObjectURL(files.insurance_document) : ''} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
                                                                          <p className="text-xs text-gray-500 mt-1">{files.insurance_document.name}</p>
                                                                      </div>
                                                                  )}
@@ -1455,7 +1455,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                      <div className="flex gap-2 mt-2 flex-wrap">
                                                                          {files.vehicle_images.map((f, i) => (
                                                                              <div key={i} className="relative">
-                                                                                 <img src={URL.createObjectURL(f)} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
+                                                                                 <img src={f ? URL.createObjectURL(f) : ''} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
                                                                              </div>
                                                                          ))}
                                                                      </div>
