@@ -15,7 +15,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #efb616, #f43f00);
+    background: linear-gradient(180deg, #efb616, #efb616);
     border-radius: 10px;
 }
 
@@ -42,7 +42,7 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #efb616, #f43f00);
+    background: linear-gradient(180deg, #efb616, #efb616);
     border-radius: 10px;
 }
 
@@ -372,7 +372,7 @@ body::-webkit-scrollbar-thumb {
 
     /* Animated text gradient */
     .text-gradient-warm {
-        background: linear-gradient(135deg, #efb616 0%, #f43f00 50%, #ef4444 100%);
+        background: linear-gradient(135deg, #efb616 0%, #efb616 50%, #ef4444 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
