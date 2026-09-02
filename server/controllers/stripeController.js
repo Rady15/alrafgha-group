@@ -301,12 +301,26 @@ exports.handleWebhook = catchAsync(async (req, res, next) => {
         return res.status(400).json({ error: 'Webhook secret not configured' });
     }
 
+    if (!sig) {
+        return res.status(400).json({ error: 'Missing stripe-signature header' });
+    }
+
     let event;
     try {
-            event = getStripeInstance().webhooks.constructEvent(req.body, sig, webhookSecret);
+        if (typeof req.body === 'string') {
+            JSON.parse(req.body); // Ensure the raw body is valid JSON
+        } else if (Buffer.isBuffer(req.body)) {
+            JSON.parse(req.body.toString('utf8'));
+        }
+        event = getStripeInstance().webhooks.constructEvent(req.body, sig, webhookSecret);
     } catch (err) {
-        console.error('Webhook signature verification failed:', err.message);
-        return res.status(400).json({ error: 'Invalid signature' });
+        console.error('Webhook verification failed:', err.message);
+        const malformed = err.type === 'entity.parse.failed' ||
+            err instanceof SyntaxError ||
+            (err.message && (err.message.includes('JSON') || err.message.includes('Unexpected token')));
+        return res.status(malformed ? 400 : 400).json({
+            error: malformed ? 'Malformed webhook payload' : 'Invalid signature'
+        });
     }
 
     // Handle events
