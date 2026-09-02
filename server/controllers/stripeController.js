@@ -62,7 +62,7 @@ exports.createAdvancePaymentIntent = catchAsync(async (req, res, next) => {
                 payment_type: 'advance',
                 vehicle_id: vehicle_id,
                 user_id: req.user.id,
-                estimated_cost: estimated_cost.toString(),
+                estimated_cost: estimatedCost.toString(),
                 advance_amount: advanceAmount.toString(),
                 booking_id: booking_id || 'none'
             }
@@ -132,7 +132,7 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
                 payment_type: 'final',
                 booking_id: booking_id,
                 user_id: req.user.id,
-                final_amount: final_amount.toString(),
+                final_amount: finalAmount.toString(),
                 advance_paid: advancePaid.toString(),
                 remaining_amount: remainingAmount.toString()
             }
