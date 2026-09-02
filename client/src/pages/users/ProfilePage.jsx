@@ -72,6 +72,10 @@ const ProfilePage = () => {
     }));
   };
 
+  useEffect(() => {
+    return () => URL.revokeObjectURL(avatarPreview);
+  }, []);
+
   const handleAvatarChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];

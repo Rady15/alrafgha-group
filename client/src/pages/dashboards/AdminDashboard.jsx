@@ -1416,12 +1416,12 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                     required
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                                 />
-                                                                {files.rc_document && (
-                                                                    <div className="mt-1">
-                                                                        <img src={URL.createObjectURL(files.rc_document)} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
-                                                                        <p className="text-xs text-gray-500 mt-1">{files.rc_document.name}</p>
-                                                                    </div>
-                                                                )}
+
+                                                                     <div className="mt-1">
+                                                                         <img src={URL.createObjectURL(files.rc_document)} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
+                                                                         <p className="text-xs text-gray-500 mt-1">{files.rc_document.name}</p>
+                                                                     </div>
+                                                                 )}
                                                             </div>
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Insurance Document <span className="text-red-500">*</span></label>
@@ -1433,12 +1433,12 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                     required
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                                 />
-                                                                {files.insurance_document && (
-                                                                    <div className="mt-1">
-                                                                        <img src={URL.createObjectURL(files.insurance_document)} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
-                                                                        <p className="text-xs text-gray-500 mt-1">{files.insurance_document.name}</p>
-                                                                    </div>
-                                                                )}
+
+                                                                     <div className="mt-1">
+                                                                         <img src={URL.createObjectURL(files.insurance_document)} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
+                                                                         <p className="text-xs text-gray-500 mt-1">{files.insurance_document.name}</p>
+                                                                     </div>
+                                                                 )}
                                                             </div>
                                                             <div className="md:col-span-2">
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Images <span className="text-red-500">*</span> <span className="text-xs text-gray-500">max 5</span></label>
@@ -1451,15 +1451,15 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                     required
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                                 />
-                                                                {files.vehicle_images.length > 0 && (
-                                                                    <div className="flex gap-2 mt-2 flex-wrap">
-                                                                        {files.vehicle_images.map((f, i) => (
-                                                                            <div key={i} className="relative">
-                                                                                <img src={URL.createObjectURL(f)} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
+
+                                                                     <div className="flex gap-2 mt-2 flex-wrap">
+                                                                         {files.vehicle_images.map((f, i) => (
+                                                                             <div key={i} className="relative">
+                                                                                 <img src={URL.createObjectURL(f)} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
+                                                                             </div>
+                                                                         ))}
+                                                                     </div>
+                                                                 )}
                                                             </div>
                                                             <div className="md:col-span-3">
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
