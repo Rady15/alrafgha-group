@@ -63,6 +63,10 @@ const AdminDashboard = () => {
         description: '', availability_status: 'available', is_featured: false, images: ''
     });
 
+    // File upload states (matching vendor form)
+    const [files, setFiles] = useState({ rc_document: null, insurance_document: null, vehicle_images: [] });
+    const [uploading, setUploading] = useState(false);
+
     useEffect(() => {
         if (authLoading) {
             return;
@@ -372,6 +376,26 @@ const AdminDashboard = () => {
         });
         setShowVehicleForm(false);
         setEditingVehicle(null);
+        setFiles({ rc_document: null, insurance_document: null, vehicle_images: [] });
+    };
+
+    const handleFileChange = (e) => {
+        const { name, files: selectedFiles } = e.target;
+        if (name === 'vehicle_images') {
+            if (selectedFiles.length > 5) {
+                toast.warning('Maximum 5 images allowed');
+                return;
+            }
+            const valid = Array.from(selectedFiles).filter(f => f.size <= 10 * 1024 * 1024);
+            setFiles(prev => ({ ...prev, vehicle_images: valid }));
+        } else {
+            const file = selectedFiles[0];
+            if (file && file.size > 10 * 1024 * 1024) {
+                toast.warning('File size must be less than 1MB');
+                return;
+            }
+            setFiles(prev => ({ ...prev, [name]: file || null }));
+        }
     };
 
     const handleEditVehicle = (vehicle) => {
@@ -392,24 +416,56 @@ const AdminDashboard = () => {
         });
         setEditingVehicle(vehicle._id);
         setShowVehicleForm(true);
+        setFiles({ rc_document: null, insurance_document: null, vehicle_images: [] });
     };
 
     const handleSaveVehicle = async () => {
         try {
+            setUploading(true);
+            const uploaded = {};
+
+            // Upload RC document
+            if (files.rc_document) {
+                const rcFormData = new FormData();
+                rcFormData.append('file', files.rc_document);
+                const rcRes = await fetch(API_ENDPOINTS.uploadFile, { method: 'POST', body: rcFormData });
+                const rcData = await rcRes.json();
+                if (rcData.status === 'success') uploaded.rc_document = rcData.data.url;
+            }
+
+            // Upload insurance document
+            if (files.insurance_document) {
+                const insFormData = new FormData();
+                insFormData.append('file', files.insurance_document);
+                const insRes = await fetch(API_ENDPOINTS.uploadFile, { method: 'POST', body: insFormData });
+                const insData = await insRes.json();
+                if (insData.status === 'success') uploaded.insurance_document = insData.data.url;
+            }
+
+            // Upload images
+            if (files.vehicle_images.length > 0) {
+                const imgFormData = new FormData();
+                files.vehicle_images.forEach(f => imgFormData.append('files', f));
+                const imgRes = await fetch(API_ENDPOINTS.uploadFiles, { method: 'POST', body: imgFormData });
+                const imgData = await imgRes.json();
+                if (imgData.status === 'success') uploaded.vehicle_images = imgData.data.files.map(f => f.url);
+            }
+
             const payload = {
                 ...vehicleForm,
                 cc_engine: vehicleForm.cc_engine ? Number(vehicleForm.cc_engine) : undefined,
-                images: vehicleForm.images ? vehicleForm.images.split(',').map(s => s.trim()).filter(Boolean) : [],
-                is_featured: Boolean(vehicleForm.is_featured)
+                images: uploaded.vehicle_images || (vehicleForm.images ? vehicleForm.images.split(',').map(s => s.trim()).filter(Boolean) : []),
+                is_featured: Boolean(vehicleForm.is_featured),
+                ...(uploaded.rc_document && { rc_document: uploaded.rc_document }),
+                ...(uploaded.insurance_document && { insurance_document: uploaded.insurance_document })
             };
-            const url = editingVehicle
-                ? API_ENDPOINTS.vehicleById(editingVehicle)
-                : API_ENDPOINTS.vehicles;
+
+            const url = editingVehicle ? API_ENDPOINTS.vehicleById(editingVehicle) : API_ENDPOINTS.vehicles;
             const method = editingVehicle ? 'PATCH' : 'POST';
             const response = await fetch(url, {
                 method,
                 credentials: 'include',
-                headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+                headers: { ...getAuthHeader() },
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
@@ -423,6 +479,8 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error('Error saving vehicle:', error);
             toast.error('Failed to save vehicle');
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -1348,14 +1406,59 @@ const AdminDashboard = () => {
                                                                 <label className="ml-2 text-sm text-gray-700">Featured</label>
                                                             </div>
                                                             <div>
-                                                                <label className="block text-sm font-medium text-gray-700 mb-1">Image URLs (comma-separated)</label>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1">RC Document <span className="text-red-500">*</span></label>
                                                                 <input
-                                                                    type="text"
-                                                                    value={vehicleForm.images}
-                                                                    onChange={(e) => setVehicleForm({ ...vehicleForm, images: e.target.value })}
+                                                                    type="file"
+                                                                    name="rc_document"
+                                                                    accept="image/*,application/pdf"
+                                                                    onChange={handleFileChange}
+                                                                    required
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                                                    placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
                                                                 />
+                                                                {files.rc_document && (
+                                                                    <div className="mt-1">
+                                                                        <img src={URL.createObjectURL(files.rc_document)} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
+                                                                        <p className="text-xs text-gray-500 mt-1">{files.rc_document.name}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1">Insurance Document <span className="text-red-500">*</span></label>
+                                                                <input
+                                                                    type="file"
+                                                                    name="insurance_document"
+                                                                    accept="image/*,application/pdf"
+                                                                    onChange={handleFileChange}
+                                                                    required
+                                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                                                />
+                                                                {files.insurance_document && (
+                                                                    <div className="mt-1">
+                                                                        <img src={URL.createObjectURL(files.insurance_document)} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
+                                                                        <p className="text-xs text-gray-500 mt-1">{files.insurance_document.name}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="md:col-span-2">
+                                                                <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Images <span className="text-red-500">*</span> <span className="text-xs text-gray-500">max 5</span></label>
+                                                                <input
+                                                                    type="file"
+                                                                    name="vehicle_images"
+                                                                    accept="image/*"
+                                                                    multiple
+                                                                    onChange={handleFileChange}
+                                                                    required
+                                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                                                />
+                                                                {files.vehicle_images.length > 0 && (
+                                                                    <div className="flex gap-2 mt-2 flex-wrap">
+                                                                        {files.vehicle_images.map((f, i) => (
+                                                                            <div key={i} className="relative">
+                                                                                <img src={URL.createObjectURL(f)} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div className="md:col-span-3">
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -1377,9 +1480,10 @@ const AdminDashboard = () => {
                                                             </button>
                                                             <button
                                                                 onClick={handleSaveVehicle}
-                                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                                                                disabled={uploading}
+                                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                                             >
-                                                                {editingVehicle ? 'Update Vehicle' : 'Create Vehicle'}
+                                                                {uploading ? 'Uploading...' : (editingVehicle ? 'Update Vehicle' : 'Create Vehicle')}
                                                             </button>
                                                         </div>
                                                     </div>
