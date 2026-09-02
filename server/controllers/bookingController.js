@@ -636,7 +636,7 @@ exports.getAllBookings = catchAsync(async (req, res, next) => {
 
 // Cancel booking by customer
 exports.cancelBooking = catchAsync(async (req, res, next) => {
-    const { cancellation_reason } = req.body;
+    const { cancellation_reason } = req.body || {};
     
     const booking = await Booking.findById(req.params.id)
         .populate('vehicle_id')
@@ -723,7 +723,7 @@ exports.cancelBooking = catchAsync(async (req, res, next) => {
 // Reject booking (Office staff)
 exports.rejectBooking = catchAsync(async (req, res, next) => {
     const { bookingId } = req.params;
-    const { rejection_reason } = req.body;
+    const { rejection_reason } = req.body || {};
 
     const booking = await Booking.findById(bookingId)
         .populate('vehicle_id')

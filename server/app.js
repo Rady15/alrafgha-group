@@ -106,6 +106,12 @@ app.use('/api/v1/stripe/webhook', (req, res, next) => {
 });
 
 app.use(express.json({ limit: '10mb' }));
+// Normalize req.body so routes never crash with "cannot read property of undefined"
+// when a request arrives without a JSON body (e.g. empty DELETE/PATCH).
+app.use((req, res, next) => {
+    if (req.body === undefined) req.body = {};
+    next();
+});
 app.use(cookieParser());
 
 app.use('/api/v1/auth', authRouter);
