@@ -104,8 +104,9 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
     }
 
     // Verify booking ownership
-    // Allow: the booking owner, OR staff/admin who process the return and collect final payment
-    if (booking.user_id.toString() !== req.user.id && !['admin', 'office_staff'].includes(req.user.role)) {
+    // Only the booking owner (the customer) or an admin may create a final payment intent,
+    // because the online payment must be authorized by the customer's own card.
+    if (booking.user_id.toString() !== req.user.id && req.user.role !== 'admin') {
         return next(new AppError('You can only pay for your own bookings', 403));
     }
 
