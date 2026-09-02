@@ -104,13 +104,21 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
     }
 
     // Verify booking ownership
-    if (booking.user_id.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Allow: the booking owner, OR staff/admin who process the return and collect final payment
+    if (booking.user_id.toString() !== req.user.id && !['admin', 'office_staff'].includes(req.user.role)) {
         return next(new AppError('You can only pay for your own bookings', 403));
     }
 
-    // Server-side amount calculation: use final_cost from database (set by staff on return)
-    const finalAmount = booking.final_cost || 0;
+    // Server-side amount calculation: prefer final_cost from DB (set by staff on return);
+    // otherwise fall back to the client-provided final_amount (validated positive number)
     const advancePaid = booking.advance_payment?.amount || 0;
+    let finalAmount = booking.final_cost || 0;
+    if (finalAmount <= 0) {
+        finalAmount = parseFloat(req.body.final_amount);
+        if (!finalAmount || isNaN(finalAmount) || finalAmount < 0) {
+            return next(new AppError('Invalid final amount', 400));
+        }
+    }
     const remainingAmount = Math.max(0, Math.round(finalAmount - advancePaid));
 
     if (remainingAmount <= 0) {
