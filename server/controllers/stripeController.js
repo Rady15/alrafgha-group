@@ -358,19 +358,26 @@ exports.handleWebhook = catchAsync(async (req, res, next) => {
             const paymentType = paymentIntent.metadata.payment_type;
             if (bookingId && bookingId !== 'none') {
                 if (paymentType === 'final') {
-                    await Booking.findByIdAndUpdate(bookingId, {
-                        'final_payment.status': 'completed',
-                        'final_payment.method': 'stripe',
-                        'final_payment.stripe_payment_id': paymentIntent.id,
-                        'final_payment.amount': paymentIntent.amount / 100,
-                        'final_payment.paid_at': new Date(),
-                        payment_status: 'paid',
-                        status: 'completed'
-                    }, { runValidators: false });
+                    // Use updateOne with $set on explicit valid schema paths. final_payment
+                    // is a subdocument - avoid casting issues with strict mode.
+                    const upd = await Booking.updateOne({ _id: bookingId }, {
+                        $set: {
+                            'final_payment.status': 'completed',
+                            'final_payment.method': 'stripe',
+                            'final_payment.stripe_payment_id': paymentIntent.id,
+                            'final_payment.amount': paymentIntent.amount / 100,
+                            'final_payment.paid_at': new Date(),
+                            payment_status: 'paid',
+                            status: 'completed'
+                        }
+                    });
+                    console.log('Final payment applied to booking', bookingId, 'matched=', upd.matchedCount, 'modified=', upd.modifiedCount);
                 } else {
-                    await Booking.findByIdAndUpdate(bookingId, {
-                        'advance_payment.stripe_payment_id': paymentIntent.id,
-                        'advance_payment.status': 'completed'
+                    await Booking.updateOne({ _id: bookingId }, {
+                        $set: {
+                            'advance_payment.stripe_payment_id': paymentIntent.id,
+                            'advance_payment.status': 'completed'
+                        }
                     });
                 }
             }
