@@ -2,14 +2,6 @@
 
 YatraMate is a comprehensive online vehicle rental system designed to provide a seamless experience for users to book cars and bikes, and for vendors to manage their fleet. The system supports various user roles including regular users, vendors, office staff, and administrators, each with tailored functionalities. Developed by Eng Rady
 
-🌍 Languages & Localization
-
-YatraMate is **fully localized** for Arabic (default) and English with RTL support for Arabic. The interface automatically detects the user's preferred language and displays content in the appropriate script.
-
-🌍 Languages & Localization
-
-YatraMate is **fully localized** for Arabic (default) and English with RTL support for Arabic. The interface automatically detects the user's preferred language and displays content in the appropriate script.
-
 ## 💱 Currency
 
 All pricing has been converted to **Saudi Riyal (SAR)**. The system displays prices in SAR format (e.g., `1,200.00 ر.س`) and uses Saudi Arabia locale settings for dates and formatting.
