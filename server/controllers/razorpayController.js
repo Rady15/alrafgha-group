@@ -25,14 +25,30 @@ const getRazorpayInstance = () => {
 
 // Create order for advance payment (40% of estimated cost)
 exports.createAdvancePaymentOrder = catchAsync(async (req, res, next) => {
-    const { vehicle_id, estimated_cost } = req.body;
+    const { vehicle_id } = req.body;
     
-    if (!vehicle_id || !estimated_cost) {
-        return next(new AppError('Vehicle ID and estimated cost are required', 400));
+    if (!vehicle_id) {
+        return next(new AppError('Vehicle ID is required', 400));
     }
+
+    // Server-side amount calculation
+    const vehicle = await Vehicle.findById(vehicle_id);
+    if (!vehicle) {
+        return next(new AppError('Vehicle not found', 404));
+    }
+    const packageData = await Package.findOne({
+        cc_range_min: { $lte: vehicle.cc_engine },
+        cc_range_max: { $gte: vehicle.cc_engine },
+        vehicle_type: vehicle.type,
+        is_active: true
+    });
+    if (!packageData) {
+        return next(new AppError('No package found for this vehicle', 404));
+    }
+    const estimatedCost = packageData.price_per_hour * 24;
     
     // Calculate 40% advance amount
-    const advanceAmount = Math.round(estimated_cost * 0.40);
+    const advanceAmount = Math.round(estimatedCost * 0.40);
     
     // Amount in paise (Razorpay requires amount in smallest currency unit)
     const amountInPaise = advanceAmount * 100;
@@ -44,7 +60,7 @@ exports.createAdvancePaymentOrder = catchAsync(async (req, res, next) => {
         notes: {
             payment_type: 'advance',
             vehicle_id: vehicle_id,
-            estimated_cost: estimated_cost,
+            estimated_cost: estimatedCost,
             advance_amount: advanceAmount
         }
     };
@@ -77,9 +93,7 @@ exports.verifyAdvancePayment = catchAsync(async (req, res, next) => {
         vehicle_id,
         start_location,
         requested_pickup_date,
-        requested_pickup_time,
-        estimated_cost,
-        advance_amount
+        requested_pickup_time
     } = req.body;
     
     // Verify signature
@@ -110,6 +124,9 @@ exports.verifyAdvancePayment = catchAsync(async (req, res, next) => {
     if (!packageData) {
         return next(new AppError('No package found for this vehicle', 404));
     }
+
+    const estimatedCost = packageData.price_per_hour * 24;
+    const advanceAmount = Math.round(estimatedCost * 0.40);
     
     // Create booking with advance payment details
     const newBooking = await Booking.create({
@@ -120,9 +137,9 @@ exports.verifyAdvancePayment = catchAsync(async (req, res, next) => {
         start_location,
         requested_pickup_date,
         requested_pickup_time,
-        estimated_cost,
+        estimated_cost: estimatedCost,
         advance_payment: {
-            amount: advance_amount,
+            amount: advanceAmount,
             razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature,
@@ -140,7 +157,7 @@ exports.verifyAdvancePayment = catchAsync(async (req, res, next) => {
     await Payment.create({
         booking_id: newBooking._id,
         user_id: req.user.id,
-        amount: advance_amount,
+        amount: advanceAmount,
         payment_method: 'razorpay',
         transaction_id: razorpay_payment_id,
         payment_status: 'success',
@@ -168,10 +185,10 @@ exports.verifyAdvancePayment = catchAsync(async (req, res, next) => {
 
 // Create order for final payment (remaining amount at return)
 exports.createFinalPaymentOrder = catchAsync(async (req, res, next) => {
-    const { booking_id, final_amount, advance_paid } = req.body;
+    const { booking_id } = req.body;
     
-    if (!booking_id || final_amount === undefined) {
-        return next(new AppError('Booking ID and final amount are required', 400));
+    if (!booking_id) {
+        return next(new AppError('Booking ID is required', 400));
     }
     
     const booking = await Booking.findById(booking_id);
@@ -179,9 +196,10 @@ exports.createFinalPaymentOrder = catchAsync(async (req, res, next) => {
         return next(new AppError('Booking not found', 404));
     }
     
-    // Calculate remaining amount
-    const advancePaid = advance_paid || booking.advance_payment?.amount || 0;
-    const remainingAmount = Math.max(0, Math.round(final_amount - advancePaid));
+    // Server-side amount calculation
+    const finalAmount = booking.final_cost || 0;
+    const advancePaid = booking.advance_payment?.amount || 0;
+    const remainingAmount = Math.max(0, Math.round(finalAmount - advancePaid));
     
     if (remainingAmount <= 0) {
         return res.status(200).json({
@@ -203,7 +221,7 @@ exports.createFinalPaymentOrder = catchAsync(async (req, res, next) => {
         notes: {
             payment_type: 'final',
             booking_id: booking_id,
-            final_amount: final_amount,
+            final_amount: finalAmount,
             advance_paid: advancePaid,
             remaining_amount: remainingAmount
         }
@@ -221,7 +239,7 @@ exports.createFinalPaymentOrder = catchAsync(async (req, res, next) => {
                 currency: order.currency,
                 key_id: process.env.RZP_API_KEY,
                 advance_paid: advancePaid,
-                final_amount: final_amount
+                final_amount: finalAmount
             }
         });
     } catch (error) {
@@ -236,8 +254,7 @@ exports.verifyFinalPayment = catchAsync(async (req, res, next) => {
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature,
-        booking_id,
-        amount
+        booking_id
     } = req.body;
     
     // Verify signature
@@ -256,6 +273,16 @@ exports.verifyFinalPayment = catchAsync(async (req, res, next) => {
     if (!booking) {
         return next(new AppError('Booking not found', 404));
     }
+
+    // Verify booking ownership
+    if (booking.user_id.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(new AppError('You can only pay for your own bookings', 403));
+    }
+
+    // Server-side amount calculation
+    const finalAmount = booking.final_cost || 0;
+    const advancePaid = booking.advance_payment?.amount || 0;
+    const amount = Math.max(0, Math.round(finalAmount - advancePaid));
     
     booking.final_payment = {
         amount: amount,

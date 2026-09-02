@@ -601,6 +601,11 @@ exports.getBooking = catchAsync(async (req, res, next) => {
         return next(new AppError('No booking found with that ID', 404));
     }
 
+    // IDOR prevention: customers can only view their own bookings
+    if (req.user.role === 'user' && booking.user_id._id.toString() !== req.user.id) {
+        return next(new AppError('You can only view your own bookings', 403));
+    }
+
     res.status(200).json({
         status: 'success',
         data: {
@@ -640,6 +645,11 @@ exports.cancelBooking = catchAsync(async (req, res, next) => {
 
     if (!booking) {
         return next(new AppError('No booking found with that ID', 404));
+    }
+
+    // IDOR prevention: customers can only cancel their own bookings
+    if (req.user.role === 'user' && booking.user_id._id.toString() !== req.user.id) {
+        return next(new AppError('You can only cancel your own bookings', 403));
     }
     
     if (booking.status !== 'booking_requested') {

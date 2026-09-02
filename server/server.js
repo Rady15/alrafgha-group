@@ -21,6 +21,17 @@ if (fs.existsSync(envPath)) {
 const app = require('./app');
 const seedProduction = require('./seedProduction');
 
+// Validate / auto-generate critical env vars
+if (!process.env.JWT_SECRET) {
+    const crypto = require('crypto');
+    const generated = crypto.randomBytes(48).toString('base64');
+    process.env.JWT_SECRET = generated;
+    console.warn('⚠️  JWT_SECRET was not set. A random secret has been generated for this session.');
+    console.warn('⚠️  Tokens will be INVALID after a restart. Set JWT_SECRET in your environment variables!');
+}
+if (!process.env.JWT_EXPIRES_IN) process.env.JWT_EXPIRES_IN = '90d';
+if (!process.env.JWT_COOKIE_EXPIRES_IN) process.env.JWT_COOKIE_EXPIRES_IN = '90';
+
 let DB = (process.env.DATABASE || '').replace(
     '<PASSWORD>',
     process.env.DATABASE_PASSWORD || ''

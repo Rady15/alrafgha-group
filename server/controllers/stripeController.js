@@ -26,13 +26,31 @@ exports.createAdvancePaymentIntent = catchAsync(async (req, res, next) => {
         return next(new AppError('Stripe payment not configured', 503));
     }
 
-    const { vehicle_id, estimated_cost, booking_id } = req.body;
+    const { vehicle_id, booking_id } = req.body;
 
-    if (!vehicle_id || !estimated_cost) {
-        return next(new AppError('Vehicle ID and estimated cost are required', 400));
+    if (!vehicle_id) {
+        return next(new AppError('Vehicle ID is required', 400));
     }
 
-    const advanceAmount = Math.round(estimated_cost * 0.40);
+    // Server-side amount calculation: find the vehicle and its package
+    const vehicle = await Vehicle.findById(vehicle_id);
+    if (!vehicle) {
+        return next(new AppError('Vehicle not found', 404));
+    }
+
+    const packageData = await Package.findOne({
+        cc_range_min: { $lte: vehicle.cc_engine },
+        cc_range_max: { $gte: vehicle.cc_engine },
+        vehicle_type: vehicle.type,
+        is_active: true
+    });
+    if (!packageData) {
+        return next(new AppError('No package found for this vehicle', 404));
+    }
+
+    // Calculate estimated cost from package (assume 24h minimum rental)
+    const estimatedCost = packageData.price_per_hour * 24;
+    const advanceAmount = Math.round(estimatedCost * 0.40);
     const amountInSmallestUnit = advanceAmount * 100; // Stripe uses smallest currency unit
 
     try {
@@ -72,10 +90,10 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
         return next(new AppError('Stripe payment not configured', 503));
     }
 
-    const { booking_id, final_amount, advance_paid } = req.body;
+    const { booking_id } = req.body;
 
-    if (!booking_id || final_amount === undefined) {
-        return next(new AppError('Booking ID and final amount are required', 400));
+    if (!booking_id) {
+        return next(new AppError('Booking ID is required', 400));
     }
 
     const booking = await Booking.findById(booking_id);
@@ -88,8 +106,10 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
         return next(new AppError('You can only pay for your own bookings', 403));
     }
 
-    const advancePaid = advance_paid || booking.advance_payment?.amount || 0;
-    const remainingAmount = Math.max(0, Math.round(final_amount - advancePaid));
+    // Server-side amount calculation: use final_cost from database (set by staff on return)
+    const finalAmount = booking.final_cost || 0;
+    const advancePaid = booking.advance_payment?.amount || 0;
+    const remainingAmount = Math.max(0, Math.round(finalAmount - advancePaid));
 
     if (remainingAmount <= 0) {
         return res.status(200).json({
@@ -138,7 +158,7 @@ exports.verifyAndCreateBooking = catchAsync(async (req, res, next) => {
         return next(new AppError('Stripe payment not configured', 503));
     }
 
-    const { payment_intent_id, vehicle_id, start_location, requested_pickup_date, requested_pickup_time, estimated_cost } = req.body;
+    const { payment_intent_id, vehicle_id, start_location, requested_pickup_date, requested_pickup_time } = req.body;
 
     if (!payment_intent_id || !vehicle_id) {
         return next(new AppError('Payment intent ID and vehicle ID are required', 400));
@@ -157,8 +177,22 @@ exports.verifyAndCreateBooking = catchAsync(async (req, res, next) => {
         return next(new AppError(`Payment not successful. Status: ${paymentIntent.status}`, 400));
     }
 
-    // Verify amount matches
-    const expectedAdvance = Math.round(estimated_cost * 0.40) * 100;
+    // Verify amount matches SERVER-SIDE calculation (never trust client)
+    const vehicle = await Vehicle.findById(vehicle_id);
+    if (!vehicle) {
+        return next(new AppError('Vehicle not found', 404));
+    }
+    const packageData = await Package.findOne({
+        cc_range_min: { $lte: vehicle.cc_engine },
+        cc_range_max: { $gte: vehicle.cc_engine },
+        vehicle_type: vehicle.type,
+        is_active: true
+    });
+    if (!packageData) {
+        return next(new AppError('No package found for this vehicle', 404));
+    }
+    const estimatedCost = packageData.price_per_hour * 24;
+    const expectedAdvance = Math.round(estimatedCost * 0.40) * 100;
     if (paymentIntent.amount !== expectedAdvance) {
         return next(new AppError('Payment amount mismatch', 400));
     }
@@ -174,33 +208,25 @@ exports.verifyAndCreateBooking = catchAsync(async (req, res, next) => {
         return next(new AppError('Payment already processed', 409));
     }
 
-    // ATOMIC: Reserve vehicle
-    const vehicle = await Vehicle.findOneAndUpdate(
+    // ATOMIC: Reserve vehicle (vehicle already fetched above, re-reserve atomically)
+    const reservedVehicle = await Vehicle.findOneAndUpdate(
         { _id: vehicle_id, availability_status: 'available' },
         { $set: { availability_status: 'booked' } },
         { new: true }
     );
 
-    if (!vehicle) {
+    if (!reservedVehicle) {
         return next(new AppError('Vehicle not available', 409));
     }
 
     try {
-        // Find package
-        const packageData = await Package.findOne({
-            cc_range_min: { $lte: vehicle.cc_engine },
-            cc_range_max: { $gte: vehicle.cc_engine },
-            vehicle_type: vehicle.type,
-            is_active: true
-        });
-
         if (!packageData) {
             await Vehicle.findByIdAndUpdate(vehicle_id, { $set: { availability_status: 'available' } });
             return next(new AppError('No package found for this vehicle', 404));
         }
 
         // Create booking
-        const advanceAmount = Math.round(estimated_cost * 0.40);
+        const advanceAmount = Math.round(estimatedCost * 0.40);
         const newBooking = await Booking.create({
             user_id: req.user.id,
             vehicle_id,
@@ -209,7 +235,7 @@ exports.verifyAndCreateBooking = catchAsync(async (req, res, next) => {
             start_location,
             requested_pickup_date,
             requested_pickup_time,
-            estimated_cost,
+            estimated_cost: estimatedCost,
             advance_payment: {
                 amount: advanceAmount,
                 stripe_payment_id: payment_intent_id,
