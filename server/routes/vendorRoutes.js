@@ -18,8 +18,8 @@ router.patch('/:id/verify', restrictTo('admin', 'office_staff'), vendorControlle
 
 router
     .route('/:id')
-    .get(vendorController.getVendor)
-    .patch(vendorController.updateVendor)
+    .get(restrictTo('admin', 'office_staff'), vendorController.getVendor)
+    .patch(restrictTo('admin'), vendorController.updateVendor)
     .delete(restrictTo('admin'), vendorController.deleteVendor);
 
 module.exports = router;

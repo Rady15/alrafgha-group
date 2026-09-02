@@ -71,7 +71,16 @@ exports.createUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateUser = catchAsync(async (req, res, next) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    // Whitelist allowed fields to prevent privilege escalation
+    const allowedFields = ['name', 'email', 'phone', 'address', 'role', 'is_active', 'is_verified', 'profile_image'];
+    const filteredBody = {};
+    Object.keys(req.body).forEach(key => {
+        if (allowedFields.includes(key)) {
+            filteredBody[key] = req.body[key];
+        }
+    });
+
+    const user = await User.findByIdAndUpdate(req.params.id, filteredBody, {
         new: true,
         runValidators: true
     });

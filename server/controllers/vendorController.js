@@ -45,7 +45,16 @@ exports.createVendor = catchAsync(async (req, res, next) => {
 });
 
 exports.updateVendor = catchAsync(async (req, res, next) => {
-    const vendor = await Vendor.findByIdAndUpdate(req.params.id, req.body, {
+    // Whitelist allowed fields to prevent privilege escalation
+    const allowedFields = ['name', 'email', 'contact_number', 'address', 'is_verified', 'is_organization', 'company_name', 'document_url', 'id_type'];
+    const filteredBody = {};
+    Object.keys(req.body).forEach(key => {
+        if (allowedFields.includes(key)) {
+            filteredBody[key] = req.body[key];
+        }
+    });
+
+    const vendor = await Vendor.findByIdAndUpdate(req.params.id, filteredBody, {
         new: true,
         runValidators: true
     });
