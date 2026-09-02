@@ -100,13 +100,13 @@ const VehicleCard = ({ vehicle }) => {
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] text-primary-600 font-semibold mb-1">{t('perDay')}</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-display font-bold text-primary-700">{formatPrice(price_per_day)}</span>
+                <span className="text-3xl font-display font-bold text-primary-700" dangerouslySetInnerHTML={{ __html: formatPrice(price_per_day) }} />
               </div>
             </div>
             {price_per_km && (
               <div className="text-right pl-3 border-l border-primary-200">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-primary-600 font-semibold mb-1">{t('perKm')}</p>
-                <span className="text-xl font-display font-bold text-primary-600">{formatPrice(price_per_km)}</span>
+                <span className="text-xl font-display font-bold text-primary-600" dangerouslySetInnerHTML={{ __html: formatPrice(price_per_km) }} />
               </div>
             )}
           </div>
