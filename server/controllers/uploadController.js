@@ -76,7 +76,8 @@ exports.uploadFile = catchAsync(async (req, res, next) => {
     } else {
         // Multer-only mode: return file as base64 data URL
         const fileBase64 = req.file.buffer.toString('base64');
-        const dataUrl = `data:${req.file.mimeType};base64,${fileBase64}`;
+        const mimeType = req.file.mimeType || 'application/octet-stream';
+        const dataUrl = `data:${mimeType};base64,${fileBase64}`;
 
         res.status(200).json({
             status: 'success',
@@ -134,8 +135,9 @@ exports.uploadMultipleFiles = catchAsync(async (req, res, next) => {
         // Multer-only mode: return all files as base64 data URLs
         const files = req.files.map(file => {
             const fileBase64 = file.buffer.toString('base64');
+            const mimeType = file.mimeType || 'application/octet-stream';
             return {
-                url: `data:${file.mimeType};base64,${fileBase64}`,
+                url: `data:${mimeType};base64,${fileBase64}`,
                 fileId: Date.now() + '-' + file.originalname,
                 name: file.originalname,
                 base64: fileBase64
