@@ -57,11 +57,12 @@ const AdminDashboard = () => {
     // Vehicle form states
     const [showVehicleForm, setShowVehicleForm] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState(null);
-    const [vehicleForm, setVehicleForm] = useState({
-        name: '', model_name: '', type: 'car', brand: '', registration_number: '',
-        engine_number: '', chassis_number: '', cc_engine: '', location: '',
-        description: '', availability_status: 'available', is_featured: false, images: ''
-    });
+const [vehicleForm, setVehicleForm] = useState({
+    name: '', model_name: '', type: 'car', brand: '', registration_number: '',
+    engine_number: '', chassis_number: '', cc_engine: '', location: '',
+    description: '', availability_status: 'available', is_featured: false, images: '',
+    rc_document: '', insurance_document: ''
+});
 
     // File upload states (matching vendor form)
     const [files, setFiles] = useState({ rc_document: null, insurance_document: null, vehicle_images: [] });
