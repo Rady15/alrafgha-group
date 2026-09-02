@@ -155,7 +155,7 @@ const bookingSchema = new mongoose.Schema({
     },
     payment_status: {
         type: String,
-        enum: ['unpaid', 'paid', 'refunded'],
+        enum: ['unpaid', 'partial', 'paid', 'refunded'],
         default: 'unpaid'
     },
     rejection_reason: {
