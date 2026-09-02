@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 
 process.on('uncaughtException', err => {
     console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -8,13 +10,25 @@ process.on('uncaughtException', err => {
     process.exit(1);
 });
 
-dotenv.config({ path: './.env' });
+// Load .env only if present (Railway injects env vars directly)
+const envPath = path.resolve(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+} else {
+    dotenv.config();
+}
+
 const app = require('./app');
 
-const DB = process.env.DATABASE.replace(
+let DB = (process.env.DATABASE || '').replace(
     '<PASSWORD>',
-    process.env.DATABASE_PASSWORD
+    process.env.DATABASE_PASSWORD || ''
 );
+
+if (!DB) {
+    console.error('❌ DATABASE environment variable is not set.');
+    process.exit(1);
+}
 
 mongoose
     .connect(DB)

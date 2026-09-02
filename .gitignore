@@ -146,3 +146,7 @@ PRODUCTION-REPORT.md
 server/backups/
 client/dev/null
 client/err.txt
+
+# Local tooling cache
+.kilo/
+

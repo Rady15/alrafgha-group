@@ -1,0 +1,12 @@
+node_modules
+client/node_modules
+server/node_modules
+client/dist
+server/backups
+.env
+.env.*
+!.env.example
+.git
+*.log
+New Text Document.txt
+New Text Document.txt.bak

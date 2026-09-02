@@ -3,6 +3,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
+const fs = require('fs');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const authRouter = require('./routes/authRoutes');
@@ -80,7 +82,9 @@ app.use('/api/v1/auth/login', loginLimiter);
 app.use('/api/v1/', apiLimiter);
 
 app.use(cors({
-    origin: ["https://alrafgha-group.vercel.app", "http://localhost:5173", "https://alrafgha-group.onrender.com"],
+    origin: process.env.CORS_ORIGINS
+        ? process.env.CORS_ORIGINS.split(',')
+        : ["https://alrafgha-group.vercel.app", "http://localhost:5173", "https://alrafgha-group.onrender.com"],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -107,9 +111,24 @@ app.use('/api/v1/blog', blogRouter);
 app.use('/api/v1/loyalty', loyaltyRouter);
 app.use('/api/v1/settings', siteSettingsRouter);
 
-app.get('/', (req, res) => {
-    res.status(200).send('Alrafgha Group server is running successfully! 🎉');
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
 });
+
+// Serve the built React client (single-service deployment)
+const clientDist = path.resolve(__dirname, '..', 'client', 'dist');
+if (fs.existsSync(clientDist)) {
+    app.use(express.static(clientDist));
+
+    // SPA fallback: any non-API GET route returns index.html
+    app.get(/^\/(?!api\/).*/, (req, res) => {
+        res.sendFile(path.join(clientDist, 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.status(200).send('Alrafgha Group server is running successfully! 🎉');
+    });
+}
 
 app.use(globalErrorHandler);
 

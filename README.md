@@ -1,8 +1,135 @@
-# 🗺️ YatraMate - Vehicle Rental System Application 🎉
+# 🗺️ alrafgha-group - Vehicle Rental System Application 🎉
 
-YatraMate is a comprehensive online vehicle rental system designed to provide a seamless experience for users to book cars and bikes, and for vendors to manage their fleet. The system supports various user roles including regular users, vendors, office staff, and administrators, each with tailored functionalities.
+YatraMate is a comprehensive online vehicle rental system designed to provide a seamless experience for users to book cars and bikes, and for vendors to manage their fleet. The system supports various user roles including regular users, vendors, office staff, and administrators, each with tailored functionalities. Developed by Eng Rady
 
-🌐 Live Demo: https://yatramate.vercel.app/
+🌍 Languages & Localization
+
+YatraMate is **fully localized** for Arabic (default) and English with RTL support for Arabic. The interface automatically detects the user's preferred language and displays content in the appropriate script.
+
+🌍 Languages & Localization
+
+YatraMate is **fully localized** for Arabic (default) and English with RTL support for Arabic. The interface automatically detects the user's preferred language and displays content in the appropriate script.
+
+## 💱 Currency
+
+All pricing has been converted to **Saudi Riyal (SAR)**. The system displays prices in SAR format (e.g., `1,200.00 ر.س`) and uses Saudi Arabia locale settings for dates and formatting.
+
+## 🇸🇦 Saudi Market Localization
+
+The entire platform has been localized for the Saudi Arabian market:
+
+- **Cities**: الرياض (Riyadh), جدة (Jeddah), الدمام (Dammam), مكة (Mecca), المدينة (Medina)
+- **Customers**: Names and phone numbers follow Saudi conventions (+966 prefix)
+- **Vendors**: Local business data (معرض الراحة للتأجير)
+- **Documents**: Arabic support for ID verification (Aadhaar/PAN/Passport/Driving License)
+
+## 🎯 Quick Start (Arabic Default)
+
+**Current Live Environment:** Both frontend and backend are running with Saudi localization:
+
+- **Frontend**: http://localhost:5173 (Arabic by default, use "EN / ع" in navbar to switch)
+- **Backend**: http://localhost:8000
+
+### Test Credentials
+
+| Role | Email | Password | Dashboard |
+|------|-------|----------|-----------|
+| **Customer** | `amit@yatramate.com` | `User@123` | Home page |
+| **Vendor** | `vendor@yatramate.com` | `Vendor@123` | `/vendor-dashboard` |
+| **Office Staff** | `staff@yatramate.com` | `Staff@123` | `/office-staff` |
+| **Administrator** | `admin@yatramate.com` | `Admin@123` | `/admin` |
+
+### To Test Registration Flow
+
+For OTP verification testing (since pre-created accounts already verified):
+
+```bash
+cd server
+node create-admin.js newuser@yatramate.com NewUser123 User user
+```
+
+## 🔄 System Workflow
+
+1. **User Registration**: OTP sent via email, auto-verified for customers
+2. **Vendor Registration**: Requires admin approval with document verification
+3. **Vehicle Management**: Vendors submit vehicles for admin approval
+4. **Complete Booking Flow**: Arabic/English support throughout
+5. **Payment**: SAR currency with Razorpay integration
+
+- **JWT Authentication** with HTTP-only cookies
+- **6-digit OTP** verification (10-minute expiry)
+- **Role-based access control** (admin, vendor, office staff, customer)
+- **Arabic/English** interface with RTL support
+- **SAR currency** for all pricing
+- **Saudi city** locations and data
+- **Responsive design** for all devices
+- **Image upload** with ImageKit
+- **Email notifications** in Arabic/English
+
+## 🏗️ Technologies
+
+### Frontend
+
+| Technology | Purpose |
+|------------|--------|
+| React.js | UI Framework |
+| Vite | Build Tool |
+| React Router DOM | Routing |
+| Tailwind CSS | Styling |
+| Lucide React | Icons |
+| i18next | Localization |
+
+### Backend
+
+| Technology | Purpose |
+|------------|--------|
+| Node.js | Runtime |
+| Express.js | Web Framework |
+| MongoDB | Database |
+| Mongoose | ODM |
+| JWT | Authentication |
+| Razorpay | Payment (SAR) |
+| ImageKit | Image Management |
+
+## 📁 Project Structure
+
+- `server/` - Backend API with Express.js
+- `client/` - React/Vite frontend application
+- `server/.env` - Environment variables
+- `client/.env` - Frontend configuration
+
+## 🚀 Features
+
+### Arabic/English Support
+
+- **Navbar**: Login/Sign Up/Logout in both languages
+- **Footer**: Localized contact information for Saudi Arabia
+- **Mobile Navigation**: Native Arabic/English with RTL
+- **All Pages**: Home, Vehicles, Bookings, Auth, Documentation
+
+### Saudi Market Features
+
+- **Local Cities**: Riyadh, Jeddah, Dammam, Mecca, Medina
+- **SAR Pricing**: All packages in Saudi Riyal
+- **Local Names**: Saudi customer names and vendor data
+- **RTL Layout**: Complete Arabic support with proper text direction
+
+## 📚 Documentation
+
+- **Contributing**: See CONTRIBUTING.md for contribution guidelines
+- **API Reference**: Complete API documentation available
+- **Deployment**: Instructions for production deployment
+- **Testing**: Comprehensive test suite included
+
+## ❤️ Acknowledgements
+
+Made with ❤️ by the YatraMate Team
+
+## 📞 Support
+
+- Help Center: https://yatramate.vercel.app/help
+- Email: support@yatramate.com
+- FAQ: https://yatramate.vercel.app/faq
 
 ## 📋 Table of Contents
 
