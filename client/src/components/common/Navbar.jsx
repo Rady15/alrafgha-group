@@ -52,15 +52,15 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-18 py-3">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0" data-testid="navbar-logo">
-            <img src="/arafgha-logo.png" alt="Alrafgha Group" className="h-10 w-auto" />
-            <span className="text-[10px] font-display tracking-[0.1em] text-ink-400 font-medium">
+          <Link to="/" className="flex items-center gap-3 group shrink-0 min-w-0" data-testid="navbar-logo">
+            <img src="/arafgha-logo.png" alt="Alrafgha Group" className="h-10 w-auto shrink-0" />
+            <span className="hidden sm:inline text-[10px] font-display tracking-[0.1em] text-ink-400 font-medium">
               <span className='text-primary-500 font-bold'>~</span> {t('brandTagline')}
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1 bg-ink-50/70 backdrop-blur-sm rounded-full p-1.5 border border-ink-100">
+          <div className="hidden xl:flex items-center gap-1 bg-ink-50/70 backdrop-blur-sm rounded-full p-1.5 border border-ink-100">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -80,7 +80,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Auth */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden xl:flex items-center gap-2">
             <LanguageSwitcher />
             {isAuthenticated ? (
               <>
@@ -131,7 +131,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile actions */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex xl:hidden items-center gap-2">
             {isAuthenticated ? (
               <Link
                 to="/profile"
@@ -168,7 +168,7 @@ const Navbar = () => {
 
         {/* Mobile dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-[calc(100%-0.5rem)] left-0 w-full px-4 pb-4 animate-fade-in-down" data-testid="mobile-menu">
+          <div className="xl:hidden absolute top-[calc(100%-0.5rem)] left-0 w-full px-4 pb-4 animate-fade-in-down" data-testid="mobile-menu">
             <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-ink-100 p-2 shadow-2xl">
               {navLinks.map((link) => (
                 <Link
