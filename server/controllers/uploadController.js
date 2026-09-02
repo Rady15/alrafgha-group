@@ -1,20 +1,6 @@
-const ImageKit = require('imagekit');
 const multer = require('multer');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-
-// Initialize ImageKit only if credentials are provided
-let imagekit = null;
-if (process.env.IMAGEKIT_PUBLIC_KEY && 
-    process.env.IMAGEKIT_PRIVATE_KEY && 
-    process.env.IMAGEKIT_URL_ENDPOINT &&
-    process.env.IMAGEKIT_PUBLIC_KEY !== 'placeholder') {
-    imagekit = new ImageKit({
-        publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-        privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-        urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
-    });
-}
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
@@ -25,73 +11,144 @@ const upload = multer({
     }
 });
 
-// Get ImageKit authentication parameters
+// Get ImageKit authentication parameters (only if configured)
 exports.getAuthParameters = catchAsync(async (req, res, next) => {
-    if (!imagekit) {
-        return next(new AppError('ImageKit is not configured', 500));
+    // Check if ImageKit is configured
+    const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
+    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+    const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+
+    if (publicKey && privateKey && urlEndpoint && publicKey !== 'placeholder') {
+        const ImageKit = require('imagekit');
+        const imagekit = new ImageKit({
+            publicKey,
+            privateKey,
+            urlEndpoint
+        });
+        const result = imagekit.getAuthenticationParameters();
+        res.status(200).json(result);
+    } else {
+        // Return placeholder if ImageKit not configured
+        res.status(200).json({
+            publicKey: publicKey || '',
+            privateKey: privateKey || '',
+            urlEndpoint: urlEndpoint || ''
+        });
     }
-    const result = imagekit.getAuthenticationParameters();
-    res.status(200).json(result);
 });
 
-// Upload file to ImageKit
+// Upload file - supports both ImageKit and multer-only mode
 exports.uploadFile = catchAsync(async (req, res, next) => {
-    if (!imagekit) {
-        return next(new AppError('ImageKit is not configured', 500));
-    }
-    
     if (!req.file) {
         return next(new AppError('Please upload a file', 400));
     }
 
-    const folder = req.body.folder || '/uploads';
+    // Check if ImageKit is configured
+    const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
+    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+    const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
 
-    const result = await imagekit.upload({
-        file: req.file.buffer,
-        fileName: req.file.originalname,
-        folder: folder
-    });
+    if (publicKey && privateKey && urlEndpoint && publicKey !== 'placeholder') {
+        // ImageKit mode: upload to ImageKit
+        const ImageKit = require('imagekit');
+        const imagekit = new ImageKit({
+            publicKey,
+            privateKey,
+            urlEndpoint
+        });
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            url: result.url,
-            fileId: result.fileId,
-            name: result.name
-        }
-    });
+        const folder = req.body.folder || '/uploads';
+
+        const result = await imagekit.upload({
+            file: req.file.buffer,
+            fileName: req.file.originalname,
+            folder: folder
+        });
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                url: result.url,
+                fileId: result.fileId,
+                name: result.name
+            }
+        });
+    } else {
+        // Multer-only mode: return file as base64 data URL
+        const fileBase64 = req.file.buffer.toString('base64');
+        const dataUrl = `data:${req.file.mimeType};base64,${fileBase64}`;
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                url: dataUrl,
+                fileId: req.file.filename || Date.now() + '-' + req.file.originalname,
+                name: req.file.originalname,
+                base64: fileBase64
+            }
+        });
+    }
 });
 
-// Upload multiple files to ImageKit
+// Upload multiple files - supports both ImageKit and multer-only mode
 exports.uploadMultipleFiles = catchAsync(async (req, res, next) => {
-    if (!imagekit) {
-        return next(new AppError('ImageKit is not configured', 500));
-    }
-    
     if (!req.files || req.files.length === 0) {
         return next(new AppError('Please upload at least one file', 400));
     }
 
-    const uploadPromises = req.files.map(file => 
-        imagekit.upload({
-            file: file.buffer,
-            fileName: file.originalname,
-            folder: '/vehicle-documents'
-        })
-    );
+    // Check if ImageKit is configured
+    const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
+    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+    const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
 
-    const results = await Promise.all(uploadPromises);
+    if (publicKey && privateKey && urlEndpoint && publicKey !== 'placeholder') {
+        // ImageKit mode
+        const ImageKit = require('imagekit');
+        const imagekit = new ImageKit({
+            publicKey,
+            privateKey,
+            urlEndpoint
+        });
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            files: results.map(result => ({
-                url: result.url,
-                fileId: result.fileId,
-                name: result.name
-            }))
-        }
-    });
+        const uploadPromises = req.files.map(file => 
+            imagekit.upload({
+                file: file.buffer,
+                fileName: file.originalname,
+                folder: '/vehicle-documents'
+            })
+        );
+
+        const results = await Promise.all(uploadPromises);
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                files: results.map(result => ({
+                    url: result.url,
+                    fileId: result.fileId,
+                    name: result.name
+                }))
+            }
+        });
+    } else {
+        // Multer-only mode: return all files as base64 data URLs
+        const files = req.files.map(file => {
+            const fileBase64 = file.buffer.toString('base64');
+            return {
+                url: `data:${file.mimeType};base64,${fileBase64}`,
+                fileId: Date.now() + '-' + file.originalname,
+                name: file.originalname,
+                base64: fileBase64
+            };
+        });
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                files: files
+            }
+        });
+    }
 });
 
 // Export multer upload middleware
