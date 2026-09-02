@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { API_ENDPOINTS } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
@@ -37,6 +39,10 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
     const [onlinePaymentCompleted, setOnlinePaymentCompleted] = useState(false);
     const [onlinePaymentDetails, setOnlinePaymentDetails] = useState(null);
     const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false);
+
+    // Stripe final-payment state
+    const [stripePromise, setStripePromise] = useState(null);
+    const [clientSecret, setClientSecret] = useState(null);
 
     // Get advance payment amount from booking
     const advancePaid = booking?.advance_payment?.amount || 0;
@@ -244,22 +250,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Load Razorpay SDK
-    const loadRazorpay = () => {
-        return new Promise((resolve) => {
-            if (window.Razorpay) {
-                resolve(true);
-                return;
-            }
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
-    };
-
-    // Handle online payment via Razorpay
+    // Handle online payment via Stripe
     const handleOnlinePayment = async () => {
         if (!costBreakdown || costBreakdown.remainingAmount <= 0) {
             toast.info(t('bookings:return.noRemainingAmount'));
@@ -269,16 +260,18 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
 
         setLoading(true);
         try {
-            // Load Razorpay SDK
-            const razorpayLoaded = await loadRazorpay();
-            if (!razorpayLoaded) {
+            // Fetch Stripe publishable key from server config
+            const configRes = await fetch(API_ENDPOINTS.stripeConfig);
+            const configData = await configRes.json();
+            const pk = configData.data?.publishable_key || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+            if (!pk) {
                 toast.error(t('bookings:return.paymentGatewayFailed'));
                 setLoading(false);
                 return;
             }
 
-            // Create order for final payment
-            const orderResponse = await fetch(API_ENDPOINTS.createFinalOrder, {
+            // Create final payment intent
+            const intentResponse = await fetch(API_ENDPOINTS.stripeCreateFinalIntent, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -289,16 +282,16 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                 })
             });
 
-            const orderData = await orderResponse.json();
+            const intentData = await intentResponse.json();
 
-            if (orderData.status !== 'success') {
-                toast.error(orderData.message || 'Failed to create payment order');
+            if (intentData.status !== 'success') {
+                toast.error(intentData.message || 'Failed to create payment');
                 setLoading(false);
                 return;
             }
 
             // Check if no remaining amount
-            if (orderData.data.remaining_amount === 0) {
+            if (intentData.data.remaining_amount === 0) {
                 toast.success(t('bookings:return.noRemainingAmountCovered'));
                 setOnlinePaymentCompleted(true);
                 setOnlinePaymentDetails({ amount: 0, message: 'Fully covered by advance' });
@@ -306,78 +299,27 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                 return;
             }
 
-            // Razorpay options
-            const options = {
-                key: orderData.data.key_id,
-                amount: orderData.data.amount_in_paise,
-                currency: orderData.data.currency,
-                name: 'Alrafgha Group',
-                description: `Final Payment for Booking`,
-                order_id: orderData.data.order_id,
-                handler: async function (response) {
-                    try {
-                        // Verify payment
-                        const verifyResponse = await fetch(API_ENDPOINTS.verifyFinalPayment, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify({
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature,
-                                booking_id: booking._id,
-                                amount: orderData.data.amount
-                            })
-                        });
-
-                        const verifyData = await verifyResponse.json();
-
-                        if (verifyData.status === 'success') {
-                            setOnlinePaymentCompleted(true);
-                            setOnlinePaymentDetails({
-                                paymentId: response.razorpay_payment_id,
-                                amount: orderData.data.amount
-                            });
-                            // Show the payment success modal
-                            setShowPaymentSuccessModal(true);
-                        } else {
-                            toast.error(verifyData.message || t('bookings:return.paymentVerifiedFailed'));
-                        }
-                    } catch (error) {
-                        console.error('Payment verification error:', error);
-                        toast.error(t('bookings:return.paymentVerifiedFailedContact'));
-                    }
-                    setLoading(false);
-                },
-                prefill: {
-                    name: booking.user_id?.name || '',
-                    email: booking.user_id?.email || '',
-                    contact: booking.user_id?.phone || ''
-                },
-                theme: {
-                    color: '#10b981'
-                },
-                modal: {
-                    ondismiss: function() {
-                        setLoading(false);
-                        toast.info(t('bookings:return.paymentCancelled'));
-                    }
-                }
-            };
-
-            const razorpay = new window.Razorpay(options);
-            razorpay.on('payment.failed', function (response) {
-                toast.error(`Payment failed: ${response.error.description}`);
-                setLoading(false);
-            });
-            razorpay.open();
-
+            setClientSecret(intentData.data.client_secret);
+            setStripePromise(loadStripe(pk));
         } catch (error) {
             console.error('Payment error:', error);
             toast.error(t('bookings:return.somethingWentWrong'));
             setLoading(false);
         }
     };
+
+    const handleStripeFinalSuccess = useCallback((paymentIntentId, amount) => {
+        setOnlinePaymentCompleted(true);
+        setOnlinePaymentDetails({ paymentId: paymentIntentId, amount: amount || costBreakdown?.remainingAmount || 0 });
+        setLoading(false);
+        setClientSecret(null);
+        setShowPaymentSuccessModal(true);
+    }, [costBreakdown]);
+
+    const handleStripeFinalError2 = useCallback((msg) => {
+        setLoading(false);
+        toast.error(msg);
+    }, [toast]);
 
     // Handle payment success modal close - auto submit the return form
     const handlePaymentSuccessClose = useCallback(async () => {
@@ -885,6 +827,19 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                                                         </div>
                                                     </div>
                                                 </div>
+                                            ) : clientSecret && stripePromise ? (
+                                                <div className="space-y-3 rounded-xl border-2 border-neutral-200 p-4">
+                                                    <p className="text-sm text-purple-700">
+                                                        {t('bookings:return.collectOnline', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
+                                                    </p>
+                                                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                                                        <StripeFinalForm
+                                                            amount={costBreakdown?.remainingAmount || 0}
+                                                            onSuccess={handleStripeFinalSuccess}
+                                                            onError={handleStripeFinalError2}
+                                                        />
+                                                    </Elements>
+                                                </div>
                                             ) : (
                                                 <div className="space-y-3">
                                                     <p className="text-sm text-purple-700">
@@ -910,7 +865,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                                                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                                                 </svg>
-                                                                {t('bookings:return.payViaRazorpay', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
+                                                                {t('bookings:return.payViaMada', { amount: formatPrice(costBreakdown ? costBreakdown.remainingAmount : 0) })}
                                                             </>
                                                         )}
                                                     </button>
@@ -960,7 +915,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                 </form>
             </div>
 
-            {/* Payment Success Modal - shown after successful Razorpay payment */}
+            {/* Payment Success Modal - shown after successful Stripe payment */}
             {showPaymentSuccessModal && onlinePaymentDetails && (
                 <PaymentSuccessModal
                     paymentDetails={onlinePaymentDetails}
@@ -980,6 +935,68 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                     }}
                 />
             )}
+        </div>
+    );
+};
+
+const StripeFinalForm = ({ amount, onSuccess, onError }) => {
+    const stripe = useStripe();
+    const elements = useElements();
+    const [confirming, setConfirming] = useState(false);
+    const [paymentError, setPaymentError] = useState(null);
+
+    const handleConfirm = async () => {
+        if (!stripe || !elements) return;
+
+        setConfirming(true);
+        setPaymentError(null);
+
+        try {
+            const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
+                elements,
+                redirect: 'if_required'
+            });
+
+            if (confirmError) {
+                setPaymentError(confirmError.message || 'Payment failed');
+                onError?.(confirmError.message || 'Payment failed');
+                setConfirming(false);
+                return;
+            }
+
+            if (!paymentIntent || paymentIntent.status !== 'succeeded') {
+                const msg = paymentIntent?.last_payment_error?.message || 'Payment was not completed';
+                setPaymentError(msg);
+                onError?.(msg);
+                setConfirming(false);
+                return;
+            }
+
+            onSuccess?.(paymentIntent.id, paymentIntent.amount_received / 100);
+        } catch (error) {
+            console.error('Confirm payment error:', error);
+            setPaymentError('Something went wrong. Please try again.');
+            onError?.('Something went wrong. Please try again.');
+        }
+        setConfirming(false);
+    };
+
+    return (
+        <div className="space-y-3">
+            <PaymentElement options={{ layout: 'tabs' }} />
+            {paymentError && (
+                <p className="text-sm text-red-600">{paymentError}</p>
+            )}
+            <button
+                type="button"
+                disabled={!stripe || confirming}
+                onClick={handleConfirm}
+                className="w-full py-3 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                data-testid="confirm-final-payment-button"
+            >
+                {confirming ? 'Processing...' : `Confirm Payment ${formatPrice(amount)}`}
+            </button>
+            <p className="text-xs text-neutral-500">Payments are processed securely by Stripe.</p>
         </div>
     );
 };

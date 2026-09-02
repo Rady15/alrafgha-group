@@ -42,7 +42,7 @@ const VehicleDetailsPage = () => {
   };
 
   const handlePaymentSuccess = (booking) => {
-    // Called after successful Razorpay payment
+    // Called after successful Stripe payment
     console.log('Booking created:', booking);
   };
 

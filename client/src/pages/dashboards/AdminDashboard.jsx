@@ -3765,7 +3765,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                         </span></p>
                                         <p className="font-bold text-green-700 text-lg">{formatPrice(booking.advance_payment?.amount || 0)}</p>
                                         <p className="text-gray-600 text-xs mt-1">
-                                            {t('details.transactionId')} <span className="font-mono">{booking.advance_payment?.razorpay_payment_id || t('na')}</span>
+                                            {t('details.transactionId')} <span className="font-mono">{booking.advance_payment?.stripe_payment_id || booking.advance_payment?.razorpay_payment_id || t('na')}</span>
                                         </p>
                                         {booking.advance_payment?.paid_at && (
                                             <p className="text-gray-600 text-xs mt-1">{t('details.paid')} {formatDateTime(booking.advance_payment.paid_at)}</p>
@@ -3779,7 +3779,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                         </span></p>
                                         <p className="font-bold text-orange-700 text-lg">{formatPrice(booking.final_payment?.amount || 0)}</p>
                                         <p className="text-gray-600 text-xs mt-1">
-                                            {t('details.transactionId')} <span className="font-mono">{booking.final_payment?.razorpay_payment_id || (booking.final_payment?.method === 'cash' ? t('payment.cashPayment') : t('na'))}</span>
+                                            {t('details.transactionId')} <span className="font-mono">{booking.final_payment?.stripe_payment_id || booking.final_payment?.razorpay_payment_id || (booking.final_payment?.method === 'cash' ? t('payment.cashPayment') : t('na'))}</span>
                                         </p>
                                         <p className="text-gray-600 text-xs">
                                             Mode: <span className="font-semibold uppercase">{booking.final_payment?.method ? t('payment.' + booking.final_payment.method) : t('na')}</span>

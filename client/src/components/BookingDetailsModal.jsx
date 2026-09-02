@@ -536,8 +536,8 @@ const BookingDetailsModal = ({ booking, onClose }) => {
                                     <div className="flex justify-between py-2 border-b text-sm" style={{ borderColor: '#BBF7D0' }}>
                                         <span style={{ color: '#15803D' }}>
                                             {t('bookings:bill.advancePaymentAtBooking')}
-                                            {booking.advance_payment?.razorpay_payment_id && (
-                                                <span className="text-xs block" style={{ color: '#6B7280' }}>ID: {booking.advance_payment.razorpay_payment_id}</span>
+                                            {booking.advance_payment?.stripe_payment_id && (
+                                                <span className="text-xs block" style={{ color: '#6B7280' }}>ID: {booking.advance_payment.stripe_payment_id}</span>
                                             )}
                                         </span>
                                         <span className="font-medium" style={{ color: '#16A34A' }}>{formatPrice(booking.advance_payment.amount)}</span>
@@ -547,8 +547,8 @@ const BookingDetailsModal = ({ booking, onClose }) => {
                                     <div className="flex justify-between py-2 border-b text-sm" style={{ borderColor: '#BBF7D0' }}>
                                         <span style={{ color: '#15803D' }}>
                                             {t('bookings:bill.finalPayment', { method: t(`bookings:payment.${booking.final_payment?.method === 'online' ? 'online' : 'cash'}`) })}
-                                            {booking.final_payment?.razorpay_payment_id && (
-                                                <span className="text-xs block" style={{ color: '#6B7280' }}>ID: {booking.final_payment.razorpay_payment_id}</span>
+                                            {booking.final_payment?.stripe_payment_id && (
+                                                <span className="text-xs block" style={{ color: '#6B7280' }}>ID: {booking.final_payment.stripe_payment_id}</span>
                                             )}
                                         </span>
                                         <span className="font-medium" style={{ color: '#16A34A' }}>{formatPrice(booking.final_payment.amount)}</span>

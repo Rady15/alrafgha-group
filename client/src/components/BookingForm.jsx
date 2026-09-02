@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { API_ENDPOINTS, getAuthHeader } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
@@ -20,6 +22,10 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState(null);
+
+  // Stripe state
+  const [stripePromise, setStripePromise] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,21 +93,7 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const loadRazorpay = () => {
-    return new Promise((resolve) => {
-      if (window.Razorpay) {
-        resolve(true);
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const handlePayment = async () => {
+  const handleStartPayment = async () => {
     if (!isAuthenticated) {
       toast.error('Please login to book a vehicle');
       return;
@@ -116,123 +108,38 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
     setLoading(true);
 
     try {
-      // Load Razorpay SDK
-      const razorpayLoaded = await loadRazorpay();
-      if (!razorpayLoaded) {
-        toast.error('Failed to load payment gateway. Please refresh and try again.');
+      // Fetch Stripe publishable key from server config
+      const configRes = await fetch(API_ENDPOINTS.stripeConfig);
+      const configData = await configRes.json();
+      const pk = configData.data?.publishable_key || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+      if (!pk) {
+        toast.error('Payment gateway is not configured');
         setLoading(false);
         return;
       }
 
-      // Create order for advance payment
-      const orderResponse = await fetch(API_ENDPOINTS.createAdvanceOrder, {
+      // Create advance payment intent (server-side)
+      const intentRes = await fetch(API_ENDPOINTS.stripeCreateAdvanceIntent, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           ...getAuthHeader()
         },
         credentials: 'include',
-        body: JSON.stringify({
-          vehicle_id: vehicle._id,
-          estimated_cost: totalCost.total
-        })
+        body: JSON.stringify({ vehicle_id: vehicle._id })
       });
 
-      const orderData = await orderResponse.json();
-
-      if (orderData.status !== 'success') {
-        toast.error(orderData.message || 'Failed to create payment order');
+      const intentData = await intentRes.json();
+      if (intentData.status !== 'success' || !intentData.data?.client_secret) {
+        toast.error(intentData.message || 'Failed to create payment');
         setLoading(false);
         return;
       }
 
-      // Parse pickup datetime
-      const pickupDate = new Date(formData.pickup_datetime);
-      const pickupTime = pickupDate.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-
-      // Razorpay options
-      const options = {
-        key: orderData.data.key_id,
-        amount: orderData.data.amount_in_paise,
-        currency: orderData.data.currency,
-        name: 'Alrafgha Group',
-        description: `Advance Payment (40%) for ${vehicle.name}`,
-        order_id: orderData.data.order_id,
-        handler: async function (response) {
-          try {
-            // Verify payment and create booking
-            const verifyResponse = await fetch(API_ENDPOINTS.verifyAdvancePayment, {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json',
-                ...getAuthHeader()
-              },
-              credentials: 'include',
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                vehicle_id: vehicle._id,
-                start_location: formData.pickup_location,
-                requested_pickup_date: pickupDate.toISOString(),
-                requested_pickup_time: pickupTime,
-                estimated_cost: totalCost.total,
-                advance_amount: orderData.data.amount
-              })
-            });
-
-            const verifyData = await verifyResponse.json();
-
-            if (verifyData.status === 'success') {
-              setPaymentDetails({
-                paymentId: response.razorpay_payment_id,
-                amount: orderData.data.amount,
-                booking: verifyData.data.booking
-              });
-              setShowPaymentSuccess(true);
-              toast.success('Payment successful! Your booking is confirmed.');
-              
-              if (onPaymentSuccess) {
-                onPaymentSuccess(verifyData.data.booking);
-              }
-            } else {
-              toast.error(verifyData.message || 'Payment verification failed');
-            }
-          } catch (error) {
-            console.error('Payment verification error:', error);
-            toast.error('Payment verification failed. Please contact support.');
-          }
-          setLoading(false);
-        },
-        prefill: {
-          name: user?.name || '',
-          email: user?.email || '',
-          contact: user?.phone || ''
-        },
-        theme: {
-          color: '#ef4444'
-        },
-        modal: {
-          ondismiss: function() {
-            setLoading(false);
-            toast.info('Payment cancelled');
-          }
-        }
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.on('payment.failed', function (response) {
-        toast.error(`Payment failed: ${response.error.description}`);
-        setLoading(false);
-      });
-      razorpay.open();
-
+      setClientSecret(intentData.data.client_secret);
+      setStripePromise(loadStripe(pk));
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Payment setup error:', error);
       toast.error('Something went wrong. Please try again.');
       setLoading(false);
     }
@@ -420,13 +327,43 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
           </div>
         )}
 
+        {/* Stripe Payment Element - shown after client secret is created */}
+        {clientSecret && stripePromise && (
+          <div className="rounded-xl border-2 border-neutral-200 p-5" data-testid="stripe-payment-section">
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <StripeAdvanceForm
+                formData={formData}
+                totalCost={totalCost}
+                vehicle={vehicle}
+                user={user}
+                toast={toast}
+                onSuccess={(booking) => {
+                  setPaymentDetails({
+                    paymentId: booking?.advance_payment?.stripe_payment_id || 'confirmed',
+                    amount: totalCost?.advanceAmount || 0,
+                    booking: booking
+                  });
+                  setShowPaymentSuccess(true);
+                  setClientSecret(null);
+                  toast.success('Payment successful! Your booking is confirmed.');
+                  if (onPaymentSuccess) {
+                    onPaymentSuccess(booking);
+                  }
+                  setLoading(false);
+                }}
+                onError={(msg) => { toast.error(msg); setLoading(false); }}
+              />
+            </Elements>
+          </div>
+        )}
+
         {/* Pay Now Button */}
         <button
           type="button"
-          onClick={handlePayment}
-          disabled={!vehicle?.is_available_for_booking || loading || !totalCost}
+          onClick={handleStartPayment}
+          disabled={!vehicle?.is_available_for_booking || loading || !totalCost || !!clientSecret}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center space-x-2 ${
-            vehicle?.is_available_for_booking && !loading && totalCost
+            vehicle?.is_available_for_booking && !loading && totalCost && !clientSecret
               ? 'bg-linear-to-r from-green-500 to-green-600 text-white hover:shadow-glow transform hover:scale-105 cursor-pointer'
               : 'border-2 border-neutral-300 text-neutral-400 cursor-not-allowed'
           }`}
@@ -522,6 +459,121 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
         </div>
       )}
     </>
+  );
+};
+
+const StripeAdvanceForm = ({ formData, totalCost, vehicle, user, toast, onSuccess, onError }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [confirming, setConfirming] = useState(false);
+  const [paymentError, setPaymentError] = useState(null);
+
+  const handleConfirm = async () => {
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setConfirming(true);
+    setPaymentError(null);
+
+    try {
+      const pickupDate = new Date(formData.pickup_datetime);
+      const pickupTime = pickupDate.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+
+      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              name: user?.name || '',
+              email: user?.email || '',
+              phone: user?.phone || ''
+            }
+          },
+          return_url: window.location.origin + '/bookings'
+        },
+        redirect: 'if_required'
+      });
+
+      if (confirmError) {
+        setPaymentError(confirmError.message || 'Payment failed');
+        onError?.(confirmError.message || 'Payment failed');
+        toast.error(confirmError.message || 'Payment failed');
+        setConfirming(false);
+        return;
+      }
+
+      if (!paymentIntent || paymentIntent.status !== 'succeeded') {
+        setPaymentError('Payment was not completed');
+        onError?.('Payment was not completed');
+        toast.error('Payment was not completed');
+        setConfirming(false);
+        return;
+      }
+
+      // Payment succeeded - now verify and create booking server-side
+      const verifyRes = await fetch(API_ENDPOINTS.stripeVerifyAdvance, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeader()
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          payment_intent_id: paymentIntent.id,
+          vehicle_id: vehicle._id,
+          start_location: formData.pickup_location,
+          requested_pickup_date: pickupDate.toISOString(),
+          requested_pickup_time: pickupTime
+        })
+      });
+
+      const verifyData = await verifyRes.json();
+      if (verifyData.status !== 'success') {
+        setPaymentError(verifyData.message || 'Booking could not be confirmed');
+        onError?.(verifyData.message || 'Booking could not be confirmed');
+        toast.error(verifyData.message || 'Booking could not be confirmed');
+        setConfirming(false);
+        return;
+      }
+
+      onSuccess?.(verifyData.data.booking);
+    } catch (error) {
+      console.error('Confirm payment error:', error);
+      setPaymentError('Something went wrong. Please try again.');
+      onError?.('Something went wrong. Please try again.');
+      toast.error('Something went wrong. Please try again.');
+    }
+    setConfirming(false);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center mb-2">
+        <svg className="w-5 h-5 text-primary-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg>
+        <span className="font-semibold text-neutral-800">Secure payment</span>
+      </div>
+      <PaymentElement options={{ layout: 'tabs' }} />
+      {paymentError && (
+        <p className="text-sm text-secondary-600">{paymentError}</p>
+      )}
+      <button
+        type="button"
+        disabled={!stripe || confirming}
+        onClick={handleConfirm}
+        className="w-full py-3 bg-linear-to-r from-primary-500 to-secondary-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-60"
+        data-testid="confirm-payment-button"
+      >
+        {confirming ? 'Processing...' : `Confirm & Pay ${formatPrice(totalCost?.advanceAmount || 0)}`}
+      </button>
+      <p className="text-xs text-neutral-500">Payments are processed securely by Stripe.</p>
+    </div>
   );
 };
 
