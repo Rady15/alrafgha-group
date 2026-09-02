@@ -345,43 +345,56 @@ exports.handleWebhook = catchAsync(async (req, res, next) => {
         case 'payment_intent.succeeded': {
             const paymentIntent = event.data.object;
             console.log('Payment succeeded:', paymentIntent.id);
+            const diag = { id: paymentIntent.id, type: event.type };
 
-            // Check for duplicate processing
-            const existingPayment = await Payment.findOne({ transaction_id: paymentIntent.id });
-            if (existingPayment) {
-                console.log('Payment already processed:', paymentIntent.id);
-                break;
-            }
-
-            // Update booking if exists
-            const bookingId = paymentIntent.metadata.booking_id;
-            const paymentType = paymentIntent.metadata.payment_type;
-            if (bookingId && bookingId !== 'none') {
-                if (paymentType === 'final') {
-                    // Use updateOne with $set on explicit valid schema paths. final_payment
-                    // is a subdocument - avoid casting issues with strict mode.
-                    const upd = await Booking.updateOne({ _id: bookingId }, {
-                        $set: {
-                            'final_payment.status': 'completed',
-                            'final_payment.method': 'stripe',
-                            'final_payment.stripe_payment_id': paymentIntent.id,
-                            'final_payment.amount': paymentIntent.amount / 100,
-                            'final_payment.paid_at': new Date(),
-                            payment_status: 'paid',
-                            status: 'completed'
-                        }
-                    });
-                    console.log('Final payment applied to booking', bookingId, 'matched=', upd.matchedCount, 'modified=', upd.modifiedCount);
-                } else {
-                    await Booking.updateOne({ _id: bookingId }, {
-                        $set: {
-                            'advance_payment.stripe_payment_id': paymentIntent.id,
-                            'advance_payment.status': 'completed'
-                        }
-                    });
+            try {
+                // Check for duplicate processing
+                const existingPayment = await Payment.findOne({ transaction_id: paymentIntent.id });
+                diag.existing = !!existingPayment;
+                if (existingPayment) {
+                    console.log('Payment already processed:', paymentIntent.id);
+                    break;
                 }
+
+                // Update booking if exists
+                const bookingId = paymentIntent.metadata.booking_id;
+                const paymentType = paymentIntent.metadata.payment_type;
+                diag.bookingId = bookingId;
+                diag.paymentType = paymentType;
+                if (bookingId && bookingId !== 'none') {
+                    if (paymentType === 'final') {
+                        const upd = await Booking.updateOne({ _id: bookingId }, {
+                            $set: {
+                                'final_payment.status': 'completed',
+                                'final_payment.method': 'stripe',
+                                'final_payment.stripe_payment_id': paymentIntent.id,
+                                'final_payment.amount': paymentIntent.amount / 100,
+                                'final_payment.paid_at': new Date(),
+                                payment_status: 'paid',
+                                status: 'completed'
+                            }
+                        });
+                        diag.matched = upd.matchedCount;
+                        diag.modified = upd.modifiedCount;
+                        console.log('Final payment applied to booking', bookingId, 'matched=', upd.matchedCount, 'modified=', upd.modifiedCount);
+                    } else {
+                        await Booking.updateOne({ _id: bookingId }, {
+                            $set: {
+                                'advance_payment.stripe_payment_id': paymentIntent.id,
+                                'advance_payment.status': 'completed'
+                            }
+                        });
+                    }
+                } else {
+                    diag.skipped = 'no bookingId/paymentType in metadata';
+                }
+            } catch (e) {
+                diag.error = e.message;
+                return res.status(500).json({ received: false, diag });
             }
-            break;
+
+            res.status(200).json({ received: true, diag });
+            return;
         }
         case 'payment_intent.payment_failed': {
             const paymentIntent = event.data.object;
