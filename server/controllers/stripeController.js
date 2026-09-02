@@ -363,7 +363,9 @@ exports.handleWebhook = catchAsync(async (req, res, next) => {
                         'final_payment.method': 'stripe',
                         'final_payment.stripe_payment_id': paymentIntent.id,
                         'final_payment.amount': paymentIntent.amount / 100,
-                        'final_payment.paid_at': new Date()
+                        'final_payment.paid_at': new Date(),
+                        payment_status: 'paid',
+                        status: 'completed'
                     }, { runValidators: false });
                 } else {
                     await Booking.findByIdAndUpdate(bookingId, {

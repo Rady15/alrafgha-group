@@ -273,9 +273,9 @@ exports.confirmReturn = catchAsync(async (req, res, next) => {
         payment_mode
     } = req.body;
     
-    // Validate amount_paid is provided
-    if (!amount_paid || amount_paid <= 0) {
-        return next(new AppError('Amount paid is required and must be greater than 0', 400));
+    // Validate amount_paid is provided (must be a non-negative number)
+    if (amount_paid === undefined || amount_paid === null || Number.isNaN(Number(amount_paid)) || Number(amount_paid) < 0) {
+        return next(new AppError('Amount paid is required and must not be negative', 400));
     }
     
     const booking = await Booking.findById(bookingId)
@@ -438,25 +438,46 @@ exports.confirmReturn = catchAsync(async (req, res, next) => {
     booking.damage_cost = parseFloat(damage_cost) || 0;
     booking.final_cost = final_cost;
     booking.status = 'returned';
-    booking.payment_status = 'paid';
-    
-    // Set final payment details with payment mode
-    if (booking.final_payment && (booking.final_payment.stripe_payment_id || booking.final_payment.razorpay_payment_id)) {
+
+    const advancePaid = booking.advance_payment?.amount || 0;
+    const remainingFinal = Math.max(0, final_cost - advancePaid);
+    const collectedNow = parseFloat(amount_paid) || 0;
+
+    // If the customer has not yet paid the full remaining balance online, keep the
+    // final payment pending so the customer can pay the rest from their own account.
+    // Cash collections are always finalised immediately at the counter.
+    const paymentMode = payment_mode || 'cash';
+    const paidViaStripeBefore = booking.final_payment && (booking.final_payment.stripe_payment_id || booking.final_payment.razorpay_payment_id);
+
+    if (paidViaStripeBefore) {
+        // Customer paid the remaining balance online already (webhook set the final_payment)
         booking.final_payment = {
             ...booking.final_payment.toObject(),
-            amount: parseFloat(amount_paid),
+            amount: collectedNow,
             method: 'online',
             status: 'completed',
             paid_at: booking.final_payment.paid_at || new Date()
         };
-    } else {
-        // Cash payment or new payment - use payment_mode from request
+        booking.payment_status = 'paid';
+    } else if (paymentMode === 'online' && collectedNow < remainingFinal) {
+        // Online payment is still pending from the customer - mark return completed,
+        // vehicle available, but leave final payment pending for the customer to pay.
         booking.final_payment = {
-            amount: parseFloat(amount_paid),
-            method: payment_mode || 'cash',
+            amount: remainingFinal,
+            method: 'online',
+            status: 'pending',
+            paid_at: null
+        };
+        booking.payment_status = 'partial';
+    } else {
+        // Cash payment (or online already fully collected now) - finalise immediately
+        booking.final_payment = {
+            amount: collectedNow,
+            method: paymentMode === 'online' ? 'online' : 'cash',
             status: 'completed',
             paid_at: new Date()
         };
+        booking.payment_status = 'paid';
     }
     
     await booking.save();
