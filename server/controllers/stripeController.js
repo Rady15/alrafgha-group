@@ -57,7 +57,7 @@ exports.createAdvancePaymentIntent = catchAsync(async (req, res, next) => {
         const paymentIntent = await getStripeInstance().paymentIntents.create({
             amount: amountInSmallestUnit,
             currency: 'sar',
-            automatic_payment_methods: { enabled: true },
+            automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
             metadata: {
                 payment_type: 'advance',
                 vehicle_id: vehicle_id,
@@ -127,7 +127,7 @@ exports.createFinalPaymentIntent = catchAsync(async (req, res, next) => {
         const paymentIntent = await getStripeInstance().paymentIntents.create({
             amount: amountInSmallestUnit,
             currency: 'sar',
-            automatic_payment_methods: { enabled: true },
+            automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
             metadata: {
                 payment_type: 'final',
                 booking_id: booking_id,
