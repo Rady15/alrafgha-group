@@ -205,6 +205,11 @@ exports.verifyAndCreateBooking = catchAsync(async (req, res, next) => {
         return next(new AppError('Payment vehicle mismatch', 400));
     }
 
+    // CRITICAL: Verify the payment intent belongs to the authenticated user
+    if (paymentIntent.metadata.user_id !== req.user.id) {
+        return next(new AppError('Payment does not belong to this user', 403));
+    }
+
     // Check for duplicate payment (idempotency)
     const existingPayment = await Payment.findOne({ transaction_id: payment_intent_id });
     if (existingPayment) {
