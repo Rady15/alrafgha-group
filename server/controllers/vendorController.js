@@ -4,7 +4,7 @@ const AppError = require('../utils/appError');
 const { sendVendorVerificationEmail } = require('../utils/email');
 
 exports.getAllVendors = catchAsync(async (req, res, next) => {
-    const vendors = await Vendor.find();
+    const vendors = await Vendor.find().select('-password_hash');
 
     res.status(200).json({
         status: 'success',
@@ -16,7 +16,7 @@ exports.getAllVendors = catchAsync(async (req, res, next) => {
 });
 
 exports.getVendor = catchAsync(async (req, res, next) => {
-    const vendor = await Vendor.findById(req.params.id);
+    const vendor = await Vendor.findById(req.params.id).select('-password_hash');
 
     if (!vendor) {
         return next(new AppError('No vendor found with that ID', 404));
@@ -33,10 +33,13 @@ exports.getVendor = catchAsync(async (req, res, next) => {
 exports.createVendor = catchAsync(async (req, res, next) => {
     const newVendor = await Vendor.create(req.body);
 
+    const vendorResponse = newVendor.toObject();
+    delete vendorResponse.password_hash;
+
     res.status(201).json({
         status: 'success',
         data: {
-            vendor: newVendor
+            vendor: vendorResponse
         }
     });
 });
@@ -77,13 +80,16 @@ exports.getVendorByEmail = catchAsync(async (req, res, next) => {
     const vendor = await Vendor.findOne({ email: req.params.email });
 
     if (!vendor) {
-        return next(new AppError('No vendor found with that email', 404));
+        return next(new AppError('No vendor found with that ID', 404));
     }
+
+    const vendorResponse = vendor.toObject();
+    delete vendorResponse.password_hash;
 
     res.status(200).json({
         status: 'success',
         data: {
-            vendor
+            vendor: vendorResponse
         }
     });
 });

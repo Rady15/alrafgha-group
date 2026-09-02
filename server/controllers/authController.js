@@ -264,11 +264,11 @@ exports.login = catchAsync(async (req, res, next) => {
     let user;
     let userRole;
 
-    user = await User.findOne({ email });
+    user = await User.findOne({ email }).select('+password_hash');
     if (user) {
         userRole = user.role;
     } else {
-        user = await Vendor.findOne({ email });
+        user = await Vendor.findOne({ email }).select('+password_hash');
         if (user) {
             userRole = 'vendor';
         } else {
@@ -464,9 +464,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     // Get user
     let user;
     if (req.user.role === 'vendor') {
-        user = await Vendor.findById(req.user.id);
+        user = await Vendor.findById(req.user.id).select('+password_hash');
     } else {
-        user = await User.findById(req.user.id);
+        user = await User.findById(req.user.id).select('+password_hash');
     }
 
     if (!user) {
@@ -875,9 +875,9 @@ exports.requestPasswordChangeOTP = catchAsync(async (req, res, next) => {
     // Get user based on role
     let user;
     if (req.user.role === 'vendor') {
-        user = await Vendor.findById(req.user.id);
+        user = await Vendor.findById(req.user.id).select('+password_hash');
     } else {
-        user = await User.findById(req.user.id);
+        user = await User.findById(req.user.id).select('+password_hash');
     }
 
     if (!user) {

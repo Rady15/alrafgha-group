@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
         password_hash: {
             type: String,
             required: [function() { return this.authProvider !== 'google'; }, "Password is required"],
+            select: false,
         },
 
         authProvider: {

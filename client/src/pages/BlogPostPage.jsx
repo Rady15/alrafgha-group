@@ -4,6 +4,7 @@ import { API_ENDPOINTS } from '../config/api';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../i18n/format';
 import { ArrowLeft, Calendar, Eye, User, Tag, BookOpen } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 const BlogPostPage = () => {
     const { t } = useTranslation();
@@ -139,7 +140,7 @@ const BlogPostPage = () => {
                 {/* Content */}
                 <div className="prose prose-lg max-w-none text-ink-700 leading-relaxed">
                     {post.content ? (
-                        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
                     ) : (
                         <p className="text-ink-500">{post.excerpt}</p>
                     )}

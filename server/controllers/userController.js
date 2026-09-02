@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
+    const users = await User.find().select('-password_hash');
 
     res.status(200).json({
         status: 'success',
@@ -16,7 +16,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select('-password_hash');
 
     if (!user) {
         return next(new AppError('No user found with that ID', 404));
@@ -80,10 +80,13 @@ exports.updateUser = catchAsync(async (req, res, next) => {
         return next(new AppError('No user found with that ID', 404));
     }
 
+    const userResponse = user.toObject();
+    delete userResponse.password_hash;
+
     res.status(200).json({
         status: 'success',
         data: {
-            user
+            user: userResponse
         }
     });
 });

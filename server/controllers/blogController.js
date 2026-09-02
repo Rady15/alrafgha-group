@@ -69,6 +69,10 @@ exports.createPost = catchAsync(async (req, res, next) => {
 
 exports.updatePost = catchAsync(async (req, res, next) => {
     if (req.body.is_published && !req.body.published_at) req.body.published_at = new Date();
+    // XSS FIX: Sanitize HTML content on update (same as create)
+    if (req.body.content) req.body.content = sanitizeContent(req.body.content);
+    if (req.body.title) req.body.title = sanitizeHtml(req.body.title, { allowedTags: [], allowedAttributes: {} });
+    if (req.body.excerpt) req.body.excerpt = sanitizeHtml(req.body.excerpt, { allowedTags: [], allowedAttributes: {} });
     const post = await BlogPost.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!post) return next(new AppError('Post not found', 404));
     res.status(200).json({ status: 'success', data: { post } });
