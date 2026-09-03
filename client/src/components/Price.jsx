@@ -1,6 +1,6 @@
-const Price = ({ amount, className = '' }) => (
+const Price = ({ children, className = '' }) => (
   <span className={`price ${className}`}>
-    {amount}
+    {children}
   </span>
 );
 
