@@ -5,6 +5,7 @@ import { API_ENDPOINTS, getAuthHeader } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../i18n/format';
+import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 
 const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
@@ -278,7 +279,7 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
                     <span className="text-neutral-600">
                       {t('bookings:form.dayRate', { days: totalCost.breakdown.days, price: formatPrice(totalCost.breakdown.pricePerDay) })}
                     </span>
-                    <span className="font-semibold text-neutral-800">{formatPrice(totalCost.breakdown.dayCost)}</span>
+                    <span className="font-semibold text-neutral-800"><Price>{formatPrice(totalCost.breakdown.dayCost)}</Price></span>
                 </div>
               )}
               
@@ -287,7 +288,7 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
                     <span className="text-neutral-600">
                       {t('bookings:form.hourRate', { hours: totalCost.breakdown.remainingHours, price: formatPrice(totalCost.breakdown.pricePerHour) })}
                     </span>
-                    <span className="font-semibold text-neutral-800">{formatPrice(totalCost.breakdown.hourCost)}</span>
+                    <span className="font-semibold text-neutral-800"><Price>{formatPrice(totalCost.breakdown.hourCost)}</Price></span>
                 </div>
               )}
               
@@ -303,7 +304,7 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
               <div className="flex items-center justify-between mb-2">
                   <span className="text-neutral-700 font-bold text-lg">{t('bookings:form.estimatedTotal')}</span>
                   <span className="text-2xl font-bold bg-linear-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent" data-testid="estimated-total">
-                    {formatPrice(totalCost.total)}
+                    <Price>{formatPrice(totalCost.total)}</Price>
                   </span>
               </div>
               
@@ -317,7 +318,7 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-green-700">{t('bookings:form.payNowToConfirm')}</span>
-                  <span className="text-2xl font-bold text-green-600" data-testid="advance-amount">{formatPrice(totalCost.advanceAmount)}</span>
+                  <span className="text-2xl font-bold text-green-600" data-testid="advance-amount"><Price>{formatPrice(totalCost.advanceAmount)}</Price></span>
                 </div>
                 <p className="text-xs text-green-600 mt-2">
                   {t('bookings:form.remainingCollectedNote', { amount: formatPrice(totalCost.remainingAmount) })}
@@ -424,7 +425,7 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('bookings:labels.amountPaid')}:</span>
-                  <span className="font-bold text-green-600">{formatPrice(paymentDetails.amount)}</span>
+                  <span className="font-bold text-green-600"><Price>{formatPrice(paymentDetails.amount)}</Price></span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('bookings:form.vehicle')}</span>
