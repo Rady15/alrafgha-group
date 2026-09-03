@@ -3271,7 +3271,7 @@ const VehicleRequestsTable = ({ requests, vehicles, onViewDetails, onToggleFeatu
                                             request.status === 'rejected' ? 'bg-red-100 text-red-800' :
                                                 'bg-yellow-100 text-yellow-800'
                                             }`}>
-                                            t('status.request_' + request.status)
+                                            {t('status.request_' + request.status)}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -3326,7 +3326,7 @@ const VehicleRequestsTable = ({ requests, vehicles, onViewDetails, onToggleFeatu
                                         request.status === 'rejected' ? 'bg-red-100 text-red-800' :
                                             'bg-yellow-100 text-yellow-800'
                                         }`}>
-                                        t('status.request_' + request.status)
+                                        {t('status.request_' + request.status)}
                                     </span>
                                     {request.status === 'approved' && vehicle && isFeatured && (
                                         <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
@@ -3550,7 +3550,7 @@ const VehicleRequestDetailsModal = ({ request, onClose, onApprove, onReject }) =
                                         request.status === 'rejected' ? 'bg-red-100 text-red-800' :
                                             'bg-yellow-100 text-yellow-800'
                                         }`}>
-                                        t('status.request_' + request.status)
+                                        {t('status.request_' + request.status)}
                                     </span>
                                 </p>
                             </div>

@@ -5,7 +5,9 @@
     "fleet": "Fleet",
     "pricing": "Pricing",
     "bookings": "Bookings",
-    "vendors": "Vendors"
+    "vendors": "Vendors",
+    "offers": "Offers",
+    "blog": "Blog"
   },
   "auth": {
     "login": "Login",

@@ -34,8 +34,8 @@ const Navbar = () => {
   const navLinks = [
     { path: '/', label: t('nav.home') },
     { path: '/vehicles', label: t('nav.fleet') },
-    { path: '/offers', label: 'العروض' },
-    { path: '/blog', label: 'المدونة' },
+    { path: '/offers', label: t('nav.offers') },
+    { path: '/blog', label: t('nav.blog') },
     { path: '/pricing', label: t('nav.pricing') },
     { path: '/bookings', label: t('nav.bookings') },
     { path: '/vendor', label: t('nav.vendors') },

@@ -10,8 +10,8 @@ const MobileNav = () => {
     const navItems = [
         { path: '/', label: t('nav.home'), icon: House },
         { path: '/vehicles', label: t('nav.fleet'), icon: CarFront },
-        { path: '/offers', label: 'العروض', icon: Tag },
-        { path: '/blog', label: 'المدونة', icon: BookOpen },
+        { path: '/offers', label: t('nav.offers'), icon: Tag },
+        { path: '/blog', label: t('nav.blog'), icon: BookOpen },
         { path: '/bookings', label: t('nav.bookings'), icon: ClipboardList },
         { path: '/pricing', label: t('nav.pricing'), icon: BadgeDollarSign },
         { path: '/vendor', label: t('nav.vendors'), icon: UserPlus },

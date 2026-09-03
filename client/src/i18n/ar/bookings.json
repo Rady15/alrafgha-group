@@ -258,7 +258,7 @@
     "onlinePayment": "الدفع الإلكتروني (مدى)",
     "paymentSuccessful": "تم الدفع بنجاح!",
     "collectOnline": "انقر الزر أدناه لتحصيل الدفعة الإلكترونية بقيمة {{amount}}",
-    "payViaمدى": "ادفع {{amount}} عبر مدى",
+    "payViaMada": "ادفع {{amount}} عبر مدى",
     "amountToBeCollected": "المبلغ المطلوب تحصيله:",
     "confirmReturn": "تأكيد الإرجاع",
     "confirming": "جارٍ التأكيد...",
