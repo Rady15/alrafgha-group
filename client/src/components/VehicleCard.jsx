@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Car, Bike, MapPin, ArrowUpRight, Fuel, Gauge } from 'lucide-react';
 import { formatPrice } from '../i18n/format';
+import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 
 const VehicleCard = ({ vehicle }) => {
@@ -100,13 +101,13 @@ const VehicleCard = ({ vehicle }) => {
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] text-primary-600 font-semibold mb-1">{t('perDay')}</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-display font-bold text-primary-700">{formatPrice(price_per_day)}</span>
+                <span className="text-3xl font-display font-bold text-primary-700"><Price>{formatPrice(price_per_day)}</Price></span>
               </div>
             </div>
             {price_per_km && (
               <div className="text-right pl-3 border-l border-primary-200">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-primary-600 font-semibold mb-1">{t('perKm')}</p>
-                <span className="text-xl font-display font-bold text-primary-600">{formatPrice(price_per_km)}</span>
+                <span className="text-xl font-display font-bold text-primary-600"><Price>{formatPrice(price_per_km)}</Price></span>
               </div>
             )}
           </div>

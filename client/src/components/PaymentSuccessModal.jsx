@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { formatPrice } from '../i18n/format';
+import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 
 const PaymentSuccessModal = ({ paymentDetails, onClose, autoCloseDelay = 3000 }) => {
@@ -60,7 +61,7 @@ const PaymentSuccessModal = ({ paymentDetails, onClose, autoCloseDelay = 3000 })
                         <div className="bg-gray-50 rounded-lg p-4 text-center">
                             <p className="text-sm text-gray-500 mb-1">{t('bookings:labels.amountPaid')}</p>
                             <p className="text-3xl font-bold text-gray-900" data-testid="payment-amount">
-                                {formatPrice(paymentDetails.amount)}
+                                <Price>{formatPrice(paymentDetails.amount)}</Price>
                             </p>
                         </div>
                     )}

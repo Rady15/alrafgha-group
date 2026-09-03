@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { PackageSearch, Motorbike, Car, ArrowUpRight, Zap, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '../i18n/format';
+import Price from '../components/Price';
 
 const PricingPage = () => {
     const { t } = useTranslation('pricing');
@@ -176,13 +177,13 @@ const PricingPage = () => {
                                     <div className="bg-primary-50 border border-primary-100 rounded-2xl p-5 text-center transition-colors group-hover:bg-primary-100/50">
                                         <p className="text-[10px] text-primary-600 font-bold uppercase tracking-[0.2em] mb-1">{t('perHour')}</p>
                                         <p className="font-display text-3xl font-bold text-primary-700">
-                                            {formatPrice(pkg.price_per_hour)}
+                                            <Price>{formatPrice(pkg.price_per_hour)}</Price>
                                         </p>
                                     </div>
                                     <div className="bg-ink-50 border border-ink-100 rounded-2xl p-5 text-center transition-colors group-hover:bg-ink-100/50">
                                         <p className="text-[10px] text-ink-500 font-bold uppercase tracking-[0.2em] mb-1">{t('perKm')}</p>
                                         <p className="font-display text-3xl font-bold text-ink-900">
-                                            {formatPrice(pkg.price_per_km)}
+                                            <Price>{formatPrice(pkg.price_per_km)}</Price>
                                         </p>
                                     </div>
                                 </div>

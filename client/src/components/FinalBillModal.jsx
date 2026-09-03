@@ -3,6 +3,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice, formatDate } from '../i18n/format';
+import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 
 const FinalBillModal = ({ booking, onClose }) => {
@@ -188,25 +189,25 @@ const FinalBillModal = ({ booking, onClose }) => {
                         <div className="space-y-2">
                             <div className="flex justify-between py-2 border-b text-xs sm:text-sm" style={{ borderColor: '#E5E7EB' }}>
                                 <span>{t('bookings:bill.distanceCostLine', { km: booking.distance_traveled_km || 0 })}</span>
-                                <span>{formatPrice(booking.cost_per_distance)}</span>
+                                <span><Price>{formatPrice(booking.cost_per_distance)}</Price></span>
                             </div>
                             <div className="flex justify-between py-2 border-b text-xs sm:text-sm" style={{ borderColor: '#E5E7EB' }}>
                                 <span>{t('bookings:bill.timeCostLine', { hours: booking.duration_hours || 0 })}</span>
-                                <span>{formatPrice(booking.cost_per_time)}</span>
+                                <span><Price>{formatPrice(booking.cost_per_time)}</Price></span>
                             </div>
                             <div className="flex justify-between py-2 border-b text-xs sm:text-sm italic" style={{ borderColor: '#E5E7EB', color: '#6B7280' }}>
                                 <span>{t('bookings:bill.applicableCost')}</span>
-                                <span>{formatPrice(Math.max(booking.cost_per_distance || 0, booking.cost_per_time || 0))}</span>
+                                <span><Price>{formatPrice(Math.max(booking.cost_per_distance || 0, booking.cost_per_time || 0))}</Price></span>
                             </div>
                             {(booking.damage_cost > 0 || returnDetails.damage_cost > 0) && (
                                 <div className="flex justify-between py-2 border-b text-xs sm:text-sm" style={{ borderColor: '#E5E7EB', color: '#DC2626' }}>
                                     <span>{t('bookings:details.damageCost')}</span>
-                                    <span>{formatPrice(booking.damage_cost || returnDetails.damage_cost || 0)}</span>
+                                    <span><Price>{formatPrice(booking.damage_cost || returnDetails.damage_cost || 0)}</Price></span>
                                 </div>
                             )}
                             <div className="flex justify-between py-3 mt-3 text-base sm:text-lg font-bold" style={{ borderTop: '2px solid #000' }}>
                                 <span>{t('bookings:bill.totalAmount')}</span>
-                                <span style={{ color: '#16A34A' }}>{formatPrice(booking.final_cost)}</span>
+                                <span style={{ color: '#16A34A' }}><Price>{formatPrice(booking.final_cost)}</Price></span>
                             </div>
                         </div>
                     </div>
@@ -223,7 +224,7 @@ const FinalBillModal = ({ booking, onClose }) => {
                                                 <span className="text-xs block" style={{ color: '#6B7280' }}>ID: {booking.advance_payment.stripe_payment_id}</span>
                                             )}
                                         </span>
-                                        <span className="font-medium" style={{ color: '#16A34A' }}>{formatPrice(booking.advance_payment.amount)}</span>
+                                        <span className="font-medium" style={{ color: '#16A34A' }}><Price>{formatPrice(booking.advance_payment.amount)}</Price></span>
                                 </div>
                             )}
                             {booking.final_payment?.amount > 0 && (
@@ -234,23 +235,23 @@ const FinalBillModal = ({ booking, onClose }) => {
                                                 <span className="text-xs block" style={{ color: '#6B7280' }}>ID: {booking.final_payment.stripe_payment_id}</span>
                                             )}
                                         </span>
-                                        <span className="font-medium" style={{ color: '#16A34A' }}>{formatPrice(booking.final_payment.amount)}</span>
+                                        <span className="font-medium" style={{ color: '#16A34A' }}><Price>{formatPrice(booking.final_payment.amount)}</Price></span>
                                 </div>
                             )}
                             {returnDetails.amount_paid > 0 && !booking.final_payment?.amount && (
                                 <div className="flex justify-between py-2 border-b text-xs sm:text-sm" style={{ borderColor: '#BBF7D0' }}>
                                     <span style={{ color: '#15803D' }}>{t('bookings:bill.amountCollectedAtReturn')}</span>
-                                    <span className="font-medium" style={{ color: '#16A34A' }}>{formatPrice(returnDetails.amount_paid)}</span>
+                                    <span className="font-medium" style={{ color: '#16A34A' }}><Price>{formatPrice(returnDetails.amount_paid)}</Price></span>
                                 </div>
                             )}
                             <div className="flex justify-between py-3 mt-3 text-base sm:text-lg font-bold -mx-3 px-3 rounded" style={{ borderTop: '2px solid #16A34A', backgroundColor: '#DCFCE7' }}>
                                 <span style={{ color: '#166534' }}>{t('bookings:bill.totalPaid')}</span>
                                 <span style={{ color: '#16A34A' }}>
-                                    {formatPrice(
+                                    <Price>{formatPrice(
                                         (booking.advance_payment?.amount || 0) +
                                         (booking.final_payment?.amount || 0) +
                                         ((!booking.final_payment?.amount && returnDetails.amount_paid) ? (returnDetails.amount_paid - (booking.advance_payment?.amount || 0)) : 0)
-                                    )}
+                                    )}</Price>
                                 </span>
                             </div>
                         </div>

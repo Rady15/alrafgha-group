@@ -8,6 +8,7 @@ import ReturnModal from '../../components/ReturnModal';
 import { MapPinned, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatPrice, formatDate, formatDateTime, formatTime, formatNumber } from '../../i18n/format';
+import Price from '../../components/Price';
 
 const OfficeStaffDashboard = () => {
     const { t } = useTranslation('dashboards');
@@ -498,7 +499,7 @@ const OfficeStaffDashboard = () => {
                                                             {booking.final_cost && (
                                                                 <>
                                                                     <span>•</span>
-                                                                    <span>{t('details.cost')}: <span className="font-medium text-green-600">{formatPrice(booking.final_cost)}</span></span>
+                                                                    <span>{t('details.cost')}: <span className="font-medium text-green-600"><Price>{formatPrice(booking.final_cost)}</Price></span></span>
                                                                 </>
                                                                 
                                                             )}
@@ -531,7 +532,7 @@ const OfficeStaffDashboard = () => {
                                                                     <div>
                                                                         <p className="text-gray-500">{t('details.package')}</p>
                                                                         <p className="font-medium text-gray-900">{booking.package_id.name}</p>
-                                                                        <p className="text-gray-600">{formatPrice(booking.package_id.price_per_hour)}/hr | {formatPrice(booking.package_id.price_per_km)}/km</p>
+                                                                        <p className="text-gray-600"><Price>{formatPrice(booking.package_id.price_per_hour)}</Price>/hr | <Price>{formatPrice(booking.package_id.price_per_km)}</Price>/km</p>
                                                                     </div>
                                                                 )}
 
@@ -586,7 +587,7 @@ const OfficeStaffDashboard = () => {
                                                                 {booking.final_cost && (
                                                                     <div>
                                                                         <p className="text-gray-500">Final Cost</p>
-                                                                        <p className="font-medium text-xl text-green-600">{formatPrice(booking.final_cost)}</p>
+                                                                        <p className="font-medium text-xl text-green-600"><Price>{formatPrice(booking.final_cost)}</Price></p>
                                                                     </div>
                                                                 )}
                                                             </div>
@@ -636,7 +637,7 @@ const OfficeStaffDashboard = () => {
                                                         {booking.refund_amount > 0 && (
                                                             <div>
                                                                 <p className="text-gray-500">{t('details.refundAmount')}</p>
-                                                                <p className="font-medium text-lg text-green-600">{formatPrice(booking.refund_amount)}</p>
+                                                                <p className="font-medium text-lg text-green-600"><Price>{formatPrice(booking.refund_amount)}</Price></p>
                                                                 <p className={`text-xs font-semibold ${
                                                                     booking.refund_status === 'completed' ? 'text-green-600' : 'text-yellow-600'
                                                                 }`}>
@@ -706,7 +707,7 @@ const OfficeStaffDashboard = () => {
                                                                 <div>
                                                                     <p className="text-gray-500">{t('details.package')}</p>
                                                                     <p className="font-medium text-gray-900">{booking.package_id.name}</p>
-                                                                    <p className="text-gray-600">{formatPrice(booking.package_id.price_per_hour)}/hr | {formatPrice(booking.package_id.price_per_km)}/km</p>
+                                                                    <p className="text-gray-600"><Price>{formatPrice(booking.package_id.price_per_hour)}</Price>/hr | <Price>{formatPrice(booking.package_id.price_per_km)}</Price>/km</p>
                                                                 </div>
                                                             )}
 
@@ -753,7 +754,7 @@ const OfficeStaffDashboard = () => {
                                                             {booking.final_cost && (
                                                                 <div>
                                                                     <p className="text-gray-500">Final Cost</p>
-                                                                    <p className="font-medium text-xl text-green-600">{formatPrice(booking.final_cost)}</p>
+                                                                    <p className="font-medium text-xl text-green-600"><Price>{formatPrice(booking.final_cost)}</Price></p>
                                                                 </div>
                                                             )}
                                                         </div>

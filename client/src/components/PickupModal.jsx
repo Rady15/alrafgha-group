@@ -4,6 +4,7 @@ import BillModal from './BillModal';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../i18n/format';
+import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 import CustomDropdown from './common/CustomDropdown';
 
@@ -206,7 +207,7 @@ const PickupModal = ({ booking, onClose, onSuccess }) => {
                             <div>
                                 <span className="text-gray-500">{t('bookings:pickup.rates')}</span>
                                 <span className="ml-2 font-medium">
-                                    {formatPrice(booking.package_id?.price_per_hour)}{t('bookings:units.perHour')} | {formatPrice(booking.package_id?.price_per_km)}{t('bookings:units.perKm')}
+                                    <Price>{formatPrice(booking.package_id?.price_per_hour)}</Price>{t('bookings:units.perHour')} | <Price>{formatPrice(booking.package_id?.price_per_km)}</Price>{t('bookings:units.perKm')}
                                 </span>
                             </div>
                         </div>

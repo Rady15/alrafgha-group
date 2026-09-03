@@ -124,22 +124,6 @@
         "description": "Expanding to multiple cities with thousands of satisfied customers"
       }
     ],
-    "developersTitle": "Meet the Developers",
-    "developersSubtitle": "The minds behind this application development and implementation",
-    "dev": [
-      {
-        "role": "Project Lead, Full Stack Developer"
-      },
-      {
-        "role": "Frontend Developer"
-      },
-      {
-        "role": "Backend Engineer"
-      },
-      {
-        "role": "Designer, Researcher"
-      }
-    ],
     "ctaTitle": "Ready to Start Your Journey?",
     "ctaSubtitle": "Join thousands of happy customers who trust Alrafgha Group for their travel needs",
     "ctaBrowse": "Browse Vehicles",

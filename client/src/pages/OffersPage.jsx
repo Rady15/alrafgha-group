@@ -180,11 +180,11 @@ const OffersPage = () => {
                                             <div>
                                                 {vehicle.original_price && (
                                                     <span className="text-ink-400 line-through text-sm mr-2">
-                                                        {formatPrice(vehicle.original_price)}
+                                                        <Price>{formatPrice(vehicle.original_price)}</Price>
                                                     </span>
                                                 )}
                                                 <span className="text-primary-600 font-bold text-lg">
-                                                    {formatPrice(vehicle.price_per_day)}/يوم
+                                                    <Price>{formatPrice(vehicle.price_per_day)}</Price>/يوم
                                                 </span>
                                             </div>
                                             <span className="w-8 h-8 bg-primary-50 rounded-full flex items-center justify-center group-hover:bg-primary-500 group-hover:text-white transition-all">
