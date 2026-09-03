@@ -54,17 +54,17 @@ body::-webkit-scrollbar-thumb {
     --font-display: 'Tajawal', 'Bricolage Grotesque', 'Space Grotesk', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    --color-primary-50: rgb(255 245 240);
-    --color-primary-100: rgb(255 232 219);
-    --color-primary-200: rgb(255 205 179);
-    --color-primary-300: rgb(255 170 128);
-    --color-primary-400: rgb(255 122 71);
-    --color-primary-500: rgb(255 87 34);
-    --color-primary-600: rgb(244 63 0);
-    --color-primary-700: rgb(214 48 0);
-    --color-primary-800: rgb(176 40 0);
-    --color-primary-900: rgb(143 35 0);
-    --color-primary-950: rgb(77 16 0);
+    --color-primary-50: rgb(255 251 237);
+    --color-primary-100: rgb(254 243 201);
+    --color-primary-200: rgb(253 231 141);
+    --color-primary-300: rgb(251 209 79);
+    --color-primary-400: rgb(245 188 40);
+    --color-primary-500: rgb(239 182 22);
+    --color-primary-600: rgb(205 149 14);
+    --color-primary-700: rgb(165 115 10);
+    --color-primary-800: rgb(134 92 14);
+    --color-primary-900: rgb(111 76 16);
+    --color-primary-950: rgb(64 42 7);
 
     --color-secondary-50: rgb(254 242 242);
     --color-secondary-100: rgb(254 226 226);
@@ -114,11 +114,11 @@ body::-webkit-scrollbar-thumb {
     --color-neutral-900: rgb(23 23 23);
     --color-neutral-950: rgb(10 10 10);
 
-    --shadow-glow: 0 0 24px rgba(255, 87, 34, 0.35);
-    --shadow-glow-lg: 0 0 48px rgba(255, 87, 34, 0.5);
-    --shadow-glow-xl: 0 20px 60px -10px rgba(255, 87, 34, 0.45);
+    --shadow-glow: 0 0 24px rgba(239, 182, 22, 0.35);
+    --shadow-glow-lg: 0 0 48px rgba(239, 182, 22, 0.5);
+    --shadow-glow-xl: 0 20px 60px -10px rgba(239, 182, 22, 0.45);
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --shadow-card-hover: 0 28px 50px -12px rgba(20, 20, 32, 0.18), 0 10px 20px -5px rgba(255, 87, 34, 0.15);
+    --shadow-card-hover: 0 28px 50px -12px rgba(20, 20, 32, 0.18), 0 10px 20px -5px rgba(239, 182, 22, 0.15);
     --shadow-brutal: 6px 6px 0px 0px rgba(20, 20, 32, 1);
     --shadow-brutal-sm: 4px 4px 0px 0px rgba(20, 20, 32, 1);
 
@@ -304,7 +304,7 @@ body::-webkit-scrollbar-thumb {
 
     /* Selection */
     ::selection {
-        background-color: rgb(255 87 34);
+        background-color: rgb(239 182 22);
         color: white;
     }
 }
