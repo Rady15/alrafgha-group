@@ -5,7 +5,6 @@ import { API_ENDPOINTS } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../i18n/format';
-import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 import CustomDropdown from './common/CustomDropdown';
 import FinalBillModal from './FinalBillModal';
@@ -462,7 +461,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                             {advancePaid > 0 && (
                                 <div>
                                     <span className="text-gray-500">{t('bookings:return.advancePaid')}</span>
-                                    <span className="ml-2 font-medium text-green-600"><Price>{formatPrice(advancePaid)}</Price></span>
+                                    <span className="ml-2 font-medium text-green-600">{formatPrice(advancePaid)}</span>
                                 </div>
                             )}
                         </div>
@@ -663,25 +662,25 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-green-700">{t('bookings:return.costDistanceBased')}</span>
-                                    <span className="font-medium" data-testid="cost-distance"><Price>{formatPrice(costBreakdown.costPerDistance)}</Price></span>
+                                    <span className="font-medium" data-testid="cost-distance">{formatPrice(costBreakdown.costPerDistance)}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-green-700">{t('bookings:return.costTimeBased')}</span>
-                                    <span className="font-medium" data-testid="cost-time"><Price>{formatPrice(costBreakdown.costPerTime)}</Price></span>
+                                    <span className="font-medium" data-testid="cost-time">{formatPrice(costBreakdown.costPerTime)}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-green-700">{t('bookings:return.maxCost')}</span>
-                                    <span className="font-medium" data-testid="max-cost"><Price>{formatPrice(costBreakdown.maxCost)}</Price></span>
+                                    <span className="font-medium" data-testid="max-cost">{formatPrice(costBreakdown.maxCost)}</span>
                                 </div>
                                 {costBreakdown.damageCost > 0 && (
                                     <div className="flex justify-between text-red-600">
                                         <span>{t('bookings:details.damageCost')}</span>
-                                        <span className="font-medium" data-testid="damage-cost"><Price>{formatPrice(costBreakdown.damageCost)}</Price></span>
+                                        <span className="font-medium" data-testid="damage-cost">{formatPrice(costBreakdown.damageCost)}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between text-lg font-bold text-green-900 pt-2 border-t-2 border-green-200">
                                     <span>{t('bookings:return.totalAmount')}</span>
-                                    <span data-testid="total-amount"><Price>{formatPrice(costBreakdown.totalCost)}</Price></span>
+                                    <span data-testid="total-amount">{formatPrice(costBreakdown.totalCost)}</span>
                                 </div>
                                 
                                 {/* Advance Payment Info */}
@@ -689,11 +688,11 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                                     <>
                                         <div className="flex justify-between pt-2 border-t border-green-200">
                                             <span className="text-green-700">{t('bookings:return.advancePaid')}</span>
-                                            <span className="font-medium text-green-600" data-testid="advance-paid">- <Price>{formatPrice(costBreakdown.advancePaid)}</Price></span>
+                                            <span className="font-medium text-green-600" data-testid="advance-paid">- {formatPrice(costBreakdown.advancePaid)}</span>
                                         </div>
                                         <div className="flex justify-between text-lg font-bold text-blue-900 pt-2 border-t-2 border-blue-300 bg-blue-50 -mx-4 px-4 py-2">
                                             <span>{t('bookings:return.remainingToCollect')}</span>
-                                            <span data-testid="remaining-amount"><Price>{formatPrice(costBreakdown.remainingAmount)}</Price></span>
+                                            <span data-testid="remaining-amount">{formatPrice(costBreakdown.remainingAmount)}</span>
                                         </div>
                                     </>
                                 )}
@@ -844,7 +843,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                                 <div className="bg-white rounded-lg p-3 border-2 border-blue-200">
                                     <div className="flex justify-between items-center">
                                         <span className="text-sm font-medium text-gray-700">{t('bookings:return.amountToBeCollected')}</span>
-                                        <span className="text-xl font-bold text-blue-900"><Price>{formatPrice(costBreakdown.remainingAmount)}</Price></span>
+                                        <span className="text-xl font-bold text-blue-900">{formatPrice(costBreakdown.remainingAmount)}</span>
                                     </div>
                                 </div>
                             )}

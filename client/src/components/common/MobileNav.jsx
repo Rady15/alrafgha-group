@@ -35,7 +35,7 @@ const MobileNav = () => {
                         >
                             <div
                                 className={`p-1.5 rounded-xl transition-all duration-300 ${active
-                                        ? 'bg-primary-500 text-white scale-110 shadow-[0_8px_20px_-4px_rgba(239,182,22,0.6)]'
+                                        ? 'bg-primary-500 text-white scale-110 shadow-[0_8px_20px_-4px_rgba(255,87,34,0.6)]'
                                         : 'text-ink-400 hover:text-ink-600 hover:bg-ink-50'
                                     }`}
                             >

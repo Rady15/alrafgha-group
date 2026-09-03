@@ -7,7 +7,6 @@ import CustomDropdown from '../../components/common/CustomDropdown';
 import { MapPinned, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatPrice, formatDate, formatDateTime, formatTime, formatNumber } from '../../i18n/format';
-import Price from '../../components/Price';
 
 const AdminDashboard = () => {
     const { t } = useTranslation('dashboards');
@@ -1894,7 +1893,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                             <div className="text-sm text-gray-600">{coupon.discount_value}{coupon.discount_type === 'percentage' ? '%' : ''}</div>
                                                                         </td>
                                                                         <td className="px-6 py-4 whitespace-nowrap">
-                                                                            <div className="text-sm text-gray-600">{coupon.min_order_value ? <Price>{formatPrice(coupon.min_order_value)}</Price> : '-'}</div>
+                                                                            <div className="text-sm text-gray-600">{coupon.min_order_value ? formatPrice(coupon.min_order_value) : '-'}</div>
                                                                         </td>
                                                                         <td className="px-6 py-4 whitespace-nowrap">
                                                                             <div className="text-sm text-gray-600">{coupon.used_count || 0} / {coupon.max_uses || '∞'}</div>
@@ -2165,7 +2164,7 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                         <div className="w-4 h-4 rounded-full" style={{ backgroundColor: tier.color || '#CD7F32' }}></div>
                                                                         <div>
                                                                             <p className="font-medium text-gray-900">{tier.name}</p>
-                                                                            <p className="text-xs text-gray-500">Level {tier.level} | Min: <Price>{formatPrice(tier.min_spending)}</Price></p>
+                                                                            <p className="text-xs text-gray-500">Level {tier.level} | Min: {formatPrice(tier.min_spending)}</p>
                                                                         </div>
                                                                     </div>
                                                                     <span className="text-sm font-medium text-gray-600">{tier.discount_percent}%</span>
@@ -2652,10 +2651,10 @@ const PackagesTable = ({ packages, onEdit, onDelete }) => {
                                     <div className="text-sm text-gray-600">{pkg.cc_range_min} - {pkg.cc_range_max} {t('table.cc')}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-600"><Price>{formatPrice(pkg.price_per_hour)}</Price></div>
+                                    <div className="text-sm text-gray-600">{formatPrice(pkg.price_per_hour)}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-600"><Price>{formatPrice(pkg.price_per_km)}</Price></div>
+                                    <div className="text-sm text-gray-600">{formatPrice(pkg.price_per_km)}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
@@ -2704,11 +2703,11 @@ const PackagesTable = ({ packages, onEdit, onDelete }) => {
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-500">Price/Hour:</span>
-                                <span className="text-gray-900 font-semibold"><Price>{formatPrice(pkg.price_per_hour)}</Price></span>
+                                <span className="text-gray-900 font-semibold">{formatPrice(pkg.price_per_hour)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-gray-500">Price/KM:</span>
-                                <span className="text-gray-900 font-semibold"><Price>{formatPrice(pkg.price_per_km)}</Price></span>
+                                <span className="text-gray-900 font-semibold">{formatPrice(pkg.price_per_km)}</span>
                             </div>
                         </div>
 
@@ -3818,7 +3817,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                 {booking.final_cost && (
                                     <>
                                         <span>•</span>
-                                        <span>{t('details.total')}: <span className="font-medium text-green-600"><Price>{formatPrice(booking.final_cost)}</Price></span></span>
+                                        <span>{t('details.total')}: <span className="font-medium text-green-600">{formatPrice(booking.final_cost)}</span></span>
                                     </>
                                 )}
                             </div>
@@ -3865,7 +3864,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                         <p className="text-gray-500 text-xs font-medium uppercase mb-1">{t('details.advancePayment')} <span className={`inline-flex text-xs px-2 py-0.5 rounded-full font-medium mt-1 ${getPaymentStatusBadge(booking.advance_payment?.status)}`}>
                                             {t('status.payment_' + (booking.advance_payment?.status || 'pending'))}
                                         </span></p>
-                                        <p className="font-bold text-green-700 text-lg"><Price>{formatPrice(booking.advance_payment?.amount || 0)}</Price></p>
+                                        <p className="font-bold text-green-700 text-lg">{formatPrice(booking.advance_payment?.amount || 0)}</p>
                                         <p className="text-gray-600 text-xs mt-1">
                                             {t('details.transactionId')} <span className="font-mono">{booking.advance_payment?.stripe_payment_id || booking.advance_payment?.razorpay_payment_id || t('na')}</span>
                                         </p>
@@ -3879,7 +3878,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                         <p className="text-gray-500 text-xs font-medium uppercase mb-1">{t('details.finalPayment')} <span className={`inline-flex text-xs px-2 py-0.5 rounded-full font-medium mt-1 ${getPaymentStatusBadge(booking.final_payment?.status)}`}>
                                             {t('status.payment_' + (booking.final_payment?.status || 'pending'))}
                                         </span></p>
-                                        <p className="font-bold text-orange-700 text-lg"><Price>{formatPrice(booking.final_payment?.amount || 0)}</Price></p>
+                                        <p className="font-bold text-orange-700 text-lg">{formatPrice(booking.final_payment?.amount || 0)}</p>
                                         <p className="text-gray-600 text-xs mt-1">
                                             {t('details.transactionId')} <span className="font-mono">{booking.final_payment?.stripe_payment_id || booking.final_payment?.razorpay_payment_id || (booking.final_payment?.method === 'cash' ? t('payment.cashPayment') : t('na'))}</span>
                                         </p>
@@ -3894,7 +3893,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                     {/* Total Amount */}
                                     <div className="bg-indigo-50 p-3 rounded-lg border-2 border-indigo-200">
                                         <p className="text-gray-500 text-xs font-medium uppercase mb-1">{t('details.totalAmount')}</p>
-                                        <p className="font-bold text-indigo-700 text-2xl"><Price>{formatPrice(booking.final_cost || booking.estimated_cost || 0)}</Price></p>
+                                        <p className="font-bold text-indigo-700 text-2xl">{formatPrice(booking.final_cost || booking.estimated_cost || 0)}</p>
                                         {booking.estimated_cost && !booking.final_cost && (
                                             <p className="text-xs text-gray-600 mt-1">{t('details.estimated')}</p>
                                         )}
@@ -3943,7 +3942,7 @@ const BookingsPaymentsTable = ({ bookings }) => {
                                         <div className="bg-yellow-50 p-3 rounded-lg">
                                             <p className="text-gray-500 text-xs font-medium uppercase mb-1">{t('details.package')}</p>
                                             <p className="font-semibold text-gray-900">{booking.package_id.name}</p>
-                                            <p className="text-gray-600 text-xs"><Price>{formatPrice(booking.package_id.price_per_hour)}</Price>/hr | <Price>{formatPrice(booking.package_id.price_per_km)}</Price>/km</p>
+                                            <p className="text-gray-600 text-xs">{formatPrice(booking.package_id.price_per_hour)}/hr | {formatPrice(booking.package_id.price_per_km)}/km</p>
                                         </div>
                                     )}
                                 </div>

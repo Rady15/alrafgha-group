@@ -4,8 +4,8 @@ const getLocale = () => (i18n.language && i18n.language.startsWith('ar') ? 'ar-S
 
 export const formatPrice = (amount) => {
   const num = Number(amount);
-  if (isNaN(num)) return '0';
-  return new Intl.NumberFormat(getLocale(), { maximumFractionDigits: 2 }).format(num);
+  if (isNaN(num)) return new Intl.NumberFormat(getLocale(), { style: 'currency', currency: 'SAR' }).format(0);
+  return new Intl.NumberFormat(getLocale(), { style: 'currency', currency: 'SAR', maximumFractionDigits: 2 }).format(num);
 };
 
 export const formatNumber = (num) => {

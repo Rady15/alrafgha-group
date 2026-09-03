@@ -6,7 +6,6 @@ import BookingDetailsModal from '../components/BookingDetailsModal';
 import CancelConfirmationModal from '../components/CancelConfirmationModal';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice, formatDate, formatDateTime } from '../i18n/format';
-import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -336,7 +335,7 @@ const BookingsPage = () => {
                             {t(`bookings:summary.${booking.status === 'completed' ? 'finalAmount' : 'advancePayment'}`)}
                           </div>
                           <div className="text-xl sm:text-2xl font-bold bg-linear-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                            <Price>{booking.status === 'completed' ? formatPrice(booking.total_cost) : formatPrice(booking.advance_payment?.amount || 0)}</Price>
+                            {booking.status === 'completed' ? formatPrice(booking.total_cost) : formatPrice(booking.advance_payment?.amount || 0)}
                           </div>
                         </div>
                       </div>
@@ -406,7 +405,7 @@ const BookingsPage = () => {
                             className="px-5 py-2 bg-linear-to-r from-blue-600 to-blue-700 text-white rounded-lg font-semibold hover:shadow-glow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                             data-testid="pay-remaining-button"
                           >
-                            {t('bookings:actions.payRemaining') || 'Pay Balance'} · <Price>{formatPrice(remainingDue(booking))}</Price>
+                            {t('bookings:actions.payRemaining') || 'Pay Balance'} · {formatPrice(remainingDue(booking))}
                           </button>
                         )}
                         {booking.status === 'completed' && (
@@ -479,7 +478,7 @@ const BookingsPage = () => {
               >×</button>
             </div>
             <p className="text-sm text-neutral-600 mb-3">
-              {payBooking.vehicle.name} — {t('bookings:summary.finalAmount') || 'Final amount'}: <Price>{formatPrice(remainingDue(payBooking))}</Price>
+              {payBooking.vehicle.name} — {t('bookings:summary.finalAmount') || 'Final amount'}: {formatPrice(remainingDue(payBooking))}
             </p>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <RemainingPaymentForm amount={remainingDue(payBooking)} onSuccess={handlePaySuccess} />

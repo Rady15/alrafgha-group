@@ -65,7 +65,7 @@
     "please": "يرجى",
     "toBookVehicle": "لحجز هذه المركبة",
     "successTitle": "تم الدفع بنجاح!",
-    "successMessage": "تم تأكيد حجزك. شكراً لاختيارك الرفقه جروب!",
+    "successMessage": "تم تأكيد حجزك. شكراً لاختيارك Alrafgha Group!",
     "vehicle": "المركبة:",
     "statusLabel": "الحالة:",
     "visitOffice": "يرجى زيارة مكتبنا وقت الاستلام المجدول مع إثبات هوية ساري.",
@@ -119,7 +119,7 @@
     "cancellationReason": "سبب الإلغاء"
   },
   "bill": {
-    "companyName": "الرفقه جروب للتأجير",
+    "companyName": "Alrafgha Group للتأجير",
     "returnInvoice": "فاتورة إرجاع",
     "billId": "معرف الفاتورة",
     "bookingId": "معرف الحجز",
@@ -146,7 +146,7 @@
     "totalPaid": "إجمالي المدفوع",
     "damageNotes": "ملاحظات التلف",
     "returnNotes": "ملاحظات الإرجاع",
-    "thankYou": "شكراً لاختيارك الرفقه جروب! نتمنى لك رحلة سعيدة.",
+    "thankYou": "شكراً لاختيارك Alrafgha Group! نتمنى لك رحلة سعيدة.",
     "final": "النهائية",
     "bill": "الفاتورة",
     "vehicle": "المركبة",
@@ -155,7 +155,7 @@
     "pickupDateTimeLine": "تاريخ ووقت الاستلام:",
     "pickupLocationLine": "موقع الاستلام:",
     "notes": "ملاحظات",
-    "finalChargesNote": "ستُحتسب الرسوم النهائية عند إرجاع المركبة. شكراً لاختيارك الرفقه جروب!",
+    "finalChargesNote": "ستُحتسب الرسوم النهائية عند إرجاع المركبة. شكراً لاختيارك Alrafgha Group!",
     "downloadPdf": "تنزيل PDF",
     "downloadBillPdf": "تنزيل فاتورة PDF"
   },

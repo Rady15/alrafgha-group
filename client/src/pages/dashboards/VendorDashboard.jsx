@@ -7,7 +7,6 @@ import { MapPinned, Mail, Shield, Settings, LockKeyhole, Car, PiggyBank } from '
 import CustomDropdown from '../../components/common/CustomDropdown';
 import { useTranslation } from 'react-i18next';
 import { formatPrice, formatDate, formatDateTime, formatTime, formatNumber } from '../../i18n/format';
-import Price from '../../components/Price';
 
 const VendorDashboard = () => {
     const { t } = useTranslation('dashboards');
@@ -661,8 +660,8 @@ const VendorDashboard = () => {
                                     <div className="grid grid-cols-2 gap-2 text-sm">
                                         <p><span className="font-medium">{t('details.package')}:</span> {packageInfo.name}</p>
                                         <p><span className="font-medium">{t('details.type')}:</span> {packageInfo.vehicle_type}</p>
-                                        <p><span className="font-medium">{t('details.pricePerHour')}:</span> <Price>{formatPrice(packageInfo.price_per_hour)}</Price></p>
-                                        <p><span className="font-medium">{t('details.pricePerKm')}:</span> <Price>{formatPrice(packageInfo.price_per_km)}</Price></p>
+                                        <p><span className="font-medium">{t('details.pricePerHour')}:</span> {formatPrice(packageInfo.price_per_hour)}</p>
+                                        <p><span className="font-medium">{t('details.pricePerKm')}:</span> {formatPrice(packageInfo.price_per_km)}</p>
                                     </div>
                                 </div>
                             )}
@@ -778,7 +777,7 @@ const VendorDashboard = () => {
                                                     </div>
                                                     <div>
                                                         <p className="text-neutral-600">{t('stats.totalEarnings')}</p>
-                                                        <p className="font-bold text-green-600"><Price>{formatPrice(vehicle.total_earnings || 0)}</Price></p>
+                                                        <p className="font-bold text-green-600">{formatPrice(vehicle.total_earnings || 0)}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -872,7 +871,7 @@ const VendorDashboard = () => {
                                 <div className="flex items-center justify-between">
                                     <div>
                                     <p className="text-white/80 text-sm font-medium">{t('stats.totalEarnings')}</p>
-                                    <p className="text-3xl font-bold mt-1" data-testid="total-earnings"><Price>{formatPrice(totalEarnings)}</Price></p>
+                                    <p className="text-3xl font-bold mt-1" data-testid="total-earnings">{formatPrice(totalEarnings)}</p>
                                     </div>
                                     <div className="bg-white/20 p-4 rounded-xl">
                                         <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -995,12 +994,12 @@ const VendorDashboard = () => {
                                                     </td>
                                                     <td className="px-4 py-4">
                                                         <p className={`text-sm font-medium ${earning.damage_cost > 0 ? 'text-red-600' : 'text-neutral-900'}`}>
-                                                            <Price>{formatPrice(earning.damage_cost || 0)}</Price>
+                                                            {formatPrice(earning.damage_cost || 0)}
                                                         </p>
                                                     </td>
                                                     <td className="px-4 py-4">
                                                         <p className="text-sm font-bold text-green-600">
-                                                            <Price>{formatPrice(earning.final_cost || 0)}</Price>
+                                                            {formatPrice(earning.final_cost || 0)}
                                                         </p>
                                                     </td>
                                                 </tr>

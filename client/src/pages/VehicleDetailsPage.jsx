@@ -5,7 +5,6 @@ import { Motorbike, Car, Sparkles } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../i18n/format';
-import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
 
 const VehicleDetailsPage = () => {
@@ -193,7 +192,7 @@ const VehicleDetailsPage = () => {
                     <div class="flex flex-col">
                       <span class="text-sm text-neutral-600">{t('perDay')}</span>
                       <span class="text-2xl sm:text-3xl font-extrabold bg-linear-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent tracking-tight">
-                        <Price>{formatPrice(vehicle.price_per_day)}</Price>
+                        {formatPrice(vehicle.price_per_day)}
                       </span>
                     </div>
 
@@ -201,7 +200,7 @@ const VehicleDetailsPage = () => {
                       <div class="flex flex-col">
                         <span class="text-sm text-neutral-600">{t('perKilometer')}</span>
                         <span class="text-2xl sm:text-3xl font-extrabold bg-linear-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent tracking-tight">
-                          <Price>{formatPrice(vehicle.price_per_km)}</Price>
+                          {formatPrice(vehicle.price_per_km)}
                         </span>
                       </div>
                     )}
