@@ -156,9 +156,6 @@ const Footer = () => {
           <p className="text-ink-400 text-xs">
             © {currentYear} <span className="text-white font-semibold">Alrafgha Group</span>. {t('footer.rights')}
           </p>
-          <p className="text-ink-400 text-xs">
-            {t('footer.crafted')}
-          </p>
         </div>
       </div>
     </footer>
