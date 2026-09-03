@@ -30,12 +30,6 @@ const categoryCards = [
   { key: 'sportsBikes', label: 'دراجات رياضية', count: '3+', type: 'bike', image: 'https://images.unsplash.com/photo-1558980664-10e7170e99f8?w=900&h=900&fit=crop' },
 ];
 
-const articleCards = [
-  { tag: 'سيارات', title: 'مستقبل السيارات الكهربائية في المملكة', image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=900&h=600&fit=crop' },
-  { tag: 'نصائح', title: 'أفضل وجهات السفر بالسيارة', image: 'https://images.unsplash.com/photo-1473445361085-b9a07f55608b?w=900&h=600&fit=crop' },
-  { tag: 'دليل', title: '5 نصائح للحفاظ على سيارتك', image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=900&h=600&fit=crop' },
-];
-
 const HomePage = () => {
   const navigate = useNavigate();
   const [featuredVehicles, setFeaturedVehicles] = useState([]);
@@ -44,6 +38,7 @@ const HomePage = () => {
   const [location, setLocation] = useState('');
   const [pickupDate, setPickupDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
+  const [blogPosts, setBlogPosts] = useState([]);
 
   useEffect(() => {
     const fetchFeaturedVehicles = async () => {
@@ -58,6 +53,19 @@ const HomePage = () => {
       }
     };
     fetchFeaturedVehicles();
+  }, []);
+
+  useEffect(() => {
+    const fetchBlogPosts = async () => {
+      try {
+        const res = await fetch(API_ENDPOINTS.publishedPosts);
+        const data = await res.json();
+        if (data.status === 'success') setBlogPosts(data.data.posts || []);
+      } catch (err) {
+        console.error('Error fetching blog posts:', err);
+      }
+    };
+    fetchBlogPosts();
   }, []);
 
   const filteredVehicles = useMemo(() => {
@@ -235,12 +243,14 @@ const HomePage = () => {
       </section>
 
       {/* ARTICLES */}
-      <section className="home-section home-section--soft">
-        <div className="home-shell">
-          <div className="home-section-head home-section-head--compact"><div><span className="home-overline">من مدونتنا</span><h2>أحدث <span>المقالات</span></h2></div><Link to="/blog" className="home-text-link">عرض كل المقالات <ArrowLeft size={16} /></Link></div>
-          <div className="home-articles">{articleCards.map((article) => <Link to="/blog" className="home-article" key={article.title}><div className="home-article__image"><img src={article.image} alt={article.title} /><span>{article.tag}</span></div><div className="home-article__body"><h3>{article.title}</h3><p>نصائح وأفكار تساعدك على اختيار المركبة والاستمتاع برحلتك بثقة.</p><span>اقرأ المقال <ArrowLeft size={15} /></span></div></Link>)}</div>
-        </div>
-      </section>
+      {blogPosts.length > 0 && (
+        <section className="home-section home-section--soft">
+          <div className="home-shell">
+            <div className="home-section-head home-section-head--compact"><div><span className="home-overline">من مدونتنا</span><h2>أحدث <span>المقالات</span></h2></div><Link to="/blog" className="home-text-link">عرض كل المقالات <ArrowLeft size={16} /></Link></div>
+            <div className="home-articles">{blogPosts.map((post) => <Link to={`/blog/${post.slug}`} className="home-article" key={post._id}><div className="home-article__image"><img src={post.featured_image || 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=900&h=600&fit=crop'} alt={post.title} /><span>{post.category}</span></div><div className="home-article__body"><h3>{post.title}</h3><p>{post.excerpt || 'نصائح وأفكار تساعدك على اختيار المركبة والاستمتاع برحلتك بثقة.'}</p><span>اقرأ المقال <ArrowLeft size={15} /></span></div></Link>)}</div>
+          </div>
+        </section>
+      )}
 
       {/* TESTIMONIALS */}
       <section className="home-section" data-testid="testimonials-section">

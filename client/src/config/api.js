@@ -90,6 +90,7 @@ export const API_ENDPOINTS = {
 
     // Blog endpoints
     blog: `${API_BASE_URL}/blog`,
+    blogById: (id) => `${API_BASE_URL}/blog/${id}`,
     blogBySlug: (slug) => `${API_BASE_URL}/blog/slug/${slug}`,
     publishedPosts: `${API_BASE_URL}/blog/published`,
     togglePublishPost: (id) => `${API_BASE_URL}/blog/${id}/publish`,
