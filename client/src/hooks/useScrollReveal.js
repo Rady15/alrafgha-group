@@ -27,7 +27,14 @@ export function useScrollReveal(options = {}) {
       { threshold, rootMargin }
     );
     nodes.forEach((n) => observer.observe(n));
-    return () => observer.disconnect();
+    // Safety: if observer never fires (e.g. already in viewport, JS delay), force visible after 600ms
+    const fallback = setTimeout(() => {
+      nodes.forEach((n) => n.classList.add('is-visible'));
+    }, 700);
+    return () => {
+      clearTimeout(fallback);
+      observer.disconnect();
+    };
   }, [threshold, rootMargin, once]);
 
   return ref;
