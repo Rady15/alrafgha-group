@@ -15,7 +15,8 @@
     "onDemand": "عند الطلب.",
     "bikesBadge": "دراجات نارية",
     "zipAcrossTown": "أسرع عبر المدينة",
-    "fromPrice": "ابتداءً من {{price}}/يوم"
+    "fromPrice": "ابتداءً من {{price}}/يوم",
+    "cinematic": "فيديو سينمائي"
   },
   "stats": {
     "happyRiders": "ركاب سعداء",
@@ -23,7 +24,8 @@
     "citiesLive": "مدن متاحة",
     "starRating": "تقييم النجوم",
     "trustedBy": "موثوق به من قبل",
-    "happyTravelers": "مسافرين سعداء في جميع أنحاء المملكة العربية السعودية"
+    "happyTravelers": "مسافرين سعداء في جميع أنحاء المملكة العربية السعودية",
+    "availableNow": "متاح الآن"
   },
   "categories": {
     "badge": "فئات مختارة",
@@ -38,7 +40,9 @@
     "dailyDrivers": "للقيادة اليومية",
     "familyTrips": "رحلات عائلية",
     "quickErrands": "مهام سريعة",
-    "adrenaline": "للإثارة"
+    "adrenaline": "للإثارة",
+    "exploreCollection": "استكشف المجموعة",
+    "noData": "لا توجد بيانات مركبات متاحة حاليًا."
   },
   "featured": {
     "editorsPick": "اختيار المحرر",
@@ -46,7 +50,8 @@
     "subtitle": "مركباتنا المفضلة — مختارة يدويًا، مختبرة على الطريق، وجاهزة عندما تكون مستعدًا.",
     "viewAll": "عرض الكل",
     "noVehicles": "لا تتوفر مركبات مميزة حاليًا.",
-    "viewAllVehicles": "عرض كل المركبات"
+    "viewAllVehicles": "عرض كل المركبات",
+    "all": "كل المركبات"
   },
   "howItWorks": {
     "badge": "كيف تعمل",
@@ -127,5 +132,16 @@
     "freeCancellation": "إلغاء مجاني",
     "support247": "دعم 24/7",
     "startingAt": "ابتداءً من"
+  },
+  "search": {
+    "location": "موقع الاستلام",
+    "locationPlaceholder": "اكتب المدينة أو الموقع",
+    "pickup": "تاريخ الاستلام",
+    "return": "تاريخ الإرجاع",
+    "submit": "ابحث في الأسطول"
+  },
+  "blog": {
+    "latest": "أحدث المقالات",
+    "read": "اقرأ المقال"
   }
 }

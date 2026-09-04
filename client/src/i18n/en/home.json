@@ -15,7 +15,8 @@
     "onDemand": "on-demand.",
     "bikesBadge": "Bikes",
     "zipAcrossTown": "Zip across town",
-    "fromPrice": "From {{price}}/day"
+    "fromPrice": "From {{price}}/day",
+    "cinematic": "Cinematic video"
   },
   "stats": {
     "happyRiders": "Happy riders",
@@ -23,7 +24,8 @@
     "citiesLive": "Cities live",
     "starRating": "Star rating",
     "trustedBy": "Trusted by",
-    "happyTravelers": "happy travelers across Saudi Arabia"
+    "happyTravelers": "happy travelers across Saudi Arabia",
+    "availableNow": "Available now"
   },
   "categories": {
     "badge": "Curated Categories",
@@ -38,7 +40,9 @@
     "dailyDrivers": "Daily drivers",
     "familyTrips": "Family trips",
     "quickErrands": "Quick errands",
-    "adrenaline": "Adrenaline"
+    "adrenaline": "Adrenaline",
+    "exploreCollection": "Explore collection",
+    "noData": "No vehicle data is available right now."
   },
   "featured": {
     "editorsPick": "Editor's pick",
@@ -46,7 +50,8 @@
     "subtitle": "Our most-loved vehicles — handpicked, road-tested, and ready when you are.",
     "viewAll": "View all",
     "noVehicles": "No featured vehicles available right now.",
-    "viewAllVehicles": "View all vehicles"
+    "viewAllVehicles": "View all vehicles",
+    "all": "All vehicles"
   },
   "howItWorks": {
     "badge": "How it works",
@@ -127,5 +132,16 @@
     "freeCancellation": "Free cancellation",
     "support247": "24/7 support",
     "startingAt": "Starting at"
+  },
+  "search": {
+    "location": "Pickup location",
+    "locationPlaceholder": "City or location",
+    "pickup": "Pickup date",
+    "return": "Return date",
+    "submit": "Search fleet"
+  },
+  "blog": {
+    "latest": "Latest articles",
+    "read": "Read article"
   }
 }

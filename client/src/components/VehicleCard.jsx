@@ -21,7 +21,7 @@ const VehicleCard = ({ vehicle }) => {
   } = vehicle;
 
   const isAvailable = availability_status === 'available';
-  const imageUrl = images && images.length > 0 ? images[0] : 'https://via.placeholder.com/400x300';
+  const imageUrl = images?.[0] || '';
   const TypeIcon = type === 'car' ? Car : Bike;
 
   return (
@@ -34,11 +34,11 @@ const VehicleCard = ({ vehicle }) => {
         {/* Decorative grid */}
         <div className="absolute inset-0 dot-grid opacity-40" />
 
-        <img
+        {imageUrl ? <img
           src={imageUrl}
           alt={name}
           className="relative w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-1 transition-all duration-[1200ms] ease-out"
-        />
+        /> : <div className="relative w-full h-full bg-gradient-to-br from-ink-100 via-white to-primary-50" aria-hidden="true" />}
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
