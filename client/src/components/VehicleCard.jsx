@@ -36,12 +36,11 @@ const VehicleCard = ({ vehicle }) => {
           <div className="absolute inset-0 dot-grid opacity-40" />
 
           {imageUrl ? (
-            <img src={imageUrl} alt={name} className="relative w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700 ease-out" />
-          ) : (
-            <div className="relative w-full h-full bg-gradient-to-br from-ink-100 via-white to-gold-50 flex items-center justify-center" aria-hidden="true">
-              <TypeIcon className="w-16 h-16 text-ink-200" />
-            </div>
-          )}
+            <img src={imageUrl} alt={name} className="relative w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700 ease-out" onError={(e) => { e.currentTarget.style.display = 'none'; const fb = e.currentTarget.parentElement?.querySelector('[data-fallback]'); if (fb) fb.style.display = 'flex'; }} />
+          ) : null}
+          <div data-fallback className={`${imageUrl ? 'hidden' : 'flex'} absolute inset-0 bg-gradient-to-br from-ink-100 via-white to-gold-50 items-center justify-center`} aria-hidden="true" style={{ display: imageUrl ? 'none' : 'flex' }}>
+            <TypeIcon className="w-16 h-16 text-ink-200" />
+          </div>
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-ink-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

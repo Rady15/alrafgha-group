@@ -96,8 +96,18 @@ const VehicleDetailsPage = () => {
           <div className="lg:col-span-3 space-y-6">
             {/* Gallery — no horizontal overflow, keyboard + SR friendly */}
             <div className="relative bg-ink-950 rounded-[22px] overflow-hidden shadow-2xl" data-reveal="up" onKeyDown={onGalleryKeyDown} tabIndex={vehicle.images.length > 1 ? 0 : -1} aria-label={t('vehicles:galleryLabel') || 'Vehicle gallery'}>
-              <div className="aspect-[16/10] relative">
-                <img src={vehicle.images[selectedImage]} alt={`${vehicle.name} — ${t('vehicles:imageAlt') || 'photo'} ${selectedImage + 1} / ${vehicle.images.length}`} className="w-full h-full object-cover" loading="eager" />
+              <div className="aspect-[16/10] relative bg-ink-900 overflow-hidden">
+                {/* Fallback icon — always behind, visible if image hidden/broken even when extension injects __web-inspector-hide-shortcut__ */}
+                <div className="absolute inset-0 flex items-center justify-center bg-ink-900 text-ink-400" aria-hidden="true">
+                  <Car className="w-16 h-16 opacity-30" />
+                </div>
+                <img
+                  src={vehicle.images[selectedImage]}
+                  alt={t('vehicles:imageAlt', { name: vehicle.name, n: selectedImage + 1 })}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="eager"
+                  onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
+                />
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.32) 100%)' }} />
                 <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -133,8 +143,8 @@ const VehicleDetailsPage = () => {
               {vehicle.images.length > 1 && (
                 <div className="flex gap-2 p-2 bg-ink-900 overflow-x-auto overscroll-x-contain" style={{ scrollbarWidth: 'thin' }}>
                   {vehicle.images.map((img, idx) => (
-                    <button key={idx} onClick={() => setSelectedImage(idx)} aria-label={`${t('vehicles:imageAlt') || 'View image'} ${idx + 1}`} aria-current={idx === selectedImage} className={`shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 ${selectedImage === idx ? 'border-gold-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}>
-                      <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    <button key={idx} onClick={() => setSelectedImage(idx)} aria-label={t('vehicles:imageAlt', { name: vehicle.name, n: idx + 1 })} aria-current={idx === selectedImage} className={`shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 ${selectedImage === idx ? 'border-gold-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}>
+                      <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                     </button>
                   ))}
                 </div>
@@ -145,9 +155,9 @@ const VehicleDetailsPage = () => {
             <div className="px-1" data-reveal="up" style={{ '--reveal-delay': '80ms' }}>
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-ink-900 leading-none">{vehicle.name}</h1>
-                  <p className="text-ink-500 mt-1.5 flex items-center gap-2 text-sm">
-                    <span className="font-semibold text-ink-700">{vehicle.brand}</span>
+                  <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight leading-none" style={{ color: '#0c0c14' }}>{vehicle.name}</h1>
+                  <p className="mt-1.5 flex items-center gap-2 text-sm" style={{ color: '#484858' }}>
+                    <span className="font-semibold" style={{ color: '#303040' }}>{vehicle.brand}</span>
                     <span className="w-1 h-1 rounded-full bg-gold-500" />
                     <span>{vehicle.model_name}</span>
                     {vehicle.cc_engine && <><span className="w-1 h-1 rounded-full bg-ink-300" /><span className="inline-flex items-center gap-1 font-mono text-xs bg-ink-100 px-2 py-0.5 rounded">{vehicle.cc_engine}cc</span></>}
