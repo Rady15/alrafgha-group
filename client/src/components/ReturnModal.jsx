@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { API_ENDPOINTS } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
@@ -40,10 +38,6 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
     const [onlinePaymentCompleted, setOnlinePaymentCompleted] = useState(false);
     const [onlinePaymentDetails, setOnlinePaymentDetails] = useState(null);
     const [showPaymentSuccessModal, setShowPaymentSuccessModal] = useState(false);
-
-    // Stripe final-payment state
-    const [stripePromise, setStripePromise] = useState(null);
-    const [clientSecret, setClientSecret] = useState(null);
 
     // Get advance payment amount from booking
     const advancePaid = booking?.advance_payment?.amount || 0;
@@ -251,77 +245,6 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle online payment via Stripe
-    const handleOnlinePayment = async () => {
-        if (!costBreakdown || costBreakdown.remainingAmount <= 0) {
-            toast.info(t('bookings:return.noRemainingAmount'));
-            setOnlinePaymentCompleted(true);
-            return;
-        }
-
-        setLoading(true);
-        try {
-            // Fetch Stripe publishable key from server config
-            const configRes = await fetch(API_ENDPOINTS.stripeConfig);
-            const configData = await configRes.json();
-            const pk = configData.data?.publishable_key || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-            if (!pk) {
-                toast.error(t('bookings:return.paymentGatewayFailed'));
-                setLoading(false);
-                return;
-            }
-
-            // Create final payment intent
-            const intentResponse = await fetch(API_ENDPOINTS.stripeCreateFinalIntent, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    booking_id: booking._id,
-                    final_amount: costBreakdown.totalCost,
-                    advance_paid: advancePaid
-                })
-            });
-
-            const intentData = await intentResponse.json();
-
-            if (intentData.status !== 'success') {
-                toast.error(intentData.message || 'Failed to create payment');
-                setLoading(false);
-                return;
-            }
-
-            // Check if no remaining amount
-            if (intentData.data.remaining_amount === 0) {
-                toast.success(t('bookings:return.noRemainingAmountCovered'));
-                setOnlinePaymentCompleted(true);
-                setOnlinePaymentDetails({ amount: 0, message: 'Fully covered by advance' });
-                setLoading(false);
-                return;
-            }
-
-            setClientSecret(intentData.data.client_secret);
-            setStripePromise(loadStripe(pk));
-        } catch (error) {
-            console.error('Payment error:', error);
-            toast.error(t('bookings:return.somethingWentWrong'));
-            setLoading(false);
-        }
-    };
-
-    const handleStripeFinalSuccess = useCallback((paymentIntentId, amount) => {
-        setOnlinePaymentCompleted(true);
-        setOnlinePaymentDetails({ paymentId: paymentIntentId, amount: amount || costBreakdown?.remainingAmount || 0 });
-        setLoading(false);
-        setClientSecret(null);
-        setShowPaymentSuccessModal(true);
-    }, [costBreakdown]);
-
-    const handleStripeFinalError2 = useCallback((msg) => {
-        setLoading(false);
-        toast.error(msg);
-    }, [toast]);
-
     // Handle payment success modal close - auto submit the return form
     const handlePaymentSuccessClose = useCallback(async () => {
         setShowPaymentSuccessModal(false);
@@ -370,7 +293,7 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                 setLoading(false);
             }
         }, 500);
-    }, [user, formData, costBreakdown, booking._id, toast]);
+    }, [user, formData, costBreakdown, booking._id, paymentMethod, t, toast]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -893,68 +816,6 @@ const ReturnModal = ({ booking, onClose, onSuccess }) => {
                     }}
                 />
             )}
-        </div>
-    );
-};
-
-const StripeFinalForm = ({ amount, onSuccess, onError }) => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const [confirming, setConfirming] = useState(false);
-    const [paymentError, setPaymentError] = useState(null);
-
-    const handleConfirm = async () => {
-        if (!stripe || !elements) return;
-
-        setConfirming(true);
-        setPaymentError(null);
-
-        try {
-            const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
-                elements,
-                redirect: 'if_required'
-            });
-
-            if (confirmError) {
-                setPaymentError(confirmError.message || 'Payment failed');
-                onError?.(confirmError.message || 'Payment failed');
-                setConfirming(false);
-                return;
-            }
-
-            if (!paymentIntent || paymentIntent.status !== 'succeeded') {
-                const msg = paymentIntent?.last_payment_error?.message || 'Payment was not completed';
-                setPaymentError(msg);
-                onError?.(msg);
-                setConfirming(false);
-                return;
-            }
-
-            onSuccess?.(paymentIntent.id, paymentIntent.amount_received / 100);
-        } catch (error) {
-            console.error('Confirm payment error:', error);
-            setPaymentError('Something went wrong. Please try again.');
-            onError?.('Something went wrong. Please try again.');
-        }
-        setConfirming(false);
-    };
-
-    return (
-        <div className="space-y-3">
-            <PaymentElement options={{ layout: 'tabs' }} />
-            {paymentError && (
-                <p className="text-sm text-red-600">{paymentError}</p>
-            )}
-            <button
-                type="button"
-                disabled={!stripe || confirming}
-                onClick={handleConfirm}
-                className="w-full py-3 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center"
-                data-testid="confirm-final-payment-button"
-            >
-                {confirming ? 'Processing...' : `Confirm Payment ${formatPrice(amount)}`}
-            </button>
-            <p className="text-xs text-neutral-500">Payments are processed securely by Stripe.</p>
         </div>
     );
 };

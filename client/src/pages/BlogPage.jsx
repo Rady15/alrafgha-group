@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config/api';
-import { useTranslation } from 'react-i18next';
 import { formatDate } from '../i18n/format';
 import { BookOpen, Calendar, Eye, User, ArrowUpRight, Tag } from 'lucide-react';
 
 const BlogPage = () => {
-    const { t } = useTranslation();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

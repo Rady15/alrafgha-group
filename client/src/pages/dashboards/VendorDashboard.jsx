@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
@@ -6,7 +6,7 @@ import { API_ENDPOINTS, getAuthHeader } from '../../config/api';
 import { MapPinned, Mail, Shield, Settings, LockKeyhole, Car, PiggyBank } from 'lucide-react';
 import CustomDropdown from '../../components/common/CustomDropdown';
 import { useTranslation } from 'react-i18next';
-import { formatPrice, formatDate, formatDateTime, formatTime, formatNumber } from '../../i18n/format';
+import { formatPrice, formatDate } from '../../i18n/format';
 import Price from '../../components/Price';
 
 const VendorDashboard = () => {
@@ -15,7 +15,6 @@ const VendorDashboard = () => {
     const { user, isAuthenticated, logout, loading: authLoading, requestPasswordChangeOTP, verifyPasswordChangeOTP, resendPasswordChangeOTP } = useAuth();
     const { toast } = useToast();
     const [vehicles, setVehicles] = useState([]);
-    const [vendorInfo, setVendorInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showAddForm, setShowAddForm] = useState(false);
     const [activeTab, setActiveTab] = useState('vehicles'); // 'vehicles', 'earnings', or 'settings'
@@ -58,51 +57,8 @@ const VendorDashboard = () => {
     const [packageInfo, setPackageInfo] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    useEffect(() => {
-        if (authLoading) {
-            return;
-        }
-        // Check if user is authenticated and is vendor
-        if (!isAuthenticated || !user || user.role !== 'vendor') {
-            navigate('/login');
-            return;
-        }
-
-        fetchVendorInfo(user.id);
-        fetchVehicles(user.id);
-    }, [navigate, isAuthenticated, user, authLoading]);
-
-    useEffect(() => {
-        if (activeTab === 'earnings' && user) {
-            fetchEarnings(earningsFilter);
-            // Fetch vehicles data if not already loaded
-            if (vehicles.length === 0) {
-                fetchVehicles(user.id);
-            }
-        }
-    }, [activeTab, earningsFilter, user]);
-
-    // Resend cooldown timer
-    useEffect(() => {
-        if (resendCooldown > 0) {
-            const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
-            return () => clearTimeout(timer);
-        }
-    }, [resendCooldown]);
-
-    const fetchVendorInfo = async (vendorId) => {
-        try {
-            const response = await fetch(API_ENDPOINTS.vendorById(vendorId));
-            const data = await response.json();
-            if (data.status === 'success') {
-                setVendorInfo(data.data.vendor);
-            }
-        } catch (error) {
-            console.error('Error fetching vendor info:', error);
-        }
-    };
-
-    const fetchVehicles = async (vendorId) => {
+    const fetchVehicles = useCallback(async (vendorId) => {
+        if (!vendorId) return;
         try {
             setLoading(true);
             const response = await fetch(API_ENDPOINTS.vehiclesByVendor(vendorId));
@@ -116,9 +72,9 @@ const VendorDashboard = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const fetchEarnings = async (filter) => {
+    const fetchEarnings = useCallback(async (filter) => {
         try {
             setEarningsLoading(true);
             const url = filter === 'all' 
@@ -141,7 +97,35 @@ const VendorDashboard = () => {
         } finally {
             setEarningsLoading(false);
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        if (authLoading) {
+            return;
+        }
+        // Check if user is authenticated and is vendor
+        if (!isAuthenticated || !user || user.role !== 'vendor') {
+            navigate('/login');
+            return;
+        }
+
+        fetchVehicles(user.id);
+    }, [navigate, isAuthenticated, user, authLoading, fetchVehicles]);
+
+    useEffect(() => {
+        if (activeTab === 'earnings' && user) {
+            fetchEarnings(earningsFilter);
+            fetchVehicles(user.id);
+        }
+    }, [activeTab, earningsFilter, user, fetchEarnings, fetchVehicles]);
+
+    // Resend cooldown timer
+    useEffect(() => {
+        if (resendCooldown > 0) {
+            const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [resendCooldown]);
 
     const handleChange = async (e) => {
         const { name, value } = e.target;
@@ -200,8 +184,6 @@ const VendorDashboard = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const vendorId = user?.id;
 
         // Validate files
         if (!files.rc_document || !files.insurance_document || files.vehicle_images.length === 0) {

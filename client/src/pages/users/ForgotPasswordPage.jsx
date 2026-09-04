@@ -39,7 +39,7 @@ const ForgotPasswordPage = () => {
             } else {
                 setError(result.message || t('auth:forgotPassword.errorSendFailed'));
             }
-        } catch (err) {
+        } catch {
             setError(t('auth:forgotPassword.errorUnexpected'));
         } finally {
             setIsLoading(false);

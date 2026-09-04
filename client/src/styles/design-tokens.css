@@ -1,0 +1,321 @@
+/**
+ * ALRAFGHA GROUP — DESIGN TOKENS
+ * Human-designed, premium, Saudi-market appropriate
+ * No AI-generated patterns, no generic SaaS aesthetics
+ */
+
+@theme {
+  /* Tailwind v4 theme — generates bg-*, text-*, border-* utilities */
+    /* ──────────────────────────────────────────────
+       COLOR SYSTEM — Derived from Alrafgha brand
+       No purple/blue AI gradients. Warm, trustworthy.
+       ────────────────────────────────────────────── */
+    
+    /* Brand Gold — Primary identity */
+    --color-gold-25: #fffdf5;
+    --color-gold-50: #fffbf0;
+    --color-gold-100: #fff5d6;
+    --color-gold-200: #ffe9ad;
+    --color-gold-300: #ffd97a;
+    --color-gold-400: #f5c842;
+    --color-gold-500: #efb616;   /* Primary brand */
+    --color-gold-600: #cd950e;
+    --color-gold-700: #a5730a;
+    --color-gold-800: #865c0e;
+    --color-gold-900: #6f4c10;
+    --color-gold-950: #402a07;
+
+    /* Warm Red — source for crimson / secondary */
+    --color-crimson-25: #fef2f2;
+    --color-crimson-50: #fef2f2;
+    --color-crimson-100: #fee2e2;
+    --color-crimson-200: #fecaca;
+    --color-crimson-300: #fca5a5;
+    --color-crimson-400: #f87171;
+    --color-crimson-500: #ef4444;
+    --color-crimson-600: #dc2626;
+    --color-crimson-700: #b91c1c;
+    --color-crimson-800: #991b1b;
+    --color-crimson-900: #7f1d1d;
+    --color-crimson-950: #450a0a;
+
+    /* Legacy aliases — keep primary/secondary working for all existing pages */
+    --color-primary-25: var(--color-gold-25);
+    --color-primary-50: var(--color-gold-50);
+    --color-primary-100: var(--color-gold-100);
+    --color-primary-200: var(--color-gold-200);
+    --color-primary-300: var(--color-gold-300);
+    --color-primary-400: var(--color-gold-400);
+    --color-primary-500: var(--color-gold-500);
+    --color-primary-600: var(--color-gold-600);
+    --color-primary-700: var(--color-gold-700);
+    --color-primary-800: var(--color-gold-800);
+    --color-primary-900: var(--color-gold-900);
+    --color-primary-950: var(--color-gold-950);
+    --color-secondary-25: var(--color-crimson-25);
+    --color-secondary-50: var(--color-crimson-50);
+    --color-secondary-100: var(--color-crimson-100);
+    --color-secondary-200: var(--color-crimson-200);
+    --color-secondary-300: var(--color-crimson-300);
+    --color-secondary-400: var(--color-crimson-400);
+    --color-secondary-500: var(--color-crimson-500);
+    --color-secondary-600: var(--color-crimson-600);
+    --color-secondary-700: var(--color-crimson-700);
+    --color-secondary-800: var(--color-crimson-800);
+    --color-secondary-900: var(--color-crimson-900);
+    --color-secondary-950: var(--color-crimson-950);
+    --color-accent-50: #fffbeb;
+    --color-accent-100: #fef3c7;
+    --color-accent-200: #fde68a;
+    --color-accent-300: #fcd34d;
+    --color-accent-400: #fbbf24;
+    --color-accent-500: #f59e0b;
+    --color-accent-600: #d97706;
+    --color-accent-700: #b45309;
+    --color-accent-800: #92400e;
+    --color-accent-900: #78350f;
+    --color-accent-950: #451a03;
+
+    /* Ink — Typography & UI chrome */
+    --color-ink-25: #f8f8fa;
+    --color-ink-50: #f5f5f7;
+    --color-ink-100: #e5e5eb;
+    --color-ink-200: #c7c7d1;
+    --color-ink-300: #9b9ba9;
+    --color-ink-400: #6c6c7c;
+    --color-ink-500: #484858;
+    --color-ink-600: #303040;
+    --color-ink-700: #202030;
+    --color-ink-800: #141420;
+    --color-ink-900: #0c0c14;
+    --color-ink-950: #06060c;
+
+    /* Neutral — Surfaces, borders */
+    --color-neutral-25: #fafafa;
+    --color-neutral-50: #fafafa;
+    --color-neutral-100: #f5f5f5;
+    --color-neutral-200: #e5e5e5;
+    --color-neutral-300: #d4d4d4;
+    --color-neutral-400: #a3a3a3;
+    --color-neutral-500: #737373;
+    --color-neutral-600: #525252;
+    --color-neutral-700: #404040;
+    --color-neutral-800: #262626;
+    --color-neutral-900: #171717;
+    --color-neutral-950: #0a0a0a;
+
+    /* Semantic — Status, feedback */
+    --color-success-50: #f0fdf4;
+    --color-success-500: #22c55e;
+    --color-success-600: #16a34a;
+    --color-success-700: #15803d;
+    
+    --color-warning-50: #fffbeb;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+    
+    --color-error-50: #fef2f2;
+    --color-error-500: #ef4444;
+    --color-error-600: #dc2626;
+
+    /* ──────────────────────────────────────────────
+       TYPOGRAPHY — Editorial, intentional hierarchy
+       Tajawal (Arabic) + Space Grotesk (Latin) pairing
+       ────────────────────────────────────────────── */
+    
+    --font-sans: 'Tajawal', 'Space Grotesk', system-ui, sans-serif;
+    --font-display: 'Tajawal', 'Bricolage Grotesque', 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    /* Scale — Modular, clamped */
+    --text-xs: 0.75rem;      /* 12px */
+    --text-sm: 0.8125rem;    /* 13px */
+    --text-base: 0.9375rem;  /* 15px */
+    --text-lg: 1.0625rem;    /* 17px */
+    --text-xl: 1.25rem;      /* 20px */
+    --text-2xl: 1.5rem;      /* 24px */
+    --text-3xl: 1.875rem;    /* 30px */
+    --text-4xl: 2.25rem;     /* 36px */
+    --text-5xl: 3rem;        /* 48px */
+    --text-6xl: 4rem;        /* 64px */
+    --text-7xl: clamp(4rem, 6vw, 7rem);  /* 64-112px */
+    --text-8xl: clamp(5rem, 8vw, 9rem);  /* 80-144px */
+
+    /* Weights */
+    --font-light: 300;
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+    --font-extrabold: 800;
+    --font-black: 900;
+
+    /* Line heights */
+    --leading-none: 1;
+    --leading-tight: 1.1;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+    --leading-loose: 2;
+
+    /* Letter spacing */
+    --tracking-tightest: -0.07em;
+    --tracking-tighter: -0.05em;
+    --tracking-tight: -0.025em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.025em;
+    --tracking-wider: 0.05em;
+    --tracking-widest: 0.1em;
+
+    /* ──────────────────────────────────────────────
+       SPACING — 4px base, intentional rhythm
+       ────────────────────────────────────────────── */
+    --space-0: 0;
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-7: 1.75rem;   /* 28px */
+    --space-8: 2rem;      /* 32px */
+    --space-9: 2.25rem;   /* 36px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-14: 3.5rem;   /* 56px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+    --space-28: 7rem;     /* 112px */
+    --space-32: 8rem;     /* 128px */
+
+    /* ──────────────────────────────────────────────
+       RADIUS — Intentional, not excessive
+       ────────────────────────────────────────────── */
+    --radius-none: 0;
+    --radius-xs: 0.25rem;     /* 4px */
+    --radius-sm: 0.375rem;    /* 6px */
+    --radius-md: 0.5rem;      /* 8px */
+    --radius-lg: 0.75rem;     /* 12px */
+    --radius-xl: 1rem;        /* 16px */
+    --radius-2xl: 1.5rem;     /* 24px */
+    --radius-3xl: 2rem;       /* 32px */
+    --radius-full: 9999px;
+
+    /* ──────────────────────────────────────────────
+       SHADOWS — Layered, physical, purposeful
+       ────────────────────────────────────────────── */
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.03);
+    --shadow-lg: 0 12px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+    --shadow-xl: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.05);
+    --shadow-2xl: 0 32px 64px rgba(0,0,0,0.12), 0 12px 24px rgba(0,0,0,0.06);
+    
+    /* Gold accent shadows */
+    --shadow-gold: 0 0 0 1px rgba(239, 182, 22, 0.3);
+    --shadow-gold-lg: 0 12px 32px rgba(239, 182, 22, 0.25);
+    --shadow-gold-xl: 0 24px 48px rgba(239, 182, 22, 0.3);
+    
+    /* Card elevation system */
+    --shadow-card-rest: 0 2px 8px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.03);
+    --shadow-card-hover: 0 20px 40px -12px rgba(20, 20, 32, 0.15), 0 8px 16px -4px rgba(239, 182, 22, 0.1);
+    --shadow-card-active: 0 8px 16px rgba(0,0,0,0.06);
+
+    /* ──────────────────────────────────────────────
+       MOTION — One coherent language
+       ────────────────────────────────────────────── */
+    
+    /* Easings */
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Durations */
+    --duration-instant: 0ms;
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+    --duration-slower: 500ms;
+    --duration-section: 700ms;
+    
+    /* Stagger */
+    --stagger-50: 50ms;
+    --stagger-75: 75ms;
+    --stagger-100: 100ms;
+    --stagger-150: 150ms;
+    --stagger-200: 200ms;
+
+    /* ──────────────────────────────────────────────
+       BREAKPOINTS — Intentional, not arbitrary
+       ────────────────────────────────────────────── */
+    --bp-sm: 375px;
+    --bp-md: 640px;
+    --bp-lg: 1024px;
+    --bp-xl: 1280px;
+    --bp-2xl: 1536px;
+    --bp-3xl: 1920px;
+
+    /* ──────────────────────────────────────────────
+       Z-INDEX — Layered with intent
+       ────────────────────────────────────────────── */
+    --z-base: 0;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-fixed: 300;
+    --z-modal-backdrop: 400;
+    --z-modal: 500;
+    --z-popover: 600;
+    --z-tooltip: 700;
+    --z-toast: 800;
+}
+
+@layer base {
+  [dir="rtl"] {
+    --text-direction: rtl;
+  }
+  [dir="ltr"] {
+    --text-direction: ltr;
+  }
+}
+
+/* ──────────────────────────────────────────────
+   REDUCED MOTION — Respect accessibility
+   ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+    --duration-section: 0ms;
+    --stagger-50: 0ms;
+    --stagger-75: 0ms;
+    --stagger-100: 0ms;
+    --stagger-150: 0ms;
+    --stagger-200: 0ms;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ──────────────────────────────────────────────
+   HIGH CONTRAST MODE
+   ────────────────────────────────────────────── */
+@media (prefers-contrast: high) {
+  :root {
+    --color-gold-500: #b8860b;
+    --color-crimson-500: #b22222;
+    --color-ink-900: #000;
+    --color-neutral-900: #000;
+  }
+}

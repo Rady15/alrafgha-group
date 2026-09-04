@@ -14,7 +14,6 @@ import {
   Headset,
   KeyRound,
   MapPin,
-  Play,
   Search,
   ShieldCheck,
   Star,
@@ -24,49 +23,18 @@ import {
 
 const getSettingValue = (settings, keys) => {
   for (const key of keys) {
-    const value = settings?.[key];
-    if (typeof value === 'string' && value.trim()) return value.trim();
-    if (value && typeof value === 'object' && typeof value.url === 'string' && value.url.trim()) {
-      return value.url.trim();
-    }
+    const v = settings?.[key];
+    if (typeof v === 'string' && v.trim()) return v.trim();
+    if (v && typeof v === 'object' && typeof v.url === 'string' && v.url.trim()) return v.url.trim();
   }
   return '';
 };
 
-const useReveal = () => {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const root = ref.current;
-    if (!root) return undefined;
-
-    const nodes = root.querySelectorAll('[data-reveal]');
-    if (!nodes.length) return undefined;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -60px' }
-    );
-
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, []);
-
-  return ref;
-};
-
-const HomePage = () => {
+export default function HomePage() {
   const { t } = useTranslation('home');
   const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
-  const pageRef = useReveal();
+  const rootRef = useRef(null);
 
   const [featuredVehicles, setFeaturedVehicles] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
@@ -80,285 +48,309 @@ const HomePage = () => {
 
   useEffect(() => {
     let cancelled = false;
-
-    const loadHomeData = async () => {
+    (async () => {
       try {
-        const [featuredResponse, vehiclesResponse, postsResponse, settingsResponse] = await Promise.all([
+        const [fr, vr, pr, sr] = await Promise.all([
           fetch(API_ENDPOINTS.vehiclesFeatured),
           fetch(API_ENDPOINTS.vehicles),
           fetch(API_ENDPOINTS.publishedPosts),
           fetch(API_ENDPOINTS.settings),
         ]);
-
-        const [featured, vehicles, posts, siteSettings] = await Promise.all([
-          featuredResponse.json(),
-          vehiclesResponse.json(),
-          postsResponse.json(),
-          settingsResponse.json(),
-        ]);
-
+        const [f, v, p, s] = await Promise.all([fr.json(), vr.json(), pr.json(), sr.json()]);
         if (cancelled) return;
-
-        if (featured.status === 'success') setFeaturedVehicles(featured.data?.vehicles || []);
-        if (vehicles.status === 'success') setAllVehicles(vehicles.data?.vehicles || []);
-        if (posts.status === 'success') setBlogPosts(posts.data?.posts || []);
-        if (siteSettings.status === 'success') setSettings(siteSettings.data?.settings || {});
-      } catch (error) {
-        console.error('Home data loading failed:', error);
+        if (f.status === 'success') setFeaturedVehicles(f.data?.vehicles || []);
+        if (v.status === 'success') setAllVehicles(v.data?.vehicles || []);
+        if (p.status === 'success') setBlogPosts(p.data?.posts || []);
+        if (s.status === 'success') setSettings(s.data?.settings || {});
+      } catch (e) {
+        console.error(e);
       } finally {
         if (!cancelled) setLoadingVehicles(false);
       }
-    };
-
-    loadHomeData();
+    })();
     return () => { cancelled = true; };
   }, []);
 
+  // single IntersectionObserver for the whole page — no per-section observers
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const els = root.querySelectorAll('[data-reveal]');
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -40px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [loadingVehicles]);
+
   const filteredVehicles = useMemo(() => {
     if (activeCategory === 'all') return featuredVehicles.slice(0, 6);
-    return featuredVehicles.filter((vehicle) => vehicle.type === activeCategory).slice(0, 6);
+    return featuredVehicles.filter((v) => v.type === activeCategory).slice(0, 6);
   }, [activeCategory, featuredVehicles]);
 
-  const typeCounts = useMemo(() => ({
-    car: allVehicles.filter((vehicle) => vehicle.type === 'car').length,
-    bike: allVehicles.filter((vehicle) => vehicle.type === 'bike').length,
-  }), [allVehicles]);
+  const heroImage = useMemo(() => {
+    const poster = getSettingValue(settings, ['home_hero_poster', 'hero_poster_url', 'heroPosterUrl']);
+    if (poster) return poster;
+    // prefer a car, fall back to first vehicle
+    return (featuredVehicles.find(v => v.type === 'car')?.images?.[0]) || featuredVehicles[0]?.images?.[0] || allVehicles[0]?.images?.[0] || '';
+  }, [settings, featuredVehicles, allVehicles]);
 
-  const cityCount = useMemo(() => new Set(allVehicles.map((vehicle) => vehicle.location).filter(Boolean)).size, [allVehicles]);
-  const availableCount = useMemo(() => allVehicles.filter((vehicle) => vehicle.availability_status === 'available').length, [allVehicles]);
+  const editorialImage = useMemo(() => {
+    // second distinct image for the Saudi presence / owner CTA strip
+    const pool = [...featuredVehicles, ...allVehicles];
+    const first = heroImage;
+    const second = pool.find(v => v.images?.[0] && v.images[0] !== first)?.images?.[0];
+    return second || first || '';
+  }, [featuredVehicles, allVehicles, heroImage]);
 
-  const dynamicCollections = useMemo(() => {
-    const map = new Map();
-    allVehicles.forEach((vehicle) => {
-      const key = `${vehicle.brand || ''}-${vehicle.type || ''}`;
-      if (!map.has(key)) map.set(key, { brand: vehicle.brand, type: vehicle.type, count: 0, image: vehicle.images?.[0] || '' });
-      const item = map.get(key);
-      item.count += 1;
-      if (!item.image && vehicle.images?.[0]) item.image = vehicle.images[0];
+  const brands = useMemo(() => {
+    const m = new Map();
+    allVehicles.forEach((v) => {
+      const k = `${v.brand}__${v.type}`;
+      if (!m.has(k)) m.set(k, { brand: v.brand, type: v.type, count: 0, image: v.images?.[0] || '' });
+      const it = m.get(k); it.count += 1; if (!it.image && v.images?.[0]) it.image = v.images[0];
     });
-    return Array.from(map.values()).sort((a, b) => b.count - a.count).slice(0, 4);
+    return Array.from(m.values()).sort((a, b) => b.count - a.count).slice(0, 4);
   }, [allVehicles]);
 
-  const heroVideoUrl = getSettingValue(settings, ['home_hero_video', 'hero_video_url', 'heroVideoUrl']);
-  const heroPoster = getSettingValue(settings, ['home_hero_poster', 'hero_poster_url', 'heroPosterUrl']) || featuredVehicles[0]?.images?.[0] || allVehicles[0]?.images?.[0] || '';
-  const secondaryImage = featuredVehicles[1]?.images?.[0] || featuredVehicles[0]?.images?.[0] || allVehicles[1]?.images?.[0] || '';
-
-  const stats = [
-    { value: allVehicles.length, label: t('stats.vehicles'), icon: Car },
-    { value: availableCount, label: t('stats.availableNow'), icon: Check },
-    { value: cityCount, label: t('stats.citiesLive'), icon: MapPin },
-    { value: featuredVehicles.length, label: t('featured.editorsPick'), icon: Star },
-  ];
-
-  const benefits = [
-    { icon: Zap, title: t('features.instantBooking.title'), description: t('features.instantBooking.description') },
-    { icon: Wallet, title: t('features.payPerUse.title'), description: t('features.payPerUse.description') },
-    { icon: ShieldCheck, title: t('features.verifiedInsured.title'), description: t('features.verifiedInsured.description') },
-    { icon: Headset, title: t('features.roadside.title'), description: t('features.roadside.description') },
-  ];
-
-  const steps = [
-    { number: '01', icon: Search, title: t('howItWorks.discover.title'), description: t('howItWorks.discover.description') },
-    { number: '02', icon: CalendarDays, title: t('howItWorks.book.title'), description: t('howItWorks.book.description') },
-    { number: '03', icon: KeyRound, title: t('howItWorks.ride.title'), description: t('howItWorks.ride.description') },
-  ];
-
-  const filterTabs = [
-    ['all', t('featured.all')],
-    ['car', t('categories.cityCars')],
-    ['bike', t('categories.commuterBikes')],
-  ];
-
-  const submitSearch = (event) => {
-    event.preventDefault();
-    const params = new URLSearchParams();
-    if (location.trim()) params.set('location', location.trim());
-    if (pickupDate) params.set('pickup', pickupDate);
-    if (returnDate) params.set('return', returnDate);
-    navigate(`/vehicles${params.toString() ? `?${params.toString()}` : ''}`);
+  const submitSearch = (e) => {
+    e.preventDefault();
+    const p = new URLSearchParams();
+    if (location.trim()) p.set('location', location.trim());
+    if (pickupDate) p.set('pickup', pickupDate);
+    if (returnDate) p.set('return', returnDate);
+    navigate(`/vehicles${p.toString() ? `?${p.toString()}` : ''}`);
   };
 
   return (
-    <div className="alrafgha-home" dir="rtl" ref={pageRef}>
-      <section className="home-hero home-hero--cinematic" data-testid="hero-section">
-        <div className="home-hero__grain" />
-        <div className="home-hero__glow home-hero__glow--one" />
-        <div className="home-hero__glow home-hero__glow--two" />
-
-        <div className="home-shell home-hero__content">
-          <div className="home-hero__copy" data-reveal="up">
-            <span className="home-kicker"><span className="home-kicker__dot" /> {t('hero.pillLive')}</span>
-            <h1 className="home-display-title">
-              {t('hero.headline1')} <span>{t('hero.headlineTap')}</span><br />{t('hero.headline2')}
+    <div className="alrafgha-home" ref={rootRef}>
+      {/* ── HERO — asymmetric editorial, not a template ── */}
+      <section className="lh-hero" data-testid="hero-section">
+        <div className="lh-shell lh-hero__grid">
+          {/* Copy — left, editorial */}
+          <div className="lh-hero__copy" data-reveal="up">
+            <p className="lh-eyebrow"><span className="lh-dot" aria-hidden="true" />{t('hero.pillLive')} — {t('hero.pillMiddle') || t('hero.pillSuffix')}</p>
+            <h1 className="lh-title">
+              <span className="lh-title__line">{t('hero.headline1')}</span>
+              <span className="lh-title__line lh-title__line--accent">{t('hero.headlineTap')}</span>
+              <span className="lh-title__line">{t('hero.headline2')}</span>
             </h1>
-            <p>{t('hero.subtext')}</p>
-            <div className="home-hero__actions">
-              <Link to="/vehicles" className="home-btn home-btn--primary">{t('hero.allVehicles')} <ArrowLeft size={17} /></Link>
-              <Link to="/pricing" className="home-btn home-btn--ghost">{t('hero.seePricing')}</Link>
+            <p className="lh-sub">{t('hero.subtext')}</p>
+            <div className="lh-actions">
+              <Link to="/vehicles" className="lh-btn lh-btn--solid">{t('hero.allVehicles')} <ArrowUpLeft size={14} strokeWidth={2.5} /></Link>
+              <Link to="/pricing" className="lh-btn lh-btn--line">{t('hero.seePricing')}</Link>
+            </div>
+            {/* Trust row — inline, not card grid */}
+            <div className="lh-trust" aria-label="Trust indicators">
+              <span className="lh-trust__item"><ShieldCheck size={13} />{t('features.verifiedInsured.title')}</span>
+              <span className="lh-trust__sep" aria-hidden="true">·</span>
+              <span className="lh-trust__item"><MapPin size={13} />Riyadh · Jeddah · Dammam</span>
+              <span className="lh-trust__sep" aria-hidden="true">·</span>
+              <span className="lh-trust__item">{allVehicles.length ? `${allVehicles.length} ${t('stats.vehicles')}` : t('hero.pillLive')}</span>
             </div>
           </div>
 
-          <div className="home-hero__visual" data-reveal="scale">
-            {heroVideoUrl ? (
-              <video
-                className="home-hero__media"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster={heroPoster || undefined}
-                aria-label={t('hero.allVehicles')}
-              >
-                <source src={heroVideoUrl} />
-              </video>
-            ) : heroPoster ? (
-              <img className="home-hero__media" src={heroPoster} alt={t('hero.allVehicles')} />
-            ) : (
-              <div className="home-hero__media home-hero__media--empty" aria-hidden="true" />
-            )}
-            <div className="home-hero__shade" />
-            <div className="home-hero__scanline" />
-
-            <div className="home-hero__floating home-hero__floating--top">
-              <ShieldCheck size={18} />
-              <div><strong>{t('hero.verified')}</strong><span>{t('features.verifiedInsured.description').split('—')[0]}</span></div>
-            </div>
-
-            {heroVideoUrl && (
-              <div className="home-hero__video-badge"><Play size={13} fill="currentColor" /> {t('hero.cinematic')}</div>
-            )}
-
-            <div className="home-hero__floating home-hero__floating--bottom">
-              <span className="home-live-dot" /> {t('hero.pillSuffix')} <b>{allVehicles.length || '—'}</b>
-            </div>
+          {/* Visual — right, single strong image with docked utility card */}
+          <div className="lh-hero__visual" data-reveal="scale">
+            {heroImage ? <img className="lh-hero__img" src={heroImage} alt="" /> : <div className="lh-hero__img lh-hero__img--empty" aria-hidden="true" />}
+            <div className="lh-hero__vignette" aria-hidden="true" />
+            {/* Utility dock — search, attached to image bottom, not floating */}
+            <form className="lh-dock" onSubmit={submitSearch} aria-label={t('search.submit')}>
+              <label className="lh-dock__field">
+                <span className="lh-dock__label"><MapPin size={12} />{t('search.location')}</span>
+                <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t('search.locationPlaceholder')} />
+              </label>
+              <span className="lh-dock__div" aria-hidden="true" />
+              <label className="lh-dock__field">
+                <span className="lh-dock__label"><CalendarDays size={12} />{t('search.pickup')}</span>
+                <input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} />
+              </label>
+              <span className="lh-dock__div" aria-hidden="true" />
+              <label className="lh-dock__field">
+                <span className="lh-dock__label"><CalendarDays size={12} />{t('search.return')}</span>
+                <input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} />
+              </label>
+              <button className="lh-dock__go" type="submit" aria-label={t('search.submit')}><Search size={16} /></button>
+            </form>
           </div>
         </div>
 
-        <div className="home-search-wrap home-shell" data-reveal="up">
-          <form className="home-search" onSubmit={submitSearch}>
-            <div className="home-search__field home-search__field--location">
-              <MapPin size={19} />
-              <label>{t('search.location')}<input value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t('search.locationPlaceholder')} /></label>
-            </div>
-            <div className="home-search__field">
-              <CalendarDays size={19} />
-              <label>{t('search.pickup')}<input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} /></label>
-            </div>
-            <div className="home-search__field">
-              <CalendarDays size={19} />
-              <label>{t('search.return')}<input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} /></label>
-            </div>
-            <button className="home-search__submit" type="submit"><Search size={19} /> {t('search.submit')}</button>
-          </form>
-        </div>
-
-        <div className="home-shell home-stats" data-reveal="up">
-          {stats.map(({ value, label, icon: Icon }) => (
-            <div className="home-stat" key={label}><Icon size={19} /><strong>{value}</strong><span>{label}</span></div>
-          ))}
+        {/* Thin proof line — not a stats grid */}
+        <div className="lh-shell lh-proof" data-reveal="up" style={{ '--reveal-delay': '80ms' }}>
+          <span>{allVehicles.length} {t('stats.vehicles')} — {t('stats.availableNow')} {allVehicles.filter(v=>v.availability_status==='available').length} — {new Set(allVehicles.map(v=>v.location).filter(Boolean)).size} {t('stats.citiesLive')} — SAR {t('pricing:perDay') || 'per day pricing'}</span>
+          <Link to="/vehicles" className="lh-proof__link">{t('featured.viewAll')} <ArrowLeft size={12} /></Link>
         </div>
       </section>
 
-      <section className="home-section home-section--dark home-marquee-section" data-reveal="up">
-        <div className="home-shell">
-          <div className="home-section-head home-section-head--light home-section-head--compact">
-            <div><span className="home-overline home-overline--light">{t('categories.badge')}</span><h2>{t('categories.pickYour')} <span>{t('categories.vibe')}</span></h2></div>
-            <p>{t('categories.subtitle')}</p>
-          </div>
-
-          {dynamicCollections.length > 0 ? (
-            <div className="home-category-grid">
-              {dynamicCollections.map((collection, index) => (
-                <Link
-                  key={`${collection.brand}-${collection.type}`}
-                  to={`/vehicles?type=${collection.type}`}
-                  className="home-category-card"
-                  data-reveal="up"
-                  style={{ '--reveal-delay': `${index * 90}ms` }}
-                >
-                  {collection.image ? <img src={collection.image} alt={collection.brand} /> : <div className="home-category-card__empty" />}
-                  <div className="home-category-card__overlay" />
-                  <div className="home-category-card__top"><span>{collection.type === 'car' ? <Car size={13} /> : <Bike size={13} />}</span><span>{collection.count} {t('stats.vehicles')}</span></div>
-                  <div className="home-category-card__bottom"><small>{collection.type === 'car' ? t('categories.cityCars') : t('categories.commuterBikes')}</small><h3>{collection.brand}</h3><span>{t('categories.exploreCollection')} <ArrowUpLeft size={13} /></span></div>
+      {/* ── COLLECTIONS — 2 large editorial blocks, not 4 uniform cards ── */}
+      {brands.length > 0 && (
+        <section className="lh-section lh-section--paper" data-reveal="up">
+          <div className="lh-shell">
+            <div className="lh-head lh-head--split">
+              <div>
+                <p className="lh-kicker">{t('categories.badge')}</p>
+                <h2 className="lh-h2">{t('categories.pickYour')} <em>{t('categories.vibe')}</em></h2>
+              </div>
+              <p className="lh-lead">{t('categories.subtitle')}</p>
+            </div>
+            <div className="lh-collections">
+              {brands.slice(0, 2).map((c) => (
+                <Link key={`${c.brand}-${c.type}`} to={`/vehicles?type=${c.type}`} className="lh-collection lh-collection--large">
+                  {c.image ? <img src={c.image} alt={c.brand} loading="lazy" /> : <div className="lh-collection__empty" />}
+                  <div className="lh-collection__scrim" />
+                  <div className="lh-collection__meta">
+                    <span className="lh-collection__type">{c.type === 'car' ? t('categories.cityCars') : t('categories.commuterBikes')}</span>
+                    <h3>{c.brand}</h3>
+                    <span className="lh-collection__count">{c.count} {t('stats.vehicles')} — {t('categories.exploreCollection')} <ArrowUpLeft size={11} /></span>
+                  </div>
                 </Link>
               ))}
             </div>
-          ) : (
-            <div className="home-empty home-empty--dark">{t('categories.noData')}</div>
-          )}
-        </div>
-      </section>
-
-      <section className="home-section" data-testid="featured-vehicles-section">
-        <div className="home-shell">
-          <div className="home-section-head home-section-head--compact" data-reveal="up">
-            <div><span className="home-overline">{t('featured.editorsPick')}</span><h2>{t('featured.featuredRides')}</h2><p>{t('featured.subtitle')}</p></div>
-            <Link to="/vehicles" className="home-text-link">{t('featured.viewAll')} <ArrowLeft size={16} /></Link>
+            {brands.length > 2 && (
+              <div className="lh-collections lh-collections--small">
+                {brands.slice(2, 4).map((c) => (
+                  <Link key={`${c.brand}-${c.type}-sm`} to={`/vehicles?type=${c.type}`} className="lh-collection lh-collection--sm">
+                    {c.image ? <img src={c.image} alt={c.brand} loading="lazy" /> : <div className="lh-collection__empty" />}
+                    <div className="lh-collection__scrim" />
+                    <div className="lh-collection__meta"><span className="lh-collection__type">{c.type === 'car' ? 'City' : 'Commute'}</span><h3>{c.brand}</h3></div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
+        </section>
+      )}
 
-          <div className="home-filter-pills" role="tablist" aria-label={t('categories.badge')} data-reveal="up">
-            {filterTabs.map(([key, label]) => (
-              <button key={key} className={activeCategory === key ? 'is-active' : ''} onClick={() => setActiveCategory(key)} role="tab" aria-selected={activeCategory === key}>{label}</button>
-            ))}
+      {/* ── FEATURED — horizontal editorial strip with sticky label ── */}
+      <section className="lh-section lh-section--ink" data-testid="featured-vehicles-section">
+        <div className="lh-shell">
+          <div className="lh-head lh-head--inline">
+            <div>
+              <p className="lh-kicker lh-kicker--gold">{t('featured.editorsPick')}</p>
+              <h2 className="lh-h2 lh-h2--light">{t('featured.featuredRides')}</h2>
+            </div>
+            <div className="lh-head__actions">
+              <div className="lh-pills" role="tablist" aria-label={t('categories.badge')}>
+                {[
+                  ['all', t('featured.all')],
+                  ['car', t('categories.cityCars')],
+                  ['bike', t('categories.commuterBikes')],
+                ].map(([k, label]) => (
+                  <button key={k} className={activeCategory === k ? 'is-active' : ''} onClick={() => setActiveCategory(k)} role="tab" aria-selected={activeCategory === k}>{label}</button>
+                ))}
+              </div>
+              <Link to="/vehicles" className="lh-link lh-link--light">{t('featured.viewAll')} <ArrowLeft size={13} /></Link>
+            </div>
           </div>
+          <p className="lh-lead lh-lead--muted" style={{ marginTop: -12, marginBottom: 22 }}>{t('featured.subtitle')}</p>
 
           {loadingVehicles ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"><VehicleCardSkeleton /><VehicleCardSkeleton /><VehicleCardSkeleton /></div>
+            <div className="lh-skeleton-grid"><VehicleCardSkeleton /><VehicleCardSkeleton /><VehicleCardSkeleton /></div>
           ) : filteredVehicles.length > 0 ? (
-            <div className="home-vehicle-grid">
-              {filteredVehicles.map((vehicle, index) => <div key={vehicle._id} data-reveal="up" style={{ '--reveal-delay': `${index * 70}ms` }}><VehicleCard vehicle={vehicle} /></div>)}
+            <div className="lh-fleet">
+              {filteredVehicles.map((v) => (
+                <div key={v._id} className="lh-fleet__item"><VehicleCard vehicle={v} /></div>
+              ))}
             </div>
           ) : (
-            <div className="home-empty">{t('featured.noVehicles')} <Link to="/vehicles">{t('featured.viewAllVehicles')}</Link></div>
+            <div className="lh-empty lh-empty--dark">{t('featured.noVehicles')} <Link to="/vehicles">{t('featured.viewAllVehicles')}</Link></div>
           )}
         </div>
       </section>
 
-      {secondaryImage && (
-        <section className="home-owner-cta" data-reveal="scale">
-          <div className="home-owner-cta__image"><img src={secondaryImage} alt={featuredVehicles[1]?.name || featuredVehicles[0]?.name || ''} /></div>
-          <div className="home-owner-cta__content home-shell">
-            <div data-reveal="right"><span className="home-overline home-overline--light">{t('cta.specialOffer')}</span><h2>{t('cta.readyToHit')} <span>{t('cta.theRoad')}</span></h2><p>{t('cta.subtitle')}</p></div>
-            <Link to="/vehicles" className="home-btn home-btn--primary" data-reveal="left">{t('cta.browseVehicles')} <ArrowUpLeft size={17} /></Link>
+      {/* ── SAUDI PRESENCE — full-bleed image + text inset, not a CTA card ── */}
+      {editorialImage && (
+        <section className="lh-presence">
+          <img src={editorialImage} alt="" aria-hidden="true" loading="lazy" />
+          <div className="lh-presence__wash" aria-hidden="true" />
+          <div className="lh-shell lh-presence__inner">
+            <div className="lh-presence__copy" data-reveal="up">
+              <p className="lh-kicker lh-kicker--gold">— {t('cta.specialOffer')}</p>
+              <h2>{t('cta.readyToHit')} <em>{t('cta.theRoad')}</em></h2>
+              <p>{t('cta.subtitle')}</p>
+              <div className="lh-actions" style={{ marginTop: 18 }}>
+                <Link to="/vehicles" className="lh-btn lh-btn--solid lh-btn--small">{t('cta.browseVehicles')} <ArrowUpLeft size={13} /></Link>
+                <Link to="/about" className="lh-btn lh-btn--ghost lh-btn--ghost-light">{tCommon('nav.about')}</Link>
+              </div>
+            </div>
           </div>
         </section>
       )}
 
-      <section className="home-section home-section--soft" data-testid="features-section">
-        <div className="home-shell">
-          <div className="home-section-head home-section-head--center" data-reveal="up">
-            <div><span className="home-overline">{t('features.badge')}</span><h2>{t('features.title1')} <span>{t('features.freedom')}</span> {t('features.title2')} <span>{t('features.honesty')}</span></h2></div>
-            <p>{t('features.subtitle')}</p>
+      {/* ── WHY US — ruled editorial list, not 4 cards ── */}
+      <section className="lh-section lh-section--paper lh-why" data-testid="features-section">
+        <div className="lh-shell lh-why__grid">
+          <div data-reveal="up">
+            <p className="lh-kicker">{t('features.badge')}</p>
+            <h2 className="lh-h2">{t('features.title1')} <em>{t('features.freedom')}</em> {t('features.title2')} <em>{t('features.honesty')}</em></h2>
+            <p className="lh-lead" style={{ marginTop: 12 }}>{t('features.subtitle')}</p>
           </div>
-          <div className="home-benefits-grid">
-            {benefits.map(({ icon: Icon, title, description }, index) => (
-              <div className="home-benefit" key={title} data-reveal="up" style={{ '--reveal-delay': `${index * 80}ms` }}><div className="home-benefit__icon"><Icon size={21} /></div><h3>{title}</h3><p>{description}</p><span className="home-benefit__line" /></div>
-            ))}
-          </div>
+          <ol className="lh-why__list" data-reveal="up" style={{ '--reveal-delay': '80ms' }}>
+            {[
+              { icon: Zap, title: t('features.instantBooking.title'), desc: t('features.instantBooking.description') },
+              { icon: Wallet, title: t('features.payPerUse.title'), desc: t('features.payPerUse.description') },
+              { icon: ShieldCheck, title: t('features.verifiedInsured.title'), desc: t('features.verifiedInsured.description') },
+              { icon: Headset, title: t('features.roadside.title'), desc: t('features.roadside.description') },
+            ].map((b, i) => {
+              const Icon = b.icon;
+              return (
+                <li key={b.title} className="lh-why__item">
+                  <span className="lh-why__num" aria-hidden="true">0{i + 1}</span>
+                  <span className="lh-why__icon"><Icon size={16} /></span>
+                  <div><h3>{b.title}</h3><p>{b.desc}</p></div>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </section>
 
-      <section className="home-process" data-testid="how-it-works-section">
-        <div className="home-shell">
-          <div className="home-section-head home-section-head--light" data-reveal="up"><div><span className="home-overline home-overline--light">{t('howItWorks.badge')}</span><h2>{t('howItWorks.title')} <span>{t('howItWorks.openRoad')}</span></h2></div><p>{t('howItWorks.discover.description')}</p></div>
-          <div className="home-steps">
-            {steps.map(({ number, icon: Icon, title, description }, index) => (
-              <div className="home-step" key={number} data-reveal="up" style={{ '--reveal-delay': `${index * 100}ms` }}><span className="home-step__number">{number}</span><div className="home-step__icon"><Icon size={21} /></div><h3>{title}</h3><p>{description}</p><span className="home-step__progress" /></div>
-            ))}
+      {/* ── HOW IT WORKS — timeline, not 3 cards ── */}
+      <section className="lh-how" data-testid="how-it-works-section">
+        <div className="lh-shell">
+          <div className="lh-head">
+            <div><p className="lh-kicker lh-kicker--gold">{t('howItWorks.badge')}</p><h2 className="lh-h2 lh-h2--light">{t('howItWorks.title')} <em>{t('howItWorks.openRoad')}</em></h2></div>
+            <p className="lh-lead lh-lead--muted" style={{ maxWidth: 360 }}>{t('howItWorks.discover.description')}</p>
           </div>
+          <ol className="lh-timeline">
+            {[
+              { n: '01', icon: Search, title: t('howItWorks.discover.title'), desc: t('howItWorks.discover.description') },
+              { n: '02', icon: CalendarDays, title: t('howItWorks.book.title'), desc: t('howItWorks.book.description') },
+              { n: '03', icon: KeyRound, title: t('howItWorks.ride.title'), desc: t('howItWorks.ride.description') },
+            ].map((s) => {
+              const Icon = s.icon;
+              return (
+                <li key={s.n} className="lh-timeline__step">
+                  <span className="lh-timeline__n">{s.n}</span>
+                  <span className="lh-timeline__icon"><Icon size={16} /></span>
+                  <h3>{s.title}</h3>
+                  <p>{s.desc}</p>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </section>
 
+      {/* ── JOURNAL — minimal, metadata-rich ── */}
       {blogPosts.length > 0 && (
-        <section className="home-section home-section--soft">
-          <div className="home-shell">
-            <div className="home-section-head home-section-head--compact" data-reveal="up"><div><span className="home-overline">{tCommon('nav.blog')}</span><h2>{t('blog.latest')}</h2></div><Link to="/blog" className="home-text-link">{t('featured.viewAll')} <ArrowLeft size={16} /></Link></div>
-            <div className="home-articles">
-              {blogPosts.slice(0, 3).map((post, index) => (
-                <Link to={`/blog/${post.slug}`} className="home-article" key={post._id} data-reveal="up" style={{ '--reveal-delay': `${index * 90}ms` }}>
-                  <div className="home-article__image">{post.featured_image ? <img src={post.featured_image} alt={post.title} /> : <div className="home-article__empty" />}<span>{post.category}</span></div>
-                  <div className="home-article__body"><h3>{post.title}</h3><p>{post.excerpt || ''}</p><span>{t('blog.read')} <ArrowLeft size={15} /></span></div>
+        <section className="lh-section lh-section--paper">
+          <div className="lh-shell">
+            <div className="lh-head lh-head--inline">
+              <div><p className="lh-kicker">{tCommon('nav.blog')}</p><h2 className="lh-h2">{t('blog.latest')}</h2></div>
+              <Link to="/blog" className="lh-link">{t('featured.viewAll')} <ArrowLeft size={13} /></Link>
+            </div>
+            <div className="lh-journal">
+              {blogPosts.slice(0, 3).map((post) => (
+                <Link to={`/blog/${post.slug}`} key={post._id} className="lh-journal__item">
+                  <div className="lh-journal__img">{post.featured_image ? <img src={post.featured_image} alt="" loading="lazy" /> : <div className="lh-journal__empty" />}</div>
+                  <span className="lh-journal__cat">{post.category || tCommon('nav.blog')}</span>
+                  <h3>{post.title}</h3>
+                  {post.excerpt && <p>{post.excerpt}</p>}
+                  <span className="lh-journal__more">{t('blog.read')} <ArrowLeft size={11} /></span>
                 </Link>
               ))}
             </div>
@@ -366,14 +358,20 @@ const HomePage = () => {
         </section>
       )}
 
-      <section className="home-final-cta" data-reveal="up">
-        <div className="home-shell home-final-cta__inner">
-          <div><span className="home-overline home-overline--light">{allVehicles.length ? `${allVehicles.length} ${t('stats.vehicles')}` : t('cta.specialOffer')}</span><h2>{t('cta.readyToHit')} <span>{t('cta.theRoad')}</span></h2><p>{t('cta.subtitle')}</p></div>
-          <div className="home-final-cta__actions"><Link to="/vehicles" className="home-btn home-btn--primary">{t('cta.browseVehicles')} <ArrowLeft size={17} /></Link><Link to="/about" className="home-btn home-btn--dark-ghost">{tCommon('nav.about')} <ArrowLeft size={17} /></Link></div>
+      {/* ── CLOSING — quiet, no gradient blob ── */}
+      <section className="lh-close">
+        <div className="lh-shell lh-close__inner">
+          <div>
+            <p className="lh-kicker lh-kicker--gold">{t('cta.specialOffer')}</p>
+            <h2>{t('cta.readyToHit')} <em>{t('cta.theRoad')}</em></h2>
+            <p className="lh-lead lh-lead--muted">{t('cta.subtitle')}</p>
+          </div>
+          <div className="lh-close__actions">
+            <Link to="/vehicles" className="lh-btn lh-btn--solid">{t('cta.browseVehicles')} <ArrowUpLeft size={14} /></Link>
+            <span className="lh-close__meta"><Check size={12} />{t('features.verifiedInsured.title')} · <Star size={11} />4.9</span>
+          </div>
         </div>
       </section>
     </div>
   );
-};
-
-export default HomePage;
+}

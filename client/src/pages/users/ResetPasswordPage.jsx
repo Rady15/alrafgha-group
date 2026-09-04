@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Lock, ArrowLeft, CheckCircle, Loader2, Eye, EyeOff, AlertCircle, ShieldCheck } from 'lucide-react';
 import authService from '../../services/authService';
 import { useTranslation } from 'react-i18next';
 
 const ResetPasswordPage = () => {
     const { token } = useParams();
-    const navigate = useNavigate();
     
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,7 +31,7 @@ const ResetPasswordPage = () => {
             setTokenValid(false);
             setError(t('auth:resetPassword.invalidLinkError'));
         }
-    }, [token]);
+    }, [token, t]);
 
     useEffect(() => {
         setPasswordStrength({
@@ -85,7 +84,7 @@ const ResetPasswordPage = () => {
             } else {
                 setError(result.message || t('auth:resetPassword.errorResetFailed'));
             }
-        } catch (err) {
+        } catch {
             setError(t('auth:resetPassword.errorUnexpected'));
         } finally {
             setIsLoading(false);

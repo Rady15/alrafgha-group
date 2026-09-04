@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config/api';
-import { useTranslation } from 'react-i18next';
 import { formatDate, formatPrice } from '../i18n/format';
 import { Tag, Calendar, Car, Sparkles, ArrowUpRight } from 'lucide-react';
 
 const OffersPage = () => {
-    const { t } = useTranslation();
     const [offers, setOffers] = useState([]);
     const [discountedVehicles, setDiscountedVehicles] = useState([]);
     const [loading, setLoading] = useState(true);

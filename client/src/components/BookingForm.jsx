@@ -159,14 +159,19 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
 
   return (
     <>
-      <form className="bg-white rounded-2xl shadow-card p-6 space-y-6" data-testid="booking-form">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="p-3 bg-linear-to-r from-primary-500 to-secondary-500 rounded-lg">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
+      <form className="bg-white rounded-2xl border border-ink-100 shadow-card p-5 sm:p-6 space-y-5" data-testid="booking-form">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-ink-900 text-white grid place-items-center shrink-0">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
           </div>
-          <h2 className="text-2xl font-bold text-neutral-900">{t('bookings:form.book')} <span className="text-primary-500">{t('bookings:form.yourRide')}</span></h2>
+          <div>
+            <h2 className="text-lg font-display font-bold text-ink-900 leading-none">{t('bookings:form.book')} <span className="text-gold-600">{t('bookings:form.yourRide')}</span></h2>
+            <p className="text-xs text-ink-500 mt-1">{vehicle?.name} • {vehicle?.location}</p>
+          </div>
+        </div>
+        {/* Progress — Vehicle → Dates → Payment → Confirm (visual only) */}
+        <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase text-ink-400" aria-hidden="true">
+          <span className="text-ink-900">Dates</span><span>→</span><span>Payment</span><span>→</span><span>Confirm</span>
         </div>
 
         {/* Pickup Location */}
@@ -255,9 +260,9 @@ const BookingForm = ({ vehicle, onSubmit, onPaymentSuccess }) => {
           )}
         </div>
 
-        {/* Cost Breakdown Display */}
+        {/* Cost Breakdown — calm, not gradient */}
         {totalCost && totalCost.total > 0 && (
-          <div className="bg-linear-to-r from-primary-50 to-secondary-50 rounded-xl p-5 border-2 border-primary-200" data-testid="cost-breakdown">
+          <div className="bg-gold-50/60 rounded-xl p-4 border border-gold-100" data-testid="cost-breakdown">
             <h3 className="text-lg font-bold text-neutral-800 mb-3 flex items-center">
               <svg className="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />

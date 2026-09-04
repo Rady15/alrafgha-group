@@ -1,70 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import BookingForm from '../components/BookingForm';
-import { Motorbike, Car, Sparkles } from 'lucide-react';
+import { Motorbike, Car, Sparkles, MapPin, ChevronLeft, ChevronRight, ArrowLeft, Shield, Fuel, Calendar } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/api';
-import { useToast } from '../contexts/ToastContext';
 import { formatPrice } from '../i18n/format';
 import Price from '../components/Price';
 import { useTranslation } from 'react-i18next';
+import useScrollReveal from '../hooks/useScrollReveal';
 
 const VehicleDetailsPage = () => {
   const { t } = useTranslation('vehicles');
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const pageRef = useScrollReveal();
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  useEffect(() => {
-    fetchVehicleDetails();
-  }, [id]);
-
-  const fetchVehicleDetails = async () => {
+  const fetchVehicleDetails = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(API_ENDPOINTS.vehicleById(id));
       const data = await response.json();
-
-      if (data.status === 'success') {
-        setVehicle(data.data.vehicle);
-      }
+      if (data.status === 'success') setVehicle(data.data.vehicle);
     } catch (error) {
       console.error('Error fetching vehicle details:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const handleBooking = async (bookingData) => {
-    // This is called after successful payment, navigate to bookings
-    navigate('/bookings');
-  };
+  useEffect(() => { fetchVehicleDetails(); }, [fetchVehicleDetails]);
 
-  const handlePaymentSuccess = (booking) => {
-    // Called after successful Stripe payment
-    console.log('Booking created:', booking);
-  };
+  const handleBooking = async () => { navigate('/bookings'); };
+  const handlePaymentSuccess = (booking) => { console.log('Booking created:', booking); };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary-600"></div>
+      <div className="min-h-screen bg-neutral-25 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-12 w-12 rounded-full border-2 border-gold-500 border-t-transparent animate-spin mx-auto mb-4" />
+          <p className="text-sm text-ink-500 font-medium tracking-wide uppercase">{t('loadingVehicles') || 'Loading vehicle…'}</p>
+        </div>
       </div>
     );
   }
 
   if (!vehicle) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-4">{t('notFound')}</h2>
-          <button
-            onClick={() => navigate('/vehicles')}
-            className="px-6 py-3 bg-linear-to-r from-primary-500 to-secondary-500 text-white rounded-xl font-semibold"
-          >
-            {t('backToVehicles')}
+      <div className="min-h-screen bg-neutral-25 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="w-20 h-20 rounded-2xl bg-ink-100 flex items-center justify-center mx-auto mb-6">
+            <Car className="w-10 h-10 text-ink-400" />
+          </div>
+          <h2 className="text-2xl font-display font-bold text-ink-900 mb-2">{t('notFound')}</h2>
+          <p className="text-ink-500 mb-6">{t('notFoundDesc') || 'The vehicle you are looking for does not exist.'}</p>
+          <button onClick={() => navigate('/vehicles')} className="inline-flex items-center gap-2 px-6 py-3 bg-ink-900 text-white rounded-xl font-semibold hover-lift">
+            <ArrowLeft className="w-4 h-4" />{t('backToVehicles')}
           </button>
         </div>
       </div>
@@ -78,184 +70,146 @@ const VehicleDetailsPage = () => {
     { icon: '🛡️', label: t('featureSafetyLabel'), value: t('featureSafetyValue') },
   ];
 
-  return (
-    <div className="min-h-screen bg-neutral-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <div className="mb-6 flex items-center space-x-2 text-sm">
-          <button onClick={() => navigate('/vehicles')} className="text-neutral-600 hover:text-primary-600 transition-colors duration-200">
-            {t('vehicles')}
-          </button>
-          <span className="text-neutral-400">/</span>
-          <span className="text-neutral-900 font-medium">{vehicle.name}</span>
-        </div>
+  const nextImage = () => setSelectedImage((i) => (i + 1) % vehicle.images.length);
+  const prevImage = () => setSelectedImage((i) => (i - 1 + vehicle.images.length) % vehicle.images.length);
+  const onGalleryKeyDown = (e) => {
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+  };
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Images and Details */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Main Image */}
-            <div className="bg-white rounded-2xl shadow-card overflow-hidden">
-              <div className="aspect-video relative">
-                <img
-                  src={vehicle.images[selectedImage]}
-                  alt={vehicle.name}
-                  className="w-full h-full object-cover"
-                />
-                {/* Featured Badge and Availability Badge */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                  {vehicle.is_featured && (
-                    <span className="flex items-center gap-1 px-3.5 py-2 rounded-full text-sm bg-amber-500 text-white backdrop-blur-lg">
-                      <Sparkles className="w-4 h-4 animate-pulse" />
-                       <span className='font-semibold'>{t('featured')}</span>
+  return (
+    <div ref={pageRef} className="min-h-screen bg-neutral-25">
+      {/* Breadcrumb + Back */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2" data-reveal="up">
+        <nav className="flex items-center gap-2 text-sm text-ink-500" aria-label="Breadcrumb">
+          <button onClick={() => navigate('/vehicles')} className="hover:text-gold-600 transition-colors inline-flex items-center gap-1.5">
+            <ArrowLeft className="w-3.5 h-3.5" />{t('vehicles')}
+          </button>
+          <span className="text-ink-300">/</span>
+          <span className="text-ink-900 font-medium truncate">{vehicle.name}</span>
+        </nav>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
+          {/* Left — Gallery & Details (3 cols) */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Gallery — no horizontal overflow, keyboard + SR friendly */}
+            <div className="relative bg-ink-950 rounded-[22px] overflow-hidden shadow-2xl" data-reveal="up" onKeyDown={onGalleryKeyDown} tabIndex={vehicle.images.length > 1 ? 0 : -1} aria-label={t('vehicles:galleryLabel') || 'Vehicle gallery'}>
+              <div className="aspect-[16/10] relative">
+                <img src={vehicle.images[selectedImage]} alt={`${vehicle.name} — ${t('vehicles:imageAlt') || 'photo'} ${selectedImage + 1} / ${vehicle.images.length}`} className="w-full h-full object-cover" loading="eager" />
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.32) 100%)' }} />
+                <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {vehicle.is_featured && (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-gold-500 text-ink-950">
+                        <Sparkles className="w-3 h-3" />{t('featured')}
+                      </span>
+                    )}
+                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold backdrop-blur border ${vehicle.is_available_for_booking ? 'bg-white text-ink-900 border-white' : 'bg-ink-900/70 text-white border-white/20'}`}>
+                      {vehicle.is_available_for_booking ? `● ${t('available')}` : `○ ${t('notAvailable')}`}
                     </span>
-                  )}
-                  <span className={`px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-sm ml-auto ${vehicle.is_available_for_booking
-                    ? 'bg-green-500/90 text-white'
-                    : 'bg-neutral-500/90 text-white'
-                    }`}>
-                    {vehicle.is_available_for_booking ? `✓ ${t('available')}` : `‼ ${t('notAvailable')}`}
+                  </div>
+                  <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur text-ink-700 shrink-0">
+                    {vehicle.type === 'car' ? <Car className="w-4 h-4" /> : <Motorbike className="w-4 h-4" />}{t(vehicle.type === 'car' ? 'cars' : 'bikes')}
                   </span>
                 </div>
+                {vehicle.images.length > 1 && (
+                  <>
+                    <button onClick={prevImage} aria-label={t('common:actions.previous') || 'Previous image'} className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-ink-900 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button onClick={nextImage} aria-label={t('common:actions.next') || 'Next image'} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center text-ink-900 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-black/45 backdrop-blur" aria-hidden="true">
+                      {vehicle.images.map((_, i) => (
+                        <span key={i} className={`h-1 rounded-full transition-all ${i === selectedImage ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}`} />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-
-              {/* Thumbnail Gallery */}
               {vehicle.images.length > 1 && (
-                <div className="p-4 flex space-x-2 sm:space-x-3 overflow-x-auto">
-                  {vehicle.images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${selectedImage === index
-                        ? 'border-primary-500 ring-2 ring-primary-200'
-                        : 'border-neutral-200 hover:border-primary-300'
-                        }`}
-                    >
-                      <img
-                        src={image}
-                        alt={t('imageAlt', { name: vehicle.name, n: index + 1 })}
-                        className="w-full h-full object-cover"
-                      />
+                <div className="flex gap-2 p-2 bg-ink-900 overflow-x-auto overscroll-x-contain" style={{ scrollbarWidth: 'thin' }}>
+                  {vehicle.images.map((img, idx) => (
+                    <button key={idx} onClick={() => setSelectedImage(idx)} aria-label={`${t('vehicles:imageAlt') || 'View image'} ${idx + 1}`} aria-current={idx === selectedImage} className={`shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 ${selectedImage === idx ? 'border-gold-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}>
+                      <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" />
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Vehicle Info */}
-            <div className="bg-white rounded-2xl shadow-card p-6">
-              <div className="flex items-start justify-between mb-4">
+            {/* Title block — editorial, not boxed */}
+            <div className="px-1" data-reveal="up" style={{ '--reveal-delay': '80ms' }}>
+              <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
-                  <h1 className="text-3xl font-display font-bold text-neutral-900 mb-2">
-                    {vehicle.name}
-                  </h1>
-                  <div className="flex items-center gap-3 mb-1">
-                    <p className="text-lg text-neutral-600 font-medium">
-                      {vehicle.brand} <span className='text-primary-500'>•</span> {vehicle.model_name}
-                    </p>
-                    {vehicle.cc_engine && (
-                      <span className="inline-flex items-center px-3 py-1.5 bg-linear-to-r from-neutral-100 to-neutral-200 text-neutral-700 text-sm font-bold rounded-full">
-                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        {vehicle.cc_engine}cc
-                      </span>
-                    )}
-                  </div>
+                  <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tight text-ink-900 leading-none">{vehicle.name}</h1>
+                  <p className="text-ink-500 mt-1.5 flex items-center gap-2 text-sm">
+                    <span className="font-semibold text-ink-700">{vehicle.brand}</span>
+                    <span className="w-1 h-1 rounded-full bg-gold-500" />
+                    <span>{vehicle.model_name}</span>
+                    {vehicle.cc_engine && <><span className="w-1 h-1 rounded-full bg-ink-300" /><span className="inline-flex items-center gap-1 font-mono text-xs bg-ink-100 px-2 py-0.5 rounded">{vehicle.cc_engine}cc</span></>}
+                  </p>
                 </div>
-                <span className="flex items-center gap-2 px-3.5 py-2 bg-linear-to-r from-primary-500 to-secondary-500 text-white rounded-full text-sm font-semibold shadow-md capitalize">
-                  {vehicle.type === 'car' ? (
-                    <Car className="w-6 h-6" />
-                  ) : (
-                    <Motorbike className="w-6 h-6" />
-                  )}
-                  {vehicle.type}
+                <span className="inline-flex items-center gap-1.5 text-xs text-ink-600 bg-white border border-ink-100 rounded-full px-3 py-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-gold-500" />{vehicle.location}
                 </span>
               </div>
-
-              {/* Location */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-br from-primary-50 to-secondary-50 text-primary-500 rounded-full font-medium mb-5">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                </svg>
-                {vehicle.location}
-              </div>
-
-              {/* Pricing */}
-              <div className="relative overflow-hidden rounded-2xl p-5 sm:p-7 mb-8 bg-linear-to-r from-primary-50 to-secondary-50 border border-primary-200 shadow-sm hover:shadow-lg transition-shadow">
-                <div class="absolute inset-0 pointer-events-none bg-white/40 opacity-40"></div>
-
-                <div class="relative">
-                  <h3 class="text-lg sm:text-xl font-semibold text-neutral-900 mb-4">
-                    {t('rentalPricing')} <span className='text-primary-500'>:</span>
-                  </h3>
-
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div class="flex flex-col">
-                      <span class="text-sm text-neutral-600">{t('perDay')}</span>
-                      <span class="text-2xl sm:text-3xl font-extrabold bg-linear-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent tracking-tight">
-                        <Price>{formatPrice(vehicle.price_per_day)}</Price>
-                      </span>
-                    </div>
-
-                    {vehicle.price_per_km && (
-                      <div class="flex flex-col">
-                        <span class="text-sm text-neutral-600">{t('perKilometer')}</span>
-                        <span class="text-2xl sm:text-3xl font-extrabold bg-linear-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent tracking-tight">
-                          <Price>{formatPrice(vehicle.price_per_km)}</Price>
-                        </span>
-                      </div>
-                    )}
+              {/* Pricing — inline, not card */}
+              <div className="flex flex-wrap gap-6 py-4 border-y border-ink-100">
+                <div>
+                  <p className="text-[11px] uppercase tracking-widest font-bold text-ink-400">{t('perDay')}</p>
+                  <p className="text-2xl font-display font-black text-ink-900"><Price>{formatPrice(vehicle.price_per_day)}</Price></p>
+                </div>
+                {vehicle.price_per_km && (
+                  <div className="pl-6 border-l border-ink-100">
+                    <p className="text-[11px] uppercase tracking-widest font-bold text-ink-400">{t('perKilometer')}</p>
+                    <p className="text-2xl font-display font-black text-ink-700"><Price>{formatPrice(vehicle.price_per_km)}</Price></p>
                   </div>
+                )}
+                <div className="ml-auto hidden sm:flex items-center gap-1.5 text-xs text-ink-500">
+                  <Shield className="w-4 h-4 text-gold-500" />{t('featureInsuranceValue')}
                 </div>
               </div>
+            </div>
 
-              {/* Description */}
-              <div className="mb-8 pb-8 border-b border-neutral-200">
-                <h3 className="text-xl font-bold text-neutral-900 mb-4 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  {t('aboutThisVehicle')} <span className='text-primary-500'>:</span>
-                </h3>
-                <p className="text-neutral-600 leading-relaxed text-base">
-                  {t('aboutDescription')}
-                </p>
-              </div>
-
-              {/* Features */}
-              <div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-6 flex items-center gap-2">
-                  <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                  </svg>
-                  {t('featuresAmenities')} <span className='text-primary-500'>:</span>
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-linear-to-br from-white to-neutral-50 rounded-2xl border-2 border-neutral-100 hover:border-primary-200 hover:shadow-lg transition-all duration-300">
-                      <span className="text-xl sm:text-2xl">{feature.icon}</span>
-                      <div>
-                        <div className="text-xs sm:text-sm font-bold text-neutral-900">{feature.label}</div>
-                        <div className="text-xs text-neutral-600">{feature.value}</div>
-                      </div>
+            {/* Description — editorial */}
+            <div className="bg-white rounded-2xl border border-ink-100 p-6 sm:p-8" data-reveal="up" style={{ '--reveal-delay': '120ms' }}>
+              <h2 className="text-sm font-bold tracking-widest uppercase text-ink-900 mb-3 flex items-center gap-2">
+                <span className="w-6 h-[2px] bg-gold-500" />{t('aboutThisVehicle')}
+              </h2>
+              <p className="text-ink-600 leading-relaxed">{t('aboutDescription')}</p>
+              <div className="grid grid-cols-2 gap-3 mt-6">
+                {features.map((f, i) => (
+                  <div key={i} className="flex gap-3 p-4 rounded-xl bg-neutral-25 border border-ink-100">
+                    <span className="text-lg leading-none">{f.icon}</span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-ink-900">{f.label}</p>
+                      <p className="text-xs text-ink-500">{f.value}</p>
                     </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 flex items-center gap-2 rounded-lg border border-yellow-400 bg-yellow-50 px-3 py-2 text-sm text-yellow-800 shadow-sm">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-400 text-xs font-bold text-white">!</span>
-                  <span className="font-semibold">{t('important')}</span>
-                  <span>{t('idProofNote', { id: t('originalIdProof') })}</span>
+                  </div>
+                ))}
               </div>
-
-              </div>
+              <p className="mt-4 inline-flex items-center gap-2 text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5">
+                <span className="w-5 h-5 rounded-full bg-amber-400 text-white grid place-items-center text-[10px] font-black">!</span>
+                {t('idProofNote', { id: t('originalIdProof') })}
+              </p>
             </div>
           </div>
 
-          {/* Right Column - Booking Form */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-24">
+          {/* Right — Booking (2 cols, sticky only on desktop) */}
+          <div className="lg:col-span-2">
+            <div className="lg:sticky lg:top-20 space-y-3">
+              <div className="hidden lg:flex items-center gap-2 text-xs text-ink-600 bg-gold-50/70 border border-gold-100 rounded-xl px-3 py-2.5">
+                <Shield className="w-4 h-4 text-gold-600 shrink-0" />
+                <span>{t('trustNote') || 'Verified fleet • Insured • Roadside assistance — Saudi Arabia'}</span>
+              </div>
               <BookingForm vehicle={vehicle} onSubmit={handleBooking} onPaymentSuccess={handlePaymentSuccess} />
+              <p className="text-center text-xs text-ink-400 flex items-center justify-center gap-1.5 px-2">
+                <Fuel className="w-3.5 h-3.5 shrink-0" />{t('payHint') || '40% advance to confirm • Remaining on return'}
+              </p>
             </div>
           </div>
         </div>

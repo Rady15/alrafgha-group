@@ -34,28 +34,28 @@ const BlogPage = lazy(() => import('./pages/BlogPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const LoyaltyPage = lazy(() => import('./pages/LoyaltyPage'));
 
+const HIDE_NAVBAR_ROUTES = ['/admin', '/office-staff', '/vendor-dashboard'];
+const REDIRECTABLE_ROUTES = ['/', '/login', '/register', '/vendor'];
+const DASHBOARD_ROUTES = {
+  admin: '/admin',
+  vendor: '/vendor-dashboard',
+  office_staff: '/office-staff'
+};
+
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, loading, isAuthenticated } = useAuth();
-  const hideNavbarRoutes = ['/admin', '/office-staff', '/vendor-dashboard'];
-  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
-  const redirectableRoutes = ['/', '/login', '/register', '/vendor'];
+  const shouldHideNavbar = HIDE_NAVBAR_ROUTES.includes(location.pathname);
 
   useEffect(() => {
     if (loading || !isAuthenticated || !user) {
       return;
     }
 
-    const dashboardRoutes = {
-      admin: '/admin',
-      vendor: '/vendor-dashboard',
-      office_staff: '/office-staff'
-    };
+    const targetRoute = DASHBOARD_ROUTES[user.role];
 
-    const targetRoute = dashboardRoutes[user.role];
-
-    if (targetRoute && redirectableRoutes.includes(location.pathname) && location.pathname !== targetRoute) {
+    if (targetRoute && REDIRECTABLE_ROUTES.includes(location.pathname) && location.pathname !== targetRoute) {
       navigate(targetRoute, { replace: true });
     }
   }, [loading, isAuthenticated, user, location.pathname, navigate]);

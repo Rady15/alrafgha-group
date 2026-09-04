@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react';
 import { X, MapPin, Calendar, Clock, CreditCard, Car, FileText } from 'lucide-react';
 import FinalBillModal from './FinalBillModal';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { useToast } from '../contexts/ToastContext';
 import { formatPrice, formatDate, formatDateTime } from '../i18n/format';
 import Price from '../components/Price';
@@ -10,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 const BookingDetailsModal = ({ booking, onClose }) => {
     const [showBillModal, setShowBillModal] = useState(false);
+    const [pdfLoading, setPdfLoading] = useState(false);
     const billRef = useRef(null);
     const { toast } = useToast();
     const { t } = useTranslation('bookings');
@@ -36,19 +35,20 @@ const BookingDetailsModal = ({ booking, onClose }) => {
     };
 
     const downloadBillDirectly = async () => {
+        if (pdfLoading) return;
         try {
-            // Show loading state
+            setPdfLoading(true);
             toast.info(t('bookings:toast.generatingPdf'));
-
-            // Wait for rendering
-            await new Promise((resolve) => setTimeout(resolve, 500));
-
+            await new Promise((resolve) => setTimeout(resolve, 350));
             const element = billRef.current;
             if (!element) {
                 toast.error('Bill content not found. Please try again.');
                 return;
             }
-
+            const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+                import('html2canvas'),
+                import('jspdf'),
+            ]);
             const canvas = await html2canvas(element, {
                 scale: 2,
                 logging: false,
@@ -60,7 +60,6 @@ const BookingDetailsModal = ({ booking, onClose }) => {
                 scrollX: 0,
                 scrollY: 0,
             });
-
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -70,13 +69,14 @@ const BookingDetailsModal = ({ booking, onClose }) => {
             const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
             const imgX = (pdfWidth - imgWidth * ratio) / 2;
             const imgY = 10;
-
             pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
             pdf.save(`YM-FINAL-${booking.bill_id || booking._id || 'bill'}.pdf`);
             toast.success(t('bookings:toast.finalBillDownloaded'));
         } catch (error) {
             console.error('Error generating PDF:', error);
             toast.error(t('bookings:toast.failedGeneratePdf', { error: error.message || 'Unknown error' }));
+        } finally {
+            setPdfLoading(false);
         }
     };
 
@@ -161,11 +161,13 @@ const BookingDetailsModal = ({ booking, onClose }) => {
                                 </div>
                                 <button
                                     onClick={downloadBillDirectly}
-                                    className="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm shadow-md"
+                                    disabled={pdfLoading}
+                                    aria-busy={pdfLoading}
+                                    className="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-60 disabled:cursor-wait transition-colors inline-flex items-center justify-center gap-2 text-sm shadow-md"
                                     data-testid="download-bill-button"
                                 >
-                                    <FileText className="w-4 h-4" />
-                                    {t('bookings:details.downloadBill')}
+                                    {pdfLoading ? <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" aria-hidden="true" /> : <FileText className="w-4 h-4" />}
+                                    {pdfLoading ? t('bookings:toast.generatingPdf') : t('bookings:details.downloadBill')}
                                 </button>
                             </div>
                         </div>

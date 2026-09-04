@@ -415,7 +415,7 @@ const HelpCenterPage = () => {
           </div>
 
           <div className="space-y-6">
-            {userGuides.map((guide, index) => (
+            {userGuides.map((guide) => (
               <div
                 key={guide.id}
                 data-testid={`user-guide-${guide.id}`}

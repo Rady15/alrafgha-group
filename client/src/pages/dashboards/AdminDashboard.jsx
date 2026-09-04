@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
@@ -6,7 +6,7 @@ import { API_ENDPOINTS, getAuthHeader } from '../../config/api';
 import CustomDropdown from '../../components/common/CustomDropdown';
 import { MapPinned, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatPrice, formatDate, formatDateTime, formatTime, formatNumber } from '../../i18n/format';
+import { formatPrice, formatDate, formatDateTime, formatTime } from '../../i18n/format';
 import Price from '../../components/Price';
 
 const AdminDashboard = () => {
@@ -56,7 +56,6 @@ const AdminDashboard = () => {
     const [tierForm, setTierForm] = useState({ name: '', level: '', min_spending: '', discount_percent: '', color: '#CD7F32' });
 
     // Vehicle form states
-    const [showVehicleForm, setShowVehicleForm] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState(null);
 const [vehicleForm, setVehicleForm] = useState({
     name: '', model_name: '', type: 'car', brand: '', registration_number: '',
@@ -69,19 +68,134 @@ const [vehicleForm, setVehicleForm] = useState({
     const [files, setFiles] = useState({ rc_document: null, insurance_document: null, vehicle_images: [] });
     const [uploading, setUploading] = useState(false);
 
-    useEffect(() => {
-        if (authLoading) {
-            return;
+    // Fetch data for vehicles tab
+    const fetchVehicles = useCallback(async () => {
+        try {
+            setSectionLoading(true);
+            const response = await fetch(API_ENDPOINTS.vehicles, {
+                credentials: 'include',
+                headers: { ...getAuthHeader() }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setVehicles(data.data.vehicles);
+            }
+        } catch (error) {
+            console.error('Error fetching vehicles:', error);
+            toast.error('Failed to fetch vehicles');
+        } finally {
+            setSectionLoading(false);
         }
-        // Check if user is authenticated and is admin
-        if (!isAuthenticated || !user || user.role !== 'admin') {
-            navigate('/');
-            return;
-        }
-        fetchData();
-    }, [activeTab, navigate, isAuthenticated, user, authLoading]);
+    }, [toast]);
 
-    const fetchData = async () => {
+    // Fetch data for offers tab
+    const fetchOffers = useCallback(async () => {
+        try {
+            setSectionLoading(true);
+            const response = await fetch(API_ENDPOINTS.offers, {
+                credentials: 'include',
+                headers: { ...getAuthHeader() }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setOffers(data.data.offers);
+            }
+        } catch (error) {
+            console.error('Error fetching offers:', error);
+            toast.error('Failed to fetch offers');
+        } finally {
+            setSectionLoading(false);
+        }
+    }, [toast]);
+
+    // Fetch data for coupons tab
+    const fetchCoupons = useCallback(async () => {
+        try {
+            setSectionLoading(true);
+            const response = await fetch(API_ENDPOINTS.coupons, {
+                credentials: 'include',
+                headers: { ...getAuthHeader() }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setCoupons(data.data.coupons);
+            }
+        } catch (error) {
+            console.error('Error fetching coupons:', error);
+            toast.error('Failed to fetch coupons');
+        } finally {
+            setSectionLoading(false);
+        }
+    }, [toast]);
+
+    // Fetch data for blog tab
+    const fetchBlogPosts = useCallback(async () => {
+        try {
+            setSectionLoading(true);
+            const response = await fetch(API_ENDPOINTS.blog, {
+                credentials: 'include',
+                headers: { ...getAuthHeader() }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setBlogPosts(data.data.posts);
+            }
+        } catch (error) {
+            console.error('Error fetching blog posts:', error);
+            toast.error('Failed to fetch blog posts');
+        } finally {
+            setSectionLoading(false);
+        }
+    }, [toast]);
+
+    // Fetch data for loyalty tab
+    const fetchLoyaltyData = useCallback(async () => {
+        try {
+            setSectionLoading(true);
+            const [usersRes, tiersRes] = await Promise.all([
+                fetch(API_ENDPOINTS.loyaltyUsers, { credentials: 'include', headers: { ...getAuthHeader() } }),
+                fetch(API_ENDPOINTS.loyaltyTiers, { credentials: 'include', headers: { ...getAuthHeader() } })
+            ]);
+            const usersData = await usersRes.json();
+            const tiersData = await tiersRes.json();
+            if (usersData.status === 'success') setLoyaltyUsers(usersData.data.users);
+            if (tiersData.status === 'success') setTiers(tiersData.data.tiers);
+        } catch (error) {
+            console.error('Error fetching loyalty data:', error);
+            toast.error('Failed to fetch loyalty data');
+        } finally {
+            setSectionLoading(false);
+        }
+    }, [toast]);
+
+    // Fetch data for settings tab
+    const fetchSettings = useCallback(async () => {
+        try {
+            setSectionLoading(true);
+            const response = await fetch(API_ENDPOINTS.settings, {
+                credentials: 'include',
+                headers: { ...getAuthHeader() }
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                const settingsObj = data.data.settings || {};
+                const settingsArray = Object.entries(settingsObj).map(([key, value]) => ({
+                    key,
+                    value,
+                    label: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                    label_ar: key.replace(/_/g, ' ')
+                }));
+                setSettings(settingsArray);
+            }
+        } catch (error) {
+            console.error('Error fetching settings:', error);
+            toast.error('Failed to fetch settings');
+        } finally {
+            setSectionLoading(false);
+        }
+    }, [toast]);
+
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
 
@@ -140,6 +254,18 @@ const [vehicleForm, setVehicleForm] = useState({
                 if (data.status === 'success') {
                     setBookings(data.data.bookings);
                 }
+            } else if (activeTab === 'vehicles') {
+                await fetchVehicles();
+            } else if (activeTab === 'offers') {
+                await fetchOffers();
+            } else if (activeTab === 'coupons') {
+                await fetchCoupons();
+            } else if (activeTab === 'blog') {
+                await fetchBlogPosts();
+            } else if (activeTab === 'loyalty') {
+                await fetchLoyaltyData();
+            } else if (activeTab === 'settings') {
+                await fetchSettings();
             }
 
             setLoading(false);
@@ -147,144 +273,19 @@ const [vehicleForm, setVehicleForm] = useState({
             console.error('Error fetching data:', error);
             setLoading(false);
         }
-    };
+    }, [activeTab, fetchBlogPosts, fetchCoupons, fetchLoyaltyData, fetchOffers, fetchSettings, fetchVehicles]);
 
-    // Fetch data for vehicles tab
-    const fetchVehicles = async () => {
-        try {
-            setSectionLoading(true);
-            const response = await fetch(API_ENDPOINTS.vehicles, {
-                credentials: 'include',
-                headers: { ...getAuthHeader() }
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                setVehicles(data.data.vehicles);
-            }
-        } catch (error) {
-            console.error('Error fetching vehicles:', error);
-            toast.error('Failed to fetch vehicles');
-        } finally {
-            setSectionLoading(false);
-        }
-    };
-
-    // Fetch data for offers tab
-    const fetchOffers = async () => {
-        try {
-            setSectionLoading(true);
-            const response = await fetch(API_ENDPOINTS.offers, {
-                credentials: 'include',
-                headers: { ...getAuthHeader() }
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                setOffers(data.data.offers);
-            }
-        } catch (error) {
-            console.error('Error fetching offers:', error);
-            toast.error('Failed to fetch offers');
-        } finally {
-            setSectionLoading(false);
-        }
-    };
-
-    // Fetch data for coupons tab
-    const fetchCoupons = async () => {
-        try {
-            setSectionLoading(true);
-            const response = await fetch(API_ENDPOINTS.coupons, {
-                credentials: 'include',
-                headers: { ...getAuthHeader() }
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                setCoupons(data.data.coupons);
-            }
-        } catch (error) {
-            console.error('Error fetching coupons:', error);
-            toast.error('Failed to fetch coupons');
-        } finally {
-            setSectionLoading(false);
-        }
-    };
-
-    // Fetch data for blog tab
-    const fetchBlogPosts = async () => {
-        try {
-            setSectionLoading(true);
-            const response = await fetch(API_ENDPOINTS.blog, {
-                credentials: 'include',
-                headers: { ...getAuthHeader() }
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                setBlogPosts(data.data.posts);
-            }
-        } catch (error) {
-            console.error('Error fetching blog posts:', error);
-            toast.error('Failed to fetch blog posts');
-        } finally {
-            setSectionLoading(false);
-        }
-    };
-
-    // Fetch data for loyalty tab
-    const fetchLoyaltyData = async () => {
-        try {
-            setSectionLoading(true);
-            const [usersRes, tiersRes] = await Promise.all([
-                fetch(API_ENDPOINTS.loyaltyUsers, { credentials: 'include', headers: { ...getAuthHeader() } }),
-                fetch(API_ENDPOINTS.loyaltyTiers, { credentials: 'include', headers: { ...getAuthHeader() } })
-            ]);
-            const usersData = await usersRes.json();
-            const tiersData = await tiersRes.json();
-            if (usersData.status === 'success') setLoyaltyUsers(usersData.data.users);
-            if (tiersData.status === 'success') setTiers(tiersData.data.tiers);
-        } catch (error) {
-            console.error('Error fetching loyalty data:', error);
-            toast.error('Failed to fetch loyalty data');
-        } finally {
-            setSectionLoading(false);
-        }
-    };
-
-    // Fetch data for settings tab
-    const fetchSettings = async () => {
-        try {
-            setSectionLoading(true);
-            const response = await fetch(API_ENDPOINTS.settings, {
-                credentials: 'include',
-                headers: { ...getAuthHeader() }
-            });
-            const data = await response.json();
-            if (data.status === 'success') {
-                const settingsObj = data.data.settings || {};
-                const settingsArray = Object.entries(settingsObj).map(([key, value]) => ({
-                    key,
-                    value,
-                    label: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-                    label_ar: key.replace(/_/g, ' ')
-                }));
-                setSettings(settingsArray);
-            }
-        } catch (error) {
-            console.error('Error fetching settings:', error);
-            toast.error('Failed to fetch settings');
-        } finally {
-            setSectionLoading(false);
-        }
-    };
-
-    // useEffect to fetch data when tab changes
     useEffect(() => {
-        if (activeTab === 'vehicles') fetchVehicles();
-        else if (activeTab === 'offers') fetchOffers();
-        else if (activeTab === 'coupons') fetchCoupons();
-        else if (activeTab === 'blog') fetchBlogPosts();
-        else if (activeTab === 'loyalty') fetchLoyaltyData();
-        else if (activeTab === 'settings') fetchSettings();
-    }, [activeTab]);
+        if (authLoading) {
+            return;
+        }
+        // Check if user is authenticated and is admin
+        if (!isAuthenticated || !user || user.role !== 'admin') {
+            navigate('/');
+            return;
+        }
+        fetchData();
+    }, [navigate, isAuthenticated, user, authLoading, fetchData]);
 
     // Delete handlers
     const handleDeleteVehicle = async (vehicleId) => {
@@ -377,7 +378,6 @@ const [vehicleForm, setVehicleForm] = useState({
             description: '', availability_status: 'available', is_featured: false, images: '',
             rc_document: '', insurance_document: '', vendor_id: ''
         });
-        setShowVehicleForm(false);
         setEditingVehicle(null);
         setFiles({ rc_document: null, insurance_document: null, vehicle_images: [] });
     };
@@ -418,7 +418,6 @@ const [vehicleForm, setVehicleForm] = useState({
             images: vehicle.images ? vehicle.images.join(', ') : ''
         });
         setEditingVehicle(vehicle._id);
-        setShowVehicleForm(true);
         setFiles({ rc_document: null, insurance_document: null, vehicle_images: [] });
     };
 
@@ -1414,11 +1413,12 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                                 />
 
-                                                                     <div className="mt-1">
-<img src={files.rc_document ? URL.createObjectURL(files.rc_document) : ''} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
-                                                                          <p className="text-xs text-gray-500 mt-1">{files.rc_document ? files.rc_document.name : ''}</p>
-                                                                     </div>
-                                                                 )}
+                                                                {files.rc_document && (
+                                                                    <div className="mt-1">
+                                                                        <img src={files.rc_document ? URL.createObjectURL(files.rc_document) : ''} className="h-16 w-20 object-cover rounded border" alt="rc preview" />
+                                                                        <p className="text-xs text-gray-500 mt-1">{files.rc_document ? files.rc_document.name : ''}</p>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div>
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Insurance Document <span className="text-red-500">*</span></label>
@@ -1431,11 +1431,12 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                                 />
 
-                                                                     <div className="mt-1">
-<img src={files.insurance_document ? URL.createObjectURL(files.insurance_document) : ''} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
-                                                                          <p className="text-xs text-gray-500 mt-1">{files.insurance_document ? files.insurance_document.name : ''}</p>
-                                                                     </div>
-                                                                 )}
+                                                                {files.insurance_document && (
+                                                                    <div className="mt-1">
+                                                                        <img src={files.insurance_document ? URL.createObjectURL(files.insurance_document) : ''} className="h-16 w-20 object-cover rounded border" alt="insurance preview" />
+                                                                        <p className="text-xs text-gray-500 mt-1">{files.insurance_document ? files.insurance_document.name : ''}</p>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div className="md:col-span-2">
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle Images <span className="text-red-500">*</span> <span className="text-xs text-gray-500">max 5</span></label>
@@ -1449,14 +1450,15 @@ const [vehicleForm, setVehicleForm] = useState({
                                                                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                                                                 />
 
-                                                                     <div className="flex gap-2 mt-2 flex-wrap">
-                                                                         {files.vehicle_images.map((f, i) => (
-                                                                             <div key={i} className="relative">
-                                                                                 <img src={f ? URL.createObjectURL(f) : ''} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
-                                                                             </div>
-                                                                         ))}
-                                                                     </div>
-                                                                 )}
+                                                                {files.vehicle_images && files.vehicle_images.length > 0 && (
+                                                                    <div className="flex gap-2 mt-2 flex-wrap">
+                                                                        {files.vehicle_images.map((f, i) => (
+                                                                            <div key={i} className="relative">
+                                                                                <img src={f ? URL.createObjectURL(f) : ''} className="h-16 w-20 object-cover rounded border" alt={`preview ${i}`} />
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                             <div className="md:col-span-3">
                                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>

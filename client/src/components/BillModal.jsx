@@ -1,8 +1,6 @@
-import { useRef } from 'react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { useRef, useState } from 'react';
 import { useToast } from '../contexts/ToastContext';
-import { formatPrice, formatDate } from '../i18n/format';
+import { formatDate } from '../i18n/format';
 import { useTranslation } from 'react-i18next';
 
 const BillModal = ({ booking, onClose }) => {
@@ -94,7 +92,9 @@ const BillModal = ({ booking, onClose }) => {
         },
     };
 
+    const [pdfLoading, setPdfLoading] = useState(false);
     const downloadPDF = async () => {
+        if (pdfLoading) return;
         try {
             const element = billRef.current;
             if (!element) {
@@ -102,9 +102,15 @@ const BillModal = ({ booking, onClose }) => {
                 return;
             }
 
+            setPdfLoading(true);
             toast.info(t('bookings:toast.generatingPdf'));
 
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+                import('html2canvas'),
+                import('jspdf'),
+            ]);
+
+            await new Promise((resolve) => setTimeout(resolve, 350));
 
             const canvas = await html2canvas(element, {
                 scale: 2,
@@ -134,6 +140,8 @@ const BillModal = ({ booking, onClose }) => {
         } catch (error) {
             console.error('Error generating PDF:', error);
             toast.error(t('bookings:toast.failedGeneratePdf', { error: error.message || 'Unknown error' }));
+        } finally {
+            setPdfLoading(false);
         }
     };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
@@ -7,7 +7,7 @@ import PickupModal from '../../components/PickupModal';
 import ReturnModal from '../../components/ReturnModal';
 import { MapPinned, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatPrice, formatDate, formatDateTime, formatTime, formatNumber } from '../../i18n/format';
+import { formatPrice, formatDateTime } from '../../i18n/format';
 import Price from '../../components/Price';
 
 const OfficeStaffDashboard = () => {
@@ -76,19 +76,7 @@ const OfficeStaffDashboard = () => {
         return `${dd}/${mm}/${yyyy}`;
     };
 
-    useEffect(() => {
-        if (authLoading) {
-            return;
-        }
-        // Check if user is authenticated and is office staff
-        if (!isAuthenticated || !user || user.role !== 'office_staff') {
-            navigate('/');
-            return;
-        }
-        fetchBookings();
-    }, [activeTab, navigate, isAuthenticated, user, authLoading]);
-
-    const fetchBookings = async () => {
+    const fetchBookings = useCallback(async () => {
         try {
             setLoading(true);
             let status = '';
@@ -116,7 +104,19 @@ const OfficeStaffDashboard = () => {
             setBookings([]);
             setLoading(false);
         }
-    };
+    }, [activeTab]);
+
+    useEffect(() => {
+        if (authLoading) {
+            return;
+        }
+        // Check if user is authenticated and is office staff
+        if (!isAuthenticated || !user || user.role !== 'office_staff') {
+            navigate('/');
+            return;
+        }
+        fetchBookings();
+    }, [navigate, isAuthenticated, user, authLoading, fetchBookings]);
 
     const handlePickup = (booking) => {
         setSelectedBooking(booking);

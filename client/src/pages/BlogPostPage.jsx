@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config/api';
-import { useTranslation } from 'react-i18next';
 import { formatDate } from '../i18n/format';
 import { ArrowLeft, Calendar, Eye, User, Tag, BookOpen } from 'lucide-react';
 import DOMPurify from 'dompurify';
 
 const BlogPostPage = () => {
-    const { t } = useTranslation();
     const { slug } = useParams();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);

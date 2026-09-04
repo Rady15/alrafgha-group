@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_ENDPOINTS, getAuthHeader } from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
-import { useTranslation } from 'react-i18next';
 import { formatDate, formatNumber } from '../i18n/format';
 import { Award, Star, Gift, Copy, Check, TrendingUp, Crown, Users, LogIn } from 'lucide-react';
 
 const LoyaltyPage = () => {
-    const { t } = useTranslation();
     const { isAuthenticated } = useAuth();
     const [points, setPoints] = useState(null);
     const [tier, setTier] = useState(null);

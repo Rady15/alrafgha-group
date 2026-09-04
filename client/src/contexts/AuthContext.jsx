@@ -9,9 +9,18 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUser = async () => {
+            // Avoid noisy 401 when visitor is not logged in (no JWT stored)
+            const token = localStorage.getItem('jwt');
+            if (!token) {
+                setLoading(false);
+                return;
+            }
             const result = await authService.getCurrentUser();
             if (result.success) {
                 setUser(result.data);
+            } else if (result.message && /401|Unauthorized|logged in/i.test(result.message)) {
+                // Token expired / invalid — clear it quietly
+                localStorage.removeItem('jwt');
             }
             setLoading(false);
         };

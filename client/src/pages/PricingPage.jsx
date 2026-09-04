@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { API_ENDPOINTS } from '../config/api';
 import { Link } from 'react-router-dom';
 import { PackageSearch, Motorbike, Car, ArrowUpRight, Zap, CheckCircle2 } from 'lucide-react';
@@ -13,11 +13,7 @@ const PricingPage = () => {
     const [error, setError] = useState(null);
     const [selectedType, setSelectedType] = useState('all');
 
-    useEffect(() => {
-        fetchPackages();
-    }, []);
-
-    const fetchPackages = async () => {
+    const fetchPackages = useCallback(async () => {
         try {
             setLoading(true);
             const response = await fetch(API_ENDPOINTS.packages);
@@ -33,7 +29,11 @@ const PricingPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        fetchPackages();
+    }, [fetchPackages]);
 
     const filteredPackages = selectedType === 'all'
         ? packages.filter(pkg => pkg.is_active)

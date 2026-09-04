@@ -30,15 +30,18 @@ const BookingsPage = () => {
   const [clientSecret, setClientSecret] = useState(null);
   const [payLoading, setPayLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-    fetchBookings();
-  }, [isAuthenticated, navigate]);
+  // Map backend status to frontend status
+  const mapBackendStatus = (backendStatus) => {
+    const statusMap = {
+      'booking_requested': 'pending',
+      'picked_up': 'confirmed',
+      'returned': 'completed',
+      'cancelled': 'cancelled'
+    };
+    return statusMap[backendStatus] || backendStatus;
+  };
 
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     setLoading(true);
     try {
       // Get user ID from AuthContext
@@ -118,7 +121,15 @@ const BookingsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    fetchBookings();
+  }, [isAuthenticated, navigate, fetchBookings]);
 
   // Is this booking still owed money (customer pays remaining online)?
   const remainingDue = (booking) => {
@@ -172,18 +183,7 @@ const BookingsPage = () => {
     showToast('Payment received successfully', 'success');
     setPayBooking(null);
     await fetchBookings();
-  }, [showToast]);
-
-  // Map backend status to frontend status
-  const mapBackendStatus = (backendStatus) => {
-    const statusMap = {
-      'booking_requested': 'pending',
-      'picked_up': 'confirmed',
-      'returned': 'completed',
-      'cancelled': 'cancelled'
-    };
-    return statusMap[backendStatus] || backendStatus;
-  };
+  }, [showToast, fetchBookings]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -191,15 +191,6 @@ const BookingsPage = () => {
       case 'completed': return 'bg-blue-100 text-blue-700';
       case 'pending': return 'bg-accent-100 text-accent-700';
       case 'cancelled': return 'bg-neutral-100 text-neutral-700';
-      default: return 'bg-neutral-100 text-neutral-700';
-    }
-  };
-
-  const getPaymentStatusColor = (status) => {
-    switch (status) {
-      case 'paid': return 'bg-green-100 text-green-700';
-      case 'unpaid': return 'bg-secondary-100 text-secondary-700';
-      case 'refunded': return 'bg-blue-100 text-blue-700';
       default: return 'bg-neutral-100 text-neutral-700';
     }
   };
