@@ -106,12 +106,13 @@ const Navbar = () => {
 
           <div className="flex xl:hidden items-center gap-1.5">
             <LanguageSwitcher />
-            {isAuthenticated ? (
+            {!isAuthenticated && (
+              <Link to="/login" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-ink-200 text-ink-700 text-sm font-semibold hover:bg-ink-50" data-testid="mobile-login-btn">{t('auth.login')}</Link>
+            )}
+            {isAuthenticated && (
               <Link to="/profile" className="w-10 h-10 rounded-full border border-gold-100 overflow-hidden flex items-center justify-center bg-gold-50" data-testid="mobile-profile-icon">
                 {user?.profile_image ? <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-gold-500 to-crimson-500 flex items-center justify-center text-white font-bold">{user?.name?.charAt(0)?.toUpperCase()}</div>}
               </Link>
-            ) : (
-              <Link to="/register" className="px-4 py-2 rounded-full bg-gradient-to-r from-gold-500 to-gold-600 text-white text-sm font-semibold" data-testid="mobile-signup-btn">{t('auth.signup')}</Link>
             )}
             <button onClick={() => setMobileMenuOpen((v) => !v)} className="p-2.5 rounded-full bg-white border border-ink-100 text-ink-900" data-testid="mobile-menu-toggle" aria-label={mobileMenuOpen ? t('common:actions.close') : t('common:actions.menu')} aria-expanded={mobileMenuOpen}>
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -120,15 +121,34 @@ const Navbar = () => {
         </div>
 
         {mobileMenuOpen && (
-          <div className="xl:hidden absolute top-full left-0 right-0 px-4 pb-4 animate-fade-in" data-testid="mobile-menu">
-            <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-ink-100 p-2 shadow-2xl">
-              {navLinks.map((link) => (
-                <Link key={link.path} to={link.path} onClick={() => setMobileMenuOpen(false)} className={`block px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive(link.path) ? 'bg-gold-50 text-gold-600 font-bold' : 'text-ink-700 hover:bg-ink-50'}`}>{link.label}</Link>
-              ))}
-              {!isAuthenticated && <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-medium text-ink-700 hover:bg-ink-50">{t('auth.login')}</Link>}
-              {isAuthenticated && <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-error-600 hover:bg-error-50">{t('auth.logout')}</button>}
-              <div className="mt-2 pt-2 border-t border-ink-100 flex justify-center">
-                <LanguageSwitcher />
+          <div className="xl:hidden fixed inset-0 z-[60]" data-testid="mobile-menu">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
+            <div className="absolute top-0 right-0 h-full w-[82%] max-w-[360px] bg-white shadow-2xl overflow-y-auto flex flex-col animate-drawer-in">
+              <div className="flex items-center justify-between p-5 border-b border-ink-100">
+                <Link to="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2">
+                  <img src="/arafgha-logo.png" alt="Alrafgha Group" className="h-8 w-auto" />
+                </Link>
+                <button onClick={() => setMobileMenuOpen(false)} className="p-2 rounded-full bg-ink-50 text-ink-700 hover:bg-ink-100" aria-label={t('common:actions.close')}>
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <nav className="flex-1 p-4 space-y-1">
+                {navLinks.map((link) => (
+                  <Link key={link.path} to={link.path} onClick={() => setMobileMenuOpen(false)} className={`block px-4 py-4 rounded-xl text-lg font-bold transition-colors ${isActive(link.path) ? 'bg-gold-50 text-gold-600' : 'text-ink-800 hover:bg-ink-50'}`}>{link.label}</Link>
+                ))}
+              </nav>
+              <div className="p-4 border-t border-ink-100 space-y-3">
+                {!isAuthenticated ? (
+                  <>
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center px-4 py-3.5 rounded-xl text-lg font-bold border-2 border-ink-900 text-ink-900 hover:bg-ink-50">{t('auth.login')}</Link>
+                    <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center px-4 py-3.5 rounded-xl text-lg font-bold bg-ink-900 text-white hover:bg-black" data-testid="mobile-menu-signup">{t('auth.signup')}</Link>
+                  </>
+                ) : (
+                  <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="block w-full text-center px-4 py-3.5 rounded-xl text-lg font-bold text-error-600 border border-error-200 hover:bg-error-50">{t('auth.logout')}</button>
+                )}
+                <div className="flex justify-center pt-2">
+                  <LanguageSwitcher />
+                </div>
               </div>
             </div>
           </div>

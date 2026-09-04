@@ -28,6 +28,11 @@
     from { opacity: 0; transform: translateX(-32px); }
     to { opacity: 1; transform: translateX(0); }
   }
+
+  @keyframes drawer-in {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
   
   @keyframes slide-in-right {
     from { opacity: 0; transform: translateX(32px); }
@@ -114,6 +119,10 @@
   
   .animate-clip-reveal {
     animation: clip-reveal var(--duration-section) var(--ease-in-out) both;
+  }
+
+  .animate-drawer-in {
+    animation: drawer-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 
   /* Stagger delays */
