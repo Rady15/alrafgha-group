@@ -104,7 +104,8 @@ const Navbar = () => {
             )}
           </div>
 
-          <div className="flex xl:hidden items-center gap-2">
+          <div className="flex xl:hidden items-center gap-1.5">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <Link to="/profile" className="w-10 h-10 rounded-full border border-gold-100 overflow-hidden flex items-center justify-center bg-gold-50" data-testid="mobile-profile-icon">
                 {user?.profile_image ? <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-gold-500 to-crimson-500 flex items-center justify-center text-white font-bold">{user?.name?.charAt(0)?.toUpperCase()}</div>}
@@ -126,6 +127,9 @@ const Navbar = () => {
               ))}
               {!isAuthenticated && <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-medium text-ink-700 hover:bg-ink-50">{t('auth.login')}</Link>}
               {isAuthenticated && <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-error-600 hover:bg-error-50">{t('auth.logout')}</button>}
+              <div className="mt-2 pt-2 border-t border-ink-100 flex justify-center">
+                <LanguageSwitcher />
+              </div>
             </div>
           </div>
         )}
